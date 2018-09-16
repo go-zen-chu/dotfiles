@@ -1,0 +1,54 @@
+"*":
+  "atom-beautify":
+    general:
+      _analyticsUserId: "ad2c5ccc-ab67-4e52-9b70-4aaf0b86cba7"
+      analytics: false
+  "atom-ide-ui":
+    use:
+      "atom-ide-terminal": "never"
+  "atom-package-deps":
+    ignored: []
+  "autocomplete-paths":
+    ignoredPatterns: [
+      "env"
+    ]
+  core:
+    automaticallyUpdate: false
+    closeDeletedFileTabs: true
+    debugLSP: true
+    disabledPackages: [
+      "linter"
+      "spell-check"
+    ]
+    telemetryConsent: "no"
+  editor:
+    fontSize: 17
+    invisibles: {}
+    showInvisibles: true
+  "exception-reporting":
+    userId: "22a43b76-0225-4d82-9954-a633a569cf62"
+  "file-types":
+    "^Dockerfile\\..*$": "source.dockerfile"
+  "linter-eslint":
+    fixOnSave: true
+    lintHtmlFiles: true
+    useGlobalEslint: true
+  "linter-shellcheck": {}
+  "linter-ui-default": {}
+  "markdown-image-assistant":
+    createYearMonthFolder: true
+    insertHtmlOverMarkdown: true
+    prependTargetFileName: true
+    preserveOrigName: true
+  "markdown-preview":
+    breakOnSingleNewline: true
+  minimap:
+    disablePythonDocLinks: true
+    plugins:
+      "git-diff": true
+      "git-diffDecorationsZIndex": 0
+      "minimap-autohide": true
+      "minimap-autohideDecorationsZIndex": 0
+  "tree-view": {}
+  welcome:
+    showOnStartup: false
