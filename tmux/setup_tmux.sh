@@ -3,11 +3,10 @@
 UNAME_S=$(uname -s)
 if [ "${UNAME_S}" = "Darwin" ] ; then
 	brew install tmux
-  brew install reattach-to-user-namespace
 elif [ "${UNAME_S}" = "Linux" ]; then
   #TODO: fix installing new tmux
   sudo yum -y install gcc libevent-devel ncurses-devel
-	TMUX_VER="2.4"
+	TMUX_VER="2.6"
 	TMUX_STR="tmux-${TMUX_VER}"
 	wget https://github.com/tmux/tmux/releases/download/${TMUX_VER}/${TMUX_STR}.tar.gz
 	tar xvf ${TMUX_STR}.tar.gz
