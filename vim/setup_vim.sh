@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+set -ux
 
 UNAME_S=$(uname -s)
 if [ "${UNAME_S}" = "Darwin" ] ; then
-	brew install vim
+	brew install vim --with-luajit
 elif [ "${UNAME_S}" = "Linux" ]; then
-  #TODO:
+  #TODO: should support not only CentOS
   yum install vim
 else
   echo "Not supported OS... Aborting"
@@ -12,9 +13,14 @@ else
 fi
 
 # copy all things inside .vim
-cp ./vim/.vimrc ${HOME}
-cp -r ./vim/.vim ${HOME}
-chown -R ${USER} ${HOME}/.vim
-# dein setting
-curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh -o ${HOME}/.vim/installer.sh
-sh ${HOME}/.vim/installer.sh ${HOME}/.vim/dein/
+if [[ ! -d "$HOME/.vim" ]] ; then
+	cp ./vim/.vimrc ${HOME} # place .vimrc which loads settings in dotfiles
+	cp -r ./vim/.vim ${HOME}
+	chown -R ${USER} ${HOME}/.vim
+fi
+
+if [[ ! -d "$HOME/.vim/dein" ]] ; then
+	# dein setting
+	curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh -o ${HOME}/.vim/installer.sh
+	bash ${HOME}/.vim/installer.sh ${HOME}/.vim/dein/
+fi

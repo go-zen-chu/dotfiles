@@ -7,4 +7,4 @@ PATH=${HOME}/.anyenv/bin:$PATH
 anyenv install pyenv
 anyenv install goenv
 anyenv install rbenv
-anyenv install ndenv
+anyenv install nodenv
