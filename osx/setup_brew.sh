@@ -30,19 +30,19 @@ brew install plantuml
 brew install less
 brew install shellcheck
 
-# install GUI tools
-brew install appcleaner
-brew install alfred
-brew install vivaldi
-brew install google-backup-and-sync # used to be google-drive
-brew install google-japanese-ime
-brew install dropbox
-brew install slack
-brew install iterm2
-brew install kap 
-brew install boostnote 
-brew install lastpass
-brew install cmd-eikana # japanese input tool
+# install GUI tools via cask
+brew cask install appcleaner
+brew cask install alfred
+brew cask install vivaldi
+brew cask install google-backup-and-sync # used to be google-drive
+brew cask install google-japanese-ime
+brew cask install dropbox
+brew cask install slack
+brew cask install iterm2
+brew cask install kap 
+brew cask install boostnote 
+brew cask install lastpass
+brew cask install cmd-eikana # japanese input tool
 echo_yellow "change : -> ; and L_CMD -> ei, R_CMD -> kana"
 
 # echo tools that cannot be installed
