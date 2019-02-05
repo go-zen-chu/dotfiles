@@ -40,7 +40,6 @@ brew cask install dropbox
 brew cask install slack
 brew cask install iterm2
 brew cask install kap 
-brew cask install boostnote 
 brew cask install lastpass
 brew cask install cmd-eikana # japanese input tool
 echo_yellow "change : -> ; and L_CMD -> ei, R_CMD -> kana"
