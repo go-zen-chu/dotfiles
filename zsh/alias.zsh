@@ -28,6 +28,6 @@ alias rmdir='rm -rf'
 alias cpdir='cp -R'
 alias gitlog='git log --graph --color --oneline'
 
-if [ -f "$HOME/dotfiles/plantuml/plantuml_cf_theme.txt" ] ; then
-    alias plantuml='plantuml -config "$HOME/dotfiles/plantuml/plantuml_cf_theme.txt"'
+if [ -d "$HOME/dotfiles/plantuml" ] ; then
+    alias plantuml='plantuml -config "$HOME/dotfiles/plantuml/plantuml_cf_theme/config.txt"'
 fi

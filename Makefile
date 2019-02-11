@@ -14,7 +14,7 @@ endif
 CURDIR := $(shell pwd)
 $(info "Start make for $(UNAME_S) at $(CURDIR)")
 
-setup-mac: is-mac mac-prepare setup-defaults setup-brew setup-vim setup-atom setup-tmux setup-zsh setup-anyenv
+setup-mac: is-mac mac-prepare setup-defaults setup-brew setup-vim setup-plantuml setup-tmux setup-zsh setup-anyenv
 
 setup-linux: is-linux linux-prepare setup-vim setup-tmux setup-anyenv setup-zsh
 
@@ -28,8 +28,7 @@ endif
 	@echo "Is OS X. Continue."
 
 mac-prepare:
-	# install developer tool
-	xcode-select --install
+	$(shell ./osx/check_developer_tool.sh)
 
 setup-defaults: osx/setup_defaults.sh
 	@echo "Setup Defaults"
@@ -64,8 +63,8 @@ setup-zsh: zsh/setup_zsh.sh
 setup-vim:
 	$(shell ./vim/setup_vim.sh)
 
-setup-atom:
-	$(shell ./atom/setup_atom.sh)
+setup-plantuml:
+	$(shell ./plantuml/setup_plantuml.sh)
 
 setup-anyenv:
 	$(shell ./anyenv/setup_anyenv.sh)
