@@ -82,3 +82,6 @@ defaults write com.apple.Terminal "Startup Window Settings" -string "Pro"
 #========================== TextEdit Settings ==========================
 # make default to plain text
 defaults write com.apple.TextEdit RichText -int 0
+
+#========================== Mission Control Settings ==========================
+defaults write com.apple.dock mru-spaces -bool false
