@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
+set -ux
 
 #========================== Keyboard Settings ==========================
 # Enable full keyboard access for all controls
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+#
 # Set a blazingly fast keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 0.2
+defaults write NSGlobalDomain KeyRepeat -int 1
 # Set a shorter Delay until key repeat
-defaults write NSGlobalDomain InitialKeyRepeat -int 20
-# Japanese : Caps Lock key -> control
-# http://baqamore.hatenablog.com/entry/2016/10/03/184830
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # ignore correction
 defaults write -g NSAutomaticSpellingCorrectionEnabled -bool false
+# change caps lock to control
+# get string like : 1452-630-0 for keyboard_id (ref: http://freewing.starfree.jp/software/macos_keyboard_setting_terminal_commandline)
+keyboard_id="$(ioreg -c AppleEmbeddedKeyboard -r | grep -Eiw "VendorID|ProductID" | awk '{ print $4 }' | paste -s -d'-\n' -)-0"
+defaults -currentHost write -g com.apple.keyboard.modifiermapping.${keyboard_id} -array-add "
+<dict>
+  <key>HIDKeyboardModifierMappingDst</key>\
+  <integer>30064771300</integer>\
+  <key>HIDKeyboardModifierMappingSrc</key>\
+  <integer>30064771129</integer>\
+</dict>
+"
 
 #========================== Trackpad Settings ==========================
 # make it click when tap trackpad
@@ -59,7 +70,10 @@ defaults write com.apple.Safari IncludeDevelopMenu -bool true
 defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
 
 #========================== iCal Settings ==========================
-defaults write com.apple.iCal 'Default duration in minutes for new event' 15
+# default duration to 15m
+defaults write com.apple.iCal "Default duration in minutes for new event" 15
+# 24 hour view
+defaults write com.apple.iCal "number of hours displayed" 24
 
 #========================== Terminal Settings ==========================
 # Set startup terminal theme
