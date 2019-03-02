@@ -1,4 +1,9 @@
+" 文字化け対策
+set encoding=utf-8
+set fileencodings=utf-8
+
 " tab is 4 space length
+
 set tabstop=4
 " indent length
 set shiftwidth=4

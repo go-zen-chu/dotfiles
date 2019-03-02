@@ -14,7 +14,6 @@ export ENHANCD_HOOK_AFTER_CD=ls
 # コマンド／プラグインとして管理することができる
 zplug "plugins/git", from:oh-my-zsh
 zplug "plugins/docker", from:oh-my-zsh
-#zplug "plugins/jira", from:oh-my-zsh
 zplug "mollifier/cd-gitroot"
 zplug "krujos/cf-zsh-autocompletion"
 
@@ -35,7 +34,7 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
 export FZF_DEFAULT_OPTS='--height 60% --reverse --border'
 function select-history() {
-  BUFFER=$(\history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+  BUFFER=$(\history -n -r 1 | fzf -e --no-sort +m --query "$LBUFFER" --prompt="History > ")
   CURSOR=$#BUFFER
 }
 zle -N select-history
@@ -44,9 +43,6 @@ alias cdf='cd $(fzf)'
 
 # ついでに tmux 用の拡張も入れるといい
 zplug "junegunn/fzf", as:command, use:bin/fzf-tmux
-
-#zplug "mafredri/zsh-async", from:github
-#zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
 
 # 未インストール項目をインストールする
 if ! zplug check --verbose; then
