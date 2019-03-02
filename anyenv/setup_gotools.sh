@@ -7,3 +7,4 @@ go get -u github.com/onsi/gomega/...
 go get -u github.com/pivotal-cf/om
 
 go get -u github.com/krishicks/yaml-patch/cmd/yaml-patch
+go get -u github.com/krishicks/minio/mc
