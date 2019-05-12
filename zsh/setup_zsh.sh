@@ -10,13 +10,13 @@ if [ "${UNAME_S}" = "Darwin" ] ; then
 	# set shell as zsh
 	echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
 	chsh -s /usr/local/bin/zsh
-elif [ "${UNAME_S}" = "Linux" ]; then
-  yum install bash-completion
+elif [ -f "/etc/redhat-release" ] ; then
+  sudo yum install -y zsh
 else
   echo "Not supported OS... Aborting"
   exit 1
 fi
 
 cp ./zsh/.zshrc ${HOME}
-cp ./zsh/env_independent_setting.zsh ${HOME}
+cp ./zsh/local.zsh ${HOME}
 source "${HOME}/.zshrc"

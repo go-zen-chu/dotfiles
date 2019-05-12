@@ -4,9 +4,8 @@ set -ux
 UNAME_S=$(uname -s)
 if [ "${UNAME_S}" = "Darwin" ] ; then
 	brew install vim --with-luajit
-elif [ "${UNAME_S}" = "Linux" ]; then
-  #TODO: should support not only CentOS
-  yum install vim
+elif [ -f "/etc/redhat-release" ] ; then
+  sudo yum install -y vim
 else
   echo "Not supported OS... Aborting"
   exit 1
