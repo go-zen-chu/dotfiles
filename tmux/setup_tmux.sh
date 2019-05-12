@@ -4,8 +4,7 @@ set -ux
 UNAME_S=$(uname -s)
 if [ "${UNAME_S}" = "Darwin" ] ; then
 	brew install tmux
-elif [ "${UNAME_S}" = "Linux" ]; then
-  #TODO: fix installing new tmux
+elif [ -f "/etc/redhat-release" ] ; then
   sudo yum -y install gcc libevent-devel ncurses-devel
 	TMUX_VER="2.8"
 	TMUX_STR="tmux-${TMUX_VER}"

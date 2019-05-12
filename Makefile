@@ -1,14 +1,17 @@
-.PHONY: setup-mac is-mac setup-linux setup-defaults setup-brew setup-atom setup-zsh setup-vim setup-anyenv
+.PHONY: setup-mac is-mac mac-prepare setup-defaults setup-brew setup-centos centos-setup-yum centos-setup-docker setup-bash setup-zsh setup-vim setup-tmux setup-anyenv
 
 # check what os it is
 UNAME_S := $(shell uname -s)
-IS_OS_X := false
-IS_LINUX := false
-ifeq ($(UNAME_S),Linux)
-    IS_LINUX := true
-endif
+IS_MACOS := false
+IS_CENTOS := false
+
 ifeq ($(UNAME_S),Darwin)
-    IS_OS_X := true
+  IS_MACOS := true
+else ifneq (,$(wildcard /etc/redhat-release))
+  IS_CENTOS := true
+else
+  @echo "Not supported OS. Aborting..."
+	exit 1
 endif
 
 CURDIR := $(shell pwd)
@@ -16,12 +19,11 @@ $(info "Start make for $(UNAME_S) at $(CURDIR)")
 
 setup-mac: is-mac mac-prepare setup-defaults setup-brew setup-vim setup-plantuml setup-tmux setup-zsh setup-anyenv
 
-setup-linux: is-linux linux-prepare setup-vim setup-tmux setup-anyenv setup-zsh
+setup-centos: is-centos centos-setup-yum centos-setup-docker setup-vim setup-tmux setup-zsh setup-anyenv
 
 #========================== OSX ==========================
-
 is-mac:
-ifeq ($(IS_OS_X), false)
+ifeq ($(IS_MACOS), false)
 	@echo "Not OS X. Aborting..."
 	exit 1
 endif
@@ -38,20 +40,39 @@ setup-brew: osx/setup_brew.sh
 	@echo "Setup Brew"
 	$(shell ./osx/setup_brew.sh)
 
-#========================== LINUX ==========================
-is-linux:
-ifeq ($(IS_LINUX), false)
-	@echo "Not Linux. Aborting..."
+#========================== CentOS ==========================
+is-centos:
+ifeq ($(IS_CENTOS), false)
+	@echo "Not CentOS. Aborting..."
 	exit 1
 endif
-	@echo "Is Linux. Continue."
+	@echo "Is CentOS. Continue."
 
-linux-prepare:
-	# -y for yes to all
-	yum -y install git
-	# cp all outer repos
-	sudo cp yum/.* /etc/yum.repos.d/
-	yum update
+centos-setup-yum:
+	@echo "Setup yum"
+	sudo yum update ; \
+	sudo yum install -y git ; \
+	sudo yum install -y wget ; \
+	sudo yum install -y jq
+
+centos-setup-docker:
+	@echo "Setup docker"
+	# https://docs.docker.com/install/linux/docker-ce/centos/
+	sudo yum remove docker \
+    docker-client \
+    docker-client-latest \
+    docker-common \
+    docker-latest \
+    docker-latest-logrotate \
+    docker-logrotate \
+    docker-engine ; \
+	sudo yum install -y yum-utils \
+	  device-mapper-persistent-data \
+	  lvm2 ; \
+	sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo ; \
+	sudo yum install docker-ce docker-ce-cli containerd.io
 
 #========================== OS Common ==========================
 setup-bash: bash/setup_bash.sh
