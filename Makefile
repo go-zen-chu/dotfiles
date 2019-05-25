@@ -50,10 +50,10 @@ endif
 
 centos-setup-yum:
 	@echo "Setup yum"
-	sudo yum update ; \
-	sudo yum install -y git ; \
-	sudo yum install -y wget ; \
-	sudo yum install -y jq
+	sudo yum -y update; \
+	sudo yum install -y git; \
+	sudo yum install -y wget; \
+	sudo yum install -y jq;
 
 centos-setup-docker:
 	@echo "Setup docker"

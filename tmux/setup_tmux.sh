@@ -13,7 +13,7 @@ elif [ -f "/etc/redhat-release" ] ; then
 	cd ${TMUX_STR}
 	./configure
 	make
-	make install
+	sudo make install
 	cd ..
 	rm ${TMUX_STR}.tar.gz
 	rm -rf ${TMUX_STR}

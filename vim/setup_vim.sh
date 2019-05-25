@@ -21,5 +21,5 @@ fi
 if [[ ! -d "$HOME/.vim/dein" ]] ; then
 	# dein setting
 	curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh -o ${HOME}/.vim/installer.sh
-	bash ${HOME}/.vim/installer.sh ${HOME}/.vim/dein/
+	sh ${HOME}/.vim/installer.sh ${HOME}/.vim/dein/
 fi
