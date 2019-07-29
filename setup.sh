@@ -61,6 +61,21 @@ function confirm_uninstall() {
     return 1
 }
 
+#=============================== bash ===============================
+function setup_bash() {
+    case "${os}" in
+    "Darwin")
+        brew install bash-completion
+        ;;
+    "CentOS")
+        yum install bash-completion
+        ;;
+    esac
+    cp bash/.bash_profile ${HOME}
+    cp bash/.inputrc ${HOME}
+    cp bash/.bashrc ${HOME}
+}
+
 #=============================== tmux ===============================
 declare TMUX_VERSION="2.8"
 function setup_tmux() {
