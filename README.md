@@ -1,17 +1,15 @@
 # dotfiles
 
-My configuration files for DRY.
+custom configuration files for several tools.
 
-## how to use
-
-### Mac
+## setup
 
 ```
-$ make setup-mac
+./setup.sh
 ```
 
-### Linux (CentOS for now)
+## uninstall
 
 ```
-$ make setup-linux
+./setup.sh -u
 ```
