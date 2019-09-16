@@ -62,6 +62,7 @@ function setup_centos() {
     source vim/setup.sh
     source tmux/setup.sh
     source zsh/setup.sh
+    source anyenv/setup.sh
 }
 
 # handle args
