@@ -8,4 +8,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run setup.sh
-      run: setup.sh
+      run: |
+        ls
+        ./setup.sh
