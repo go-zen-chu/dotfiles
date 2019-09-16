@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+set -eu
 
-set -eux
+echo "[INFO] Setup anyenv"
 
-git clone https://github.com/riywo/anyenv ${HOME}/.anyenv
+git clone https://github.com/riywo/anyenv "${HOME}/.anyenv"
 # update path for now
-PATH=${HOME}/.anyenv/bin:$PATH >> ${HOME}/local.zsh
+export PATH=${HOME}/.anyenv/bin:$PATH
 
 anyenv init
 anyenv install --force-init 
