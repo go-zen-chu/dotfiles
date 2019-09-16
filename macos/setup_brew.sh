@@ -9,6 +9,9 @@ if [[ $? != 0 ]] ;then
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
 fi
 
+# sometime it gets checksum error if not updated
+brew update 
+
 brew install git
 brew install openssl # not supported from El Capitan
 brew install wget
@@ -21,7 +24,6 @@ brew install jq
 brew install tree
 brew install gnu-sed
 brew install fzf
-
 brew install shellcheck
 # personal dev
 brew install hugo

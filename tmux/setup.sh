@@ -6,6 +6,7 @@ echo "[INFO] Setup tmux"
 case "${os}" in
 "Darwin")
 	brew install tmux
+	brew install reattach-to-user-namespace
 	;;
 "CentOS")
 	declare TMUX_VERSION="2.8"
