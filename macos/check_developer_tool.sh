@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -ux
 
-xcode-select -p
+echo "[INFO] Checking developer tools"
 # if installed returns 0 else install
-if [[ $? != 0 ]] ; then
+if ! xcode-select -p ; then
   xcode-select --install
 else
   echo "developer tool is already installed"
