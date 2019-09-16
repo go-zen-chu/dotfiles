@@ -32,7 +32,7 @@ brew install cloudfoundry/tap/cf-cli
 brew install bosh-cli
 
 # install GUI tools via cask
-brew cask install adaptor
+brew cask install adapter
 brew cask install appcleaner
 brew cask install alfred
 echo "set setting sync with powerpack"
