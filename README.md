@@ -1,17 +1,16 @@
 # dotfiles
 
-My configuration files for DRY.
+[![Actions Status](https://github.com/go-zen-chu/dotfiles/workflows/CI/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions)
+
+My configuration files for DRY. CI is performed on GitHub Actions.
 
 ## how to use
 
-### Mac
-
-```
-$ make setup-mac
+```bash
+./setup.sh
 ```
 
-### Linux (CentOS for now)
+## Supported OS
 
-```
-$ make setup-linux
-```
+- MacOS
+- CentOS

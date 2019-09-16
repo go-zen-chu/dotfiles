@@ -3,9 +3,6 @@ set -ux
 
 echo "[INFO] Setup brew"
 
-# you can extend time via sudo visudo https://www.tecmint.com/set-sudo-password-timeout-session-longer-linux/
-sudo -v # sudoing first
-
 hash brew 2>/dev/null
 if [[ $? != 0 ]] ;then
   # install homebrew without prompt
@@ -32,8 +29,6 @@ brew install less
 # cloud tools
 brew install cloudfoundry/tap/cf-cli
 brew install bosh-cli
-
-sudo -v # extend sudo time
 
 # install GUI tools via cask
 brew cask install adaptor
