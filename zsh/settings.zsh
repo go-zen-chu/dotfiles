@@ -1,32 +1,28 @@
-# 環境変数
+# language setting
 export LANG=ja_JP.UTF-8
 
-# 大文字小文字を区別しない
+# case insensitivce
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# 補完時に色をつける。dir = red, link = purple, exec = cyan
-# http://neko-mac.blogspot.com/2015/03/mac_18.html
-# LSCOLOR と LS_COLORS は異なるのに注意
+# colorize directory, link, executive
 zstyle ':completion:*' list-colors di=31 ln=35 ex=36
 
-# ヒストリの設定
-HISTFILE=~/.zsh_history
+# history setting
+HISTFILE=${HOME}/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 HISTTIMEFORMAT='%Y/%m/%d %H:%M:%S '
 
-# cd したら自動的にpushdする
+# pushd automatically when cd
 setopt auto_pushd
-# 重複したディレクトリを追加しない
 setopt pushd_ignore_dups
-# 日本語ファイル名を表示可能にする
+# show japanese file name
 setopt print_eight_bit
-# beep を無効にする
 setopt no_beep
-# フローコントロールを無効にする
+# ignore ctrl+s, ctrl+q lock
 setopt no_flow_control
-# Ctrl+Dでzshを終了しない
+# don't stop zsh with ctrl+d
 setopt ignore_eof
-# '#' 以降をコメントとして扱う
+# recognize # as comment in commandline
 setopt interactive_comments
-# 複数タブで履歴を共有する設定
+# share history with other tabs
 setopt share_history
