@@ -59,6 +59,7 @@ function setup_mac() {
 }
 
 function setup_centos() {
+    source centos/setup.sh
     source vim/setup.sh
     source tmux/setup.sh
     source zsh/setup.sh
