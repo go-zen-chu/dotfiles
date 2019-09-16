@@ -1,3 +1,7 @@
+
+export PATH="${HOME}/.zplugin/bin"
+zplugin  
+
 export ZPLUG_HOME=/usr/local/opt/zplug
 source ${ZPLUG_HOME}/init.zsh
 

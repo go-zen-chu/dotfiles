@@ -19,7 +19,7 @@ brew install direnv
 brew install watch # periodical command execution
 brew install jq
 brew install tree
-brew install gsed
+brew install gnu-sed
 
 brew install shellcheck
 # personal dev
