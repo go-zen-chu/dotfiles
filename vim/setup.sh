@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 set -ux
 
-UNAME_S=$(uname -s)
-if [ "${UNAME_S}" = "Darwin" ] ; then
+echo "[INFO] Setup vim"
+
+case "${os}" in
+"Darwin")
 	brew install vim --with-luajit
-elif [ -f "/etc/redhat-release" ] ; then
-  sudo yum install -y vim
-else
-  echo "Not supported OS... Aborting"
-  exit 1
-fi
+	;;
+"CentOS")
+	sudo yum install -y vim
+	;;
+esac
+vim --version
 
 # copy all things inside .vim
 if [[ ! -d "$HOME/.vim" ]] ; then

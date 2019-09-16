@@ -10,7 +10,7 @@ zstyle ':completion:*' list-colors di=31 ln=35 ex=36
 
 # ヒストリの設定
 HISTFILE=~/.zsh_history
-HISTSIZE=100000
+HISTSIZE=1000000
 SAVEHIST=100000
 HISTTIMEFORMAT='%Y/%m/%d %H:%M:%S '
 
