@@ -9,7 +9,7 @@ fi
 # update path for now
 export PATH=${HOME}/.anyenv/bin:$PATH
 
-anyenv init
+anyenv init || true # for skipping CI
 anyenv install --force-init 
 
 anyenv install pyenv
