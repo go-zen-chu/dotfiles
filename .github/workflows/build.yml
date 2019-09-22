@@ -10,4 +10,4 @@ jobs:
     - name: Run setup.sh
       run: |
         ls
-        ./setup.sh
+        yes | ./setup.sh
