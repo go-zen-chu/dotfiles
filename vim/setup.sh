@@ -5,7 +5,7 @@ echo "[INFO] Setup vim"
 
 case "${os}" in
 "Darwin")
-	brew install vim --with-luajit
+	brew install vim
 	;;
 "CentOS")
 	sudo yum install -y vim
