@@ -3,7 +3,9 @@ set -eu
 
 echo "[INFO] Setup anyenv"
 
-git clone https://github.com/riywo/anyenv "${HOME}/.anyenv"
+if [[ ! -d "${HOME}/.anyenv" ]] ; then
+    git clone https://github.com/riywo/anyenv "${HOME}/.anyenv"
+fi
 # update path for now
 export PATH=${HOME}/.anyenv/bin:$PATH
 

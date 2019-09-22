@@ -29,6 +29,4 @@ if [[ ! -d  "${HOME}/.tmux" ]] ; then
 fi
 
 # set tmux config
-if confirm_overwrite "${HOME}/.tmux.conf" ; then
-	cp ./tmux/.tmux.conf ${HOME}
-fi
+cp -i ./tmux/.tmux.conf "${HOME}"

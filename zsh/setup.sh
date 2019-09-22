@@ -19,9 +19,5 @@ chsh -s /usr/local/bin/zsh
 # install zplugin
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
-if confirm_overwrite "${HOME}/.zshrc" ; then
-    cp ./zsh/.zshrc ${HOME}
-fi
-if confirm_overwrite "${HOME}/local.zsh" ; then
-    cp ./zsh/local.zsh ${HOME}
-fi
+cp -i ./zsh/.zshrc "${HOME}"
+cp -i ./zsh/local.zsh "${HOME}"
