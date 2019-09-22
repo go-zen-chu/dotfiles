@@ -10,4 +10,6 @@ jobs:
     - name: Run setup.sh
       run: |
         ls
-        yes | ./setup.sh
+        # for not having prompt when overwriting .zshrc
+        rm ~/.zshrc
+        ./setup.sh
