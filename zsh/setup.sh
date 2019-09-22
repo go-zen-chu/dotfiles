@@ -19,5 +19,5 @@ chsh -s /usr/local/bin/zsh || true # for skipping in CI
 # install zplugin
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
-cp -i ./zsh/.zshrc "${HOME}"
+cp -i ./zsh/.zshrc "${HOME}" || true # for skipping in CI
 cp -i ./zsh/local.zsh "${HOME}"

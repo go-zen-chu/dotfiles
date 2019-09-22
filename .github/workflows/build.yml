@@ -10,6 +10,5 @@ jobs:
     - name: Run setup.sh
       run: |
         ls
-        # for not having prompt when overwriting .zshrc
-        rm ~/.zshrc
+        # yes command causes long execution in container 
         ./setup.sh
