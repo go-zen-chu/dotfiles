@@ -30,3 +30,5 @@ fi
 
 # set tmux config
 cp -i ./tmux/.tmux.conf "${HOME}"
+
+echo "[IMPORTANT] Make sure to run ctrl+b ctrl+I for installing tmux plugins"
