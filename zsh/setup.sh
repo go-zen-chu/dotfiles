@@ -15,7 +15,7 @@ case "${os}" in
 	;;
 esac
 
-chsh -s /usr/local/bin/zsh
+chsh -s /usr/local/bin/zsh || true # for skipping in CI
 # install zplugin
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
