@@ -12,7 +12,7 @@ fi
 # sometime it gets checksum error if not updated
 brew update 
 
-brew install git
+brew install git || true # || true for some CI fails
 brew install openssl # not supported from El Capitan
 brew install wget
 brew install rsync
