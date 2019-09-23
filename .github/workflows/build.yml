@@ -10,4 +10,5 @@ jobs:
     - name: Run setup.sh
       run: |
         ls
+        # yes command causes long execution in container 
         ./setup.sh

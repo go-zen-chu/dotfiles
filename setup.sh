@@ -32,20 +32,6 @@ EOF
     exit 0
 }
 
-# returns 0 if file should be written
-function confirm_overwrite() {
-    declare file=$1
-    if [[ -f "${file}" ]] ; then
-        read -r -p "${file} exists. overwrite? [y/n]" -n 1 response
-        echo ""
-        case "${response}" in
-            y|Y ) return 0 ;;
-            *)  echo "abort overwrite"; return 1 ;;
-        esac
-    fi
-    return 0
-}
-
 #=============================== setup ===============================
 function setup_mac() {
     source macos/check_developer_tool.sh
@@ -70,7 +56,7 @@ function setup_centos() {
 while getopts h OPT; do
     case $OPT in
     "h" ) usage ;;
-    * ) usage ;;
+    * )   usage ;;
     esac
 done
 shift $((OPTIND - 1))
