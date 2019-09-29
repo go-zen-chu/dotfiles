@@ -5,7 +5,8 @@ endif
 " setup dein in ~/.vim/dein directory
 set runtimepath+=$HOME/.vim/dein/repos/github.com/Shougo/dein.vim
 
-let $PATH = "/Users/amasuda/.anyenv/envs/pyenv/shims:".$PATH
+" add pyenv python3
+let $PATH = "$HOME/.anyenv/envs/pyenv/shims:".$PATH
 
 if dein#load_state('$HOME/.vim/dein')
   call dein#begin('$HOME/.vim/dein')
@@ -18,11 +19,6 @@ if dein#load_state('$HOME/.vim/dein')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
   end
-
-  call dein#add('prabirshrestha/async.vim')
-  call dein#add('prabirshrestha/asyncomplete.vim')
-  call dein#add('prabirshrestha/asyncomplete-lsp.vim')
-  call dein#add('prabirshrestha/vim-lsp')
   
   "call dein#add('Shougo/neosnippet.vim')
   "call dein#add('Shougo/neosnippet-snippets')
