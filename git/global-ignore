@@ -1,0 +1,8 @@
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# ctags
+.ctags
