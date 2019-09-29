@@ -29,6 +29,5 @@ compinit
 
 # should load after compinit
 zplugin light "zsh-users/zsh-syntax-highlighting"
-
-zplugin ice wait'1' atload'_zsh_autosuggest_start'
+#zplugin ice wait'1' atload'_zsh_autosuggest_start'
 zplugin light 'zsh-users/zsh-autosuggestions'
