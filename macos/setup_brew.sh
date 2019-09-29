@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -ux
 
-# you can extend time via sudo visudo https://www.tecmint.com/set-sudo-password-timeout-session-longer-linux/
-sudo -v # sudoing first
+echo "[INFO] Setup brew"
 
 hash brew 2>/dev/null
 if [[ $? != 0 ]] ;then
@@ -10,15 +9,10 @@ if [[ $? != 0 ]] ;then
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
 fi
 
-function echo_green() {
-  echo "\e[32m$1\e[m"
-}
+# sometime it gets checksum error if not updated
+brew update 
 
-function echo_yellow() {
-  echo "\e[33m$1\e[m"
-}
-
-brew install git
+brew install git || true # || true for some CI fails
 brew install openssl # not supported from El Capitan
 brew install wget
 brew install rsync
@@ -27,40 +21,41 @@ brew install gibo # for creating .gitignore
 brew install direnv
 brew install watch # periodical command execution
 brew install jq
-brew install bat
 brew install tree
-brew install gsed
-brew install less
+brew install gnu-sed
+brew install fzf
 brew install shellcheck
-
-sudo -v
-
-# install GUI tools via cask
-brew cask install appcleaner
-brew cask install alfred
-echo_yellow "set setting sync with powerpack"
-# brew cask install vivaldi
-brew cask install google-chrome
-brew cask install google-backup-and-sync # used to be google-drive
-brew cask install google-japanese-ime
-brew cask install google-cloud-sdk
-brew cask install dropbox
-brew cask install slack
-echo_yellow "set slack channels"
-brew cask install iterm2
-brew cask install kap
-brew cask install lastpass
-brew cask install cmd-eikana # japanese input tool
-echo_yellow "change : -> ;"
-
+# personal dev
+brew install hugo
+brew install qemu
+brew install less
 # cloud tools
 brew install cloudfoundry/tap/cf-cli
 brew install bosh-cli
-# install ruby then install uaac
-echo_yellow "gem install cf-uaac"
+
+# install GUI tools via cask
+brew cask install adapter
+brew cask install appcleaner
+brew cask install alfred
+echo "set setting sync with powerpack"
+brew cask install spectacle
+brew cask install cmd-eikana # japanese input tool
+brew cask install google-chrome
+brew cask install google-backup-and-sync # used to be google-drive
+brew cask install google-japanese-ime
+brew cask install slack
+brew cask install kap
+brew cask install dropbox
+brew cask install lastpass
+# dev
+brew cask install iterm2
+brew cask install visual-studio-code
+brew cask install google-cloud-sdk
+brew cask install wireshark
 
 # echo tools that cannot be installed via cask
-echo_green "Install LINE"
-echo_green "Install Pixelmator"
-echo_green "Install Bear"
-echo_green "Install Gitify"
+echo "need to install manually"
+echo "> Install Pixelmator"
+echo "> Install Bear"
+echo "> Install Gitify"
+echo "> Install LINE"

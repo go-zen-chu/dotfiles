@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-set -ux
+set -eu
+
+echo "[INFO] Setup macOS defaults"
 
 #========================== Keyboard Settings ==========================
 # Enable full keyboard access for all controls
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 #
 # Set a blazingly fast keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain KeyRepeat -int 2
 # Set a shorter Delay until key repeat
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # ignore correction
@@ -34,7 +36,6 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 # Enable three finger tap (look up)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerTapGesture -int 2
-defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Enable other multi-finger gestures
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerVertSwipeGesture -int 2
@@ -43,7 +44,7 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFi
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerHorizSwipeGesture -int 2
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFiveFingerPinchGesture -int 2
 
-# 3本指でmission control & expose
+# three finger mission control & expose
 defaults write com.apple.dock showMissionControlGestureEnabled -bool true
 defaults write com.apple.dock showAppExposeGestureEnabled -bool true
 defaults write com.apple.dock showDesktopGestureEnabled -bool true
@@ -56,7 +57,7 @@ defaults write com.apple.finder AppleShowAllFiles YES
 defaults write com.apple.dock autohide -bool true
 # Wipe all app icons from the Dock
 defaults write com.apple.dock persistent-apps -array
-# Magnificate the Dock （Dock の拡大機能を入にする）
+# Magnificate the Dock
 defaults write com.apple.dock magnification -bool true
 
 # restart to enable configs
@@ -84,4 +85,5 @@ defaults write com.apple.Terminal "Startup Window Settings" -string "Pro"
 defaults write com.apple.TextEdit RichText -int 0
 
 #========================== Mission Control Settings ==========================
+# Disable automatically rearrange Spaces based on recent use
 defaults write com.apple.dock mru-spaces -bool false

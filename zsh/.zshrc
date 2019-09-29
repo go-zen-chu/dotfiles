@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-source $HOME/dotfiles/zsh/zplug.zsh
+source $HOME/dotfiles/zsh/zplugin.zsh
 source $HOME/dotfiles/zsh/alias.zsh
 source $HOME/dotfiles/zsh/prompt.zsh
 source $HOME/dotfiles/zsh/key.zsh

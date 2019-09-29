@@ -1,4 +1,4 @@
-# プロンプトの表示
+# setting prompt
 PROMPT='%F{green}z> %n %~%f %F{yellow}$(get_cf_info)%f$ '
 
 # CF info in prompt. requires jq >= 1.5
@@ -8,7 +8,7 @@ if [[ -f "manifest.yml" ]]; then
 fi
 }
 
-# gitのブランチ表示
+# show git branch
 # http://stackoverflow.com/questions/1128496/to-get-a-prompt-which-indicates-git-branch-in-zsh
 setopt prompt_subst
 autoload -Uz vcs_info
