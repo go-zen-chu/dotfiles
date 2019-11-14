@@ -4,7 +4,7 @@ set -ux
 echo "[INFO] Setup brew"
 
 hash brew 2>/dev/null
-if [[ $? != 0 ]] ;then
+if [[ $? -ne 0 ]] ;then
   # install homebrew without prompt
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
 fi
