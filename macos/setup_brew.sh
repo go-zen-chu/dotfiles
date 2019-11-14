@@ -38,7 +38,7 @@ brew cask install adapter
 brew cask install appcleaner
 brew cask install alfred
 echo "set setting sync with powerpack"
-brew cask install spectacle
+brew cask install amethyst
 brew cask install cmd-eikana # japanese input tool
 brew cask install google-chrome
 brew cask install google-backup-and-sync # used to be google-drive
