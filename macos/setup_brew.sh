@@ -56,7 +56,7 @@ brew cask install visual-studio-code
 brew cask install google-cloud-sdk
 brew cask install wireshark
 brew cask install docker
-brew cask install jasper
+# brew cask install jasper
 
 # echo tools that cannot be installed via cask
 echo "need to install manually"
