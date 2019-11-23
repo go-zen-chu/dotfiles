@@ -35,6 +35,8 @@ brew install qemu
 brew install cloudfoundry/tap/cf-cli
 brew install bosh-cli
 brew install kubectl
+brew install ansible
+brew install terraform
 
 # install GUI tools via cask
 brew cask install adapter
