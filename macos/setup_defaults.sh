@@ -3,6 +3,9 @@ set -eu
 
 echo "[INFO] Setup macOS defaults"
 
+# screenshot setting
+defaults write com.apple.screencapture name "screenshot"
+
 #========================== Keyboard Settings ==========================
 # Enable full keyboard access for all controls
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
@@ -24,6 +27,11 @@ defaults -currentHost write -g com.apple.keyboard.modifiermapping.${keyboard_id}
   <integer>30064771129</integer>\
 </dict>
 "
+
+# disable next input source (for spotlight)
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61 "<dict><key>enabled</key><false/></dict>"
+# change spotlight key binding to ctrl + space
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>32</integer><integer>49</integer><integer>262144</integer></array><key>type</key><string>standard</string></dict></dict>"
 
 #========================== Trackpad Settings ==========================
 # make it click when tap trackpad

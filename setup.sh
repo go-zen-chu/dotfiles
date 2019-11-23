@@ -38,6 +38,7 @@ function setup_mac() {
     source macos/setup_defaults.sh
     source macos/setup_brew.sh
     source git/setup.sh
+    source tig/setup.sh
     source vim/setup.sh
     source tmux/setup.sh
     source plantuml/setup.sh
@@ -48,6 +49,7 @@ function setup_mac() {
 function setup_centos() {
     source centos/setup.sh
     source git/setup.sh
+    source tig/setup.sh
     source vim/setup.sh
     source tmux/setup.sh
     source zsh/setup.sh
