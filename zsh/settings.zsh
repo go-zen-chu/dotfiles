@@ -5,6 +5,8 @@ export LANG=ja_JP.UTF-8
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # colorize directory, link, executive
 zstyle ':completion:*' list-colors di=31 ln=35 ex=36
+# menu select by tab & arrow
+zstyle ':completion:*' menu select=2
 
 # history setting
 HISTFILE=${HOME}/.zsh_history
