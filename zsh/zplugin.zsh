@@ -2,6 +2,7 @@ export PATH="${HOME}/.zplugin/bin:${PATH}"
 source ${HOME}/.zplugin/bin/zplugin.zsh
 
 zplugin snippet 'OMZ::plugins/git/git.plugin.zsh'
+zplugin snippet 'OMZ::plugins/kubectl/kubectl.plugin.zsh'
 zplugin ice as"completion"
 zplugin snippet 'OMZ::plugins/docker/_docker'
 
