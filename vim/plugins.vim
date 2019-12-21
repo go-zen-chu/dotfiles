@@ -44,6 +44,9 @@ let g:deoplete#enable_at_startup = 1
 " using gopls as language server
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
+" for debug
+"let g:go_debug = ['lsp']
+"let g:go_gocode_socket_type = 'tcp'
 
 "============ vim-fzf setting ===========
 " set path to fzf from vim
