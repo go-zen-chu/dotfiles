@@ -22,4 +22,4 @@ call coc#add_extension('coc-json', 'coc-css', 'coc-markdownlint')
 set rtp+=/usr/local/opt/fzf
 " overwrite Files command so that it could search hidden files
 command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, {'source':'find . -type f -not -path "*/\.git/*"'}, <bang>0)
+  \ call fzf#vim#files(<q-args>, {'source':'find . -type f -not -path "*/\.git/*" -not -name "*.swp"'}, <bang>0)
