@@ -34,6 +34,8 @@ fi
 
 if [[ -f "${HOME}/.zshrc" ]] ; then
     # backup
-	  cp "${HOME}/.zshrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
+	  cp "${HOME}/.zshrc" "${HOME}/.zshrc.$(date '+%Y%m%d-%H%M%S').bk"
 fi
-cp -i ./zsh/.zshrc "${HOME}"
+cp -f ./zsh/.zshrc "${HOME}"
+
+echo_green "[INFO] Finish setup zsh"

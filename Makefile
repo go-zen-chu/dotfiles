@@ -6,10 +6,17 @@ help:
 .PHONY: setup-mac
 ## setup mac from scratch 
 setup-mac: macos zsh vim tmux git
+	@echo "setup MacOS finish"
 
 .PHONY: setup-centos
 ## setup centos from scratch 
 setup-centos: centos zsh vim tmux git
+	@echo "setup CentOS finish"
+
+.PHONY: setup-arch
+## setup centos from scratch 
+setup-centos: setup-common
+	@echo "setup ArchLinux finish"
 
 .PHONY: macos
 ## setup macos
@@ -22,6 +29,10 @@ macos:
 ## setup centos
 centos:
 	@./centos/setup.sh
+
+.PHONY: setup-common
+## setup common packages
+setup-common: zsh vim tmux git
 
 .PHONY: vim
 ## setup vim

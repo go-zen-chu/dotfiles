@@ -40,4 +40,6 @@ if [[ -f "${HOME}/.vimrc" ]] ; then
     # backup
 	cp "${HOME}/.vimrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
 fi
-cp -i ./vim/.vimrc "${HOME}" # place .vimrc which loads settings in dotfiles
+cp -f ./vim/.vimrc "${HOME}"
+
+echo_green "[INFO] Finish setup vim"

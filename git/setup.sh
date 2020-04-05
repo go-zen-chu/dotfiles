@@ -9,7 +9,7 @@ git config --global core.excludesfile "${HOME}/dotfiles/git/global-ignore"
 
 os=$(check_os)
 # check command exists
-if ! hash vim 2>/dev/null ; then
+if ! hash tig 2>/dev/null ; then
 	case "${os}" in
 	"MacOS")
 		brew install tig

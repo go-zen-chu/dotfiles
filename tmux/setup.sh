@@ -43,6 +43,7 @@ if [[ -f "${HOME}/.tmux.conf" ]] ; then
     # backup
 	cp "${HOME}/.tmux.conf" "${HOME}/.tmux.conf.$(date '+%Y%m%d-%H%M%S').bk"
 fi
-cp -i ./tmux/.tmux.conf "${HOME}"
+cp -f ./tmux/.tmux.conf "${HOME}"
 
 echo_green "[IMPORTANT] Make sure to run ctrl+b ctrl+I for installing tmux plugins"
+echo_green "[INFO] Finish setup tmux"
