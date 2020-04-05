@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [pull_request]
 
 jobs:
   setup-mac:
@@ -9,6 +9,5 @@ jobs:
     - uses: actions/checkout@v1
     - name: Run setup.sh
       run: |
-        ls
         # TIPS: don't use yes command since it causes long execution in container
         make setup-mac
