@@ -1,23 +1,39 @@
 #!/usr/bin/env bash
+set -ux
 
-set -eu
+source ./make/util.sh
 
-echo "[INFO] Setup zsh"
-
-case "${os}" in
-"Darwin")
+echo_green "[INFO] setup zsh"
+os=$(check_os)
+# check command exists
+if ! hash zsh 2>/dev/null ; then
+	case "${os}" in
+	"MacOS")
     brew install zsh
     # set shell as zsh
     echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
-    ;;
-"CentOS")
-	  sudo yum install -y zsh
-	;;
-esac
+    chsh -s /usr/local/bin/zsh || true # for skipping in CI
+		;;
+	"CentOS")
+		sudo yum install -y zsh
+		;;
+  "ArchLinux")
+		sudo pacman -Sy --noconfirm zsh
+		;;
+	esac
+fi
 
-chsh -s /usr/local/bin/zsh || true # for skipping in CI
-# install zplugin
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+# install zinit
+if [[ ! -d "${HOME}/.zinit" ]] ; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
+fi
 
-cp -i ./zsh/.zshrc "${HOME}" || true # for skipping in CI
-cp -i ./zsh/local.zsh "${HOME}"
+if [[ ! -f "${HOME}/local.zsh" ]] ; then
+    cp -i ./zsh/local.zsh "${HOME}"
+fi
+
+if [[ -f "${HOME}/.zshrc" ]] ; then
+    # backup
+	  cp "${HOME}/.zshrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
+fi
+cp -i ./zsh/.zshrc "${HOME}"
