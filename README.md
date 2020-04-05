@@ -7,10 +7,18 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ## how to use
 
 ```bash
-./setup.sh
+# check what use can install
+make help
+
+# setup all for mac
+make setup-mac
+
+# setup vim only
+make vim
 ```
 
 ## Supported OS
 
 - MacOS
+- ArchLinux
 - CentOS

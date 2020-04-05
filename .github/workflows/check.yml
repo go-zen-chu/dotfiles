@@ -1,0 +1,13 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  setup-mac:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run setup.sh
+      run: |
+        # TIPS: don't use yes command since it causes long execution in container
+        make setup-mac
