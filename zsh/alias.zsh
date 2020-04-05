@@ -19,12 +19,7 @@ alias -g F='| fzf'
 alias relogin='exec $SHELL -l'
 alias history='history -E 1 | less'
 alias ll='ls -l'
-alias less='less -iMRS'
 alias rmdir='rm -rf'
 alias cpdir='cp -R'
 alias gitlog='git log --graph --color --oneline'
 alias ecpath="tr ':' '\n' <<< $PATH"
-
-if [ -d "$HOME/dotfiles/plantuml" ] ; then
-    alias plantuml='plantuml -config "$HOME/dotfiles/plantuml/plantuml_cf_theme/config.txt"'
-fi
