@@ -14,6 +14,10 @@ zinit light-mode for \
 zinit snippet 'OMZ::plugins/git/git.plugin.zsh'
 zinit snippet 'OMZ::plugins/kubectl/kubectl.plugin.zsh'
 
+# enable completion
+autoload -Uz compinit
+compinit
+
 # completion
 # load before compinit
 zinit light "zsh-users/zsh-completions"
@@ -24,10 +28,6 @@ zinit snippet 'OMZ::plugins/docker-compose/_docker-compose'
 if hash kubectl 2>/dev/null ; then
     source <(kubectl completion zsh)
 fi
-
-# enable completion
-autoload -Uz compinit
-compinit
 
 # common
 zinit light "mollifier/cd-gitroot"
