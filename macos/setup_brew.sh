@@ -24,7 +24,6 @@ brew install watch # periodical command execution
 brew install jq
 brew install tree
 brew install gnu-sed
-brew install fzf
 brew install tig
 brew install shellcheck
 # personal dev
