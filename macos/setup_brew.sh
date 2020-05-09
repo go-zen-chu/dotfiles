@@ -37,16 +37,17 @@ brew install ansible
 brew install terraform
 
 # install GUI tools via cask
-brew cask install adapter
+#brew cask install adapter
 brew cask install appcleaner
 brew cask install alfred
 echo "INFO: setup sync config with powerpack"
 brew cask install amethyst
-brew cask install cmd-eikana # japanese input tool
+brew cask install karabiner-elements
 brew cask install google-chrome
 brew cask install google-backup-and-sync # used to be google-drive
 brew cask install google-japanese-ime
 brew cask install slack
+brew cask install zoomus
 brew cask install kap
 # dev
 brew cask install iterm2
@@ -54,7 +55,10 @@ brew cask install visual-studio-code
 brew cask install google-cloud-sdk
 brew cask install wireshark
 brew cask install docker
-# brew cask install jasper
+# brew cask install hex-fiend
+# brew cask install virtualbox
+# brew cask install balenaetcher # os image tool
+# brew cask install jasper # github viewer
 
 # echo tools that cannot be installed via cask
 echo "need to install manually"

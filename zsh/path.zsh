@@ -20,3 +20,7 @@ fi
 
 # export stored path
 export PATH
+
+# set XDG setting
+export XDG_CONFIG_HOME="${HOME}/.config"
+
