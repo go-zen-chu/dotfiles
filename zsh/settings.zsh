@@ -1,5 +1,5 @@
 # language setting
-export LANG=ja_JP.UTF-8
+export LANG=en_US.UTF-8
 
 # case insensitivce
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
