@@ -30,8 +30,8 @@ brew install shellcheck
 brew install hugo
 brew install qemu
 # cloud tools
-brew install cloudfoundry/tap/cf-cli
-brew install bosh-cli
+#brew install cloudfoundry/tap/cf-cli
+#brew install bosh-cli
 brew install kubectl
 brew install ansible
 brew install terraform
@@ -42,7 +42,12 @@ brew cask install appcleaner
 brew cask install alfred
 echo "INFO: setup sync config with powerpack"
 brew cask install amethyst
+# setup keyboard custom setting
 brew cask install karabiner-elements
+if [ ! -d "${HOME}/.config/karabiner" ] ; then
+  mkdir -p "${HOME}/.config"
+  cp -R ./macos/karabiner ${HOME}/.config
+fi
 brew cask install google-chrome
 brew cask install google-backup-and-sync # used to be google-drive
 brew cask install google-japanese-ime
