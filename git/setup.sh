@@ -17,11 +17,11 @@ if ! hash tig 2>/dev/null ; then
 	"CentOS")
 		echo_red "TBD"
 		;;
-    "ArchLinux")
+	"ArchLinux")
 		sudo pacman -Sy --noconfirm tig
 		;;
 	esac
 fi
 if [[ ! -f "${HOME}/.tigrc" ]] ; then
-   cp ./git/.tigrc "${HOME}"
+	cp ./git/.tigrc "${HOME}"
 fi

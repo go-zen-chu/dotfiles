@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -ux
 
-echo "[INFO] Setup brew"
+source ./make/util.sh
+
+echo_green "[INFO] Setup brew"
 
 if ! hash brew 2>/dev/null ; then
   # install homebrew without prompt
@@ -66,7 +68,8 @@ brew cask install docker
 # brew cask install jasper # github viewer
 
 # echo tools that cannot be installed via cask
-echo "need to install manually"
-echo "> Install Pixelmator"
-echo "> Install Bear"
-echo "> Install LINE"
+echo_green "need to install manually"
+echo_yellow "> Install Pixelmator"
+echo_yellow "> Install Bear"
+echo_yellow "> Install LINE"
+echo_yellow "> Install Magnet"
