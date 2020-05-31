@@ -35,3 +35,8 @@ function echo_green () {
     msg=$1
     echo "$(tput setaf 2)${msg}$(tput sgr 0)"
 }
+
+function echo_yellow () {
+    msg=$1
+    echo "$(tput setaf 3)${msg}$(tput sgr 0)"
+}
