@@ -4,7 +4,7 @@
 
 My configuration files for DRY. CI is performed on GitHub Actions.
 
-## how to use
+## How to use
 
 ```bash
 # check what use can install
@@ -13,7 +13,10 @@ make help
 # setup all for mac
 make setup-mac
 
-# setup vim only
+# setup all for archlinux
+make setup-arch
+
+# setup vim
 make vim
 ```
 
@@ -22,3 +25,4 @@ make vim
 - MacOS
 - ArchLinux
 - CentOS
+
