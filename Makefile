@@ -5,17 +5,17 @@ help:
 
 .PHONY: setup-mac
 ## setup mac from scratch 
-setup-mac: macos zsh vim tmux git
+setup-mac: macos setup-common
 	@echo "setup MacOS finish"
 
 .PHONY: setup-centos
 ## setup centos from scratch 
-setup-centos: centos zsh vim tmux git
+setup-centos: centos setup-common
 	@echo "setup CentOS finish"
 
 .PHONY: setup-arch
 ## setup centos from scratch 
-setup-centos: setup-common
+setup-arch: setup-common
 	@echo "setup ArchLinux finish"
 
 .PHONY: macos
