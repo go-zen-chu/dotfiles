@@ -32,7 +32,10 @@ fi
 # common
 zinit light "mollifier/cd-gitroot"
 zinit light 'zsh-users/zsh-autosuggestions'
-# setup for fzf
+## kube prompt
+zinit light 'jonmosco/kube-ps1'
+
+# setup fzf
 zinit ice from"gh-r" as"program"
 zinit load junegunn/fzf-bin
 export FZF_DEFAULT_OPTS='--height 60% --reverse --border'
@@ -49,3 +52,4 @@ zinit light "zsh-users/zsh-syntax-highlighting"
 zinit light "zsh-users/zsh-history-substring-search"
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
+
