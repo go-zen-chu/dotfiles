@@ -1,12 +1,8 @@
 # setting prompt
-PROMPT='%F{green}z> %n %~%f %F{yellow}$(get_cf_info)%f$ '
+PROMPT='%F{green}z> %n %~%f $ '
 
-# CF info in prompt. requires jq >= 1.5
-get_cf_info() {
-if [[ -f "manifest.yml" ]]; then
-    echo "$(less ~/.cf/config.json | jq -r '(.Target | gsub("https://api.run.|.io";"")), .OrganizationFields.Name, .SpaceFields.Name' | tr '\n' ' ')"
-fi
-}
+# kube-ps1
+PROMPT='$(kube_ps1)'$PROMPT
 
 # show git branch
 # http://stackoverflow.com/questions/1128496/to-get-a-prompt-which-indicates-git-branch-in-zsh
