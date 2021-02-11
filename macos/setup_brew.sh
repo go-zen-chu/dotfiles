@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ux
+set -u
 
 source ./make/util.sh
 
@@ -7,7 +7,7 @@ echo_green "[INFO] Setup brew"
 
 if ! hash brew 2>/dev/null ; then
   # install homebrew without prompt
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
 fi
 
 # sometime it gets checksum error if not updated
@@ -30,46 +30,47 @@ brew install tig
 brew install shellcheck
 # personal dev
 brew install hugo
-brew install qemu
+# brew install qemu
 # cloud tools
 #brew install cloudfoundry/tap/cf-cli
 #brew install bosh-cli
 brew install kubectl
 brew install ansible
 brew install terraform
+brew install anyenv
 
-# install GUI tools via cask
-#brew cask install adapter
-brew cask install appcleaner
-brew cask install alfred
+# install GUI tools 
+#brew install --cask adapter
+brew install --cask appcleaner
+brew install --cask lfred
 echo "INFO: setup sync config with powerpack"
-brew cask install amethyst
+brew install --cask amethyst
 # setup keyboard custom setting
-brew cask install karabiner-elements
+brew install --cask karabiner-elements
 if [ ! -d "${HOME}/.config/karabiner" ] ; then
   mkdir -p "${HOME}/.config"
   cp -R ./macos/karabiner ${HOME}/.config
 fi
-brew cask install google-chrome
-brew cask install google-backup-and-sync # used to be google-drive
-brew cask install google-japanese-ime
-brew cask install slack
-brew cask install zoomus
-brew cask install kap
+brew install --cask google-chrome
+brew install --cask google-backup-and-sync # used to be google-drive
+brew install --cask google-japanese-ime
+brew install --cask slack
+brew install --cask zoomus
+brew install --cask kap
+
 # dev
-brew cask install iterm2
-brew cask install visual-studio-code
-brew cask install google-cloud-sdk
-brew cask install wireshark
-brew cask install docker
-# brew cask install hex-fiend
-# brew cask install virtualbox
-# brew cask install balenaetcher # os image tool
-# brew cask install jasper # github viewer
+brew install --cask iterm2
+brew install --cask visual-studio-code
+brew install --cask google-cloud-sdk
+brew install --cask wireshark
+brew install --cask docker
+# brew install --cask hex-fiend
+# brew install --cask virtualbox
+# brew install --cask balenaetcher # os image tool
+brew install --cask jasper # github viewer
 
 # echo tools that cannot be installed via cask
 echo_green "need to install manually"
 echo_yellow "> Install Pixelmator"
 echo_yellow "> Install Bear"
 echo_yellow "> Install LINE"
-echo_yellow "> Install Magnet"

@@ -31,10 +31,8 @@ fi
 
 # install vim-plug
 if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]] ; then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
-
 # setup .vimrc
 if [[ -f "${HOME}/.vimrc" ]] ; then
     # backup
@@ -42,4 +40,8 @@ if [[ -f "${HOME}/.vimrc" ]] ; then
 fi
 cp -f ./vim/.vimrc "${HOME}"
 
+# run vim command and install plugin
+vim -c ':PlugInstall' -c 'qa!'
+
 echo_green "[INFO] Finish setup vim"
+
