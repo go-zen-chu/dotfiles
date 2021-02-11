@@ -16,3 +16,17 @@ anyenv install pyenv
 anyenv install goenv
 anyenv install rbenv
 anyenv install nodenv
+
+GO_VERSION="1.15.3"
+goenv install $GO_VERSION
+goenv global $GO_VERSION
+
+NODE_VERSION="12.20.1"
+nodenv install $NODE_VERSION
+nodenv install $NODE_VERSION
+
+# for coc
+npm i -g bash-language-server
+npm i -g markdownlint
+npm i -g textlint
+
