@@ -31,8 +31,7 @@ fi
 
 # install vim-plug
 if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]] ; then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
 # setup .vimrc
@@ -43,3 +42,4 @@ fi
 cp -f ./vim/.vimrc "${HOME}"
 
 echo_green "[INFO] Finish setup vim"
+
