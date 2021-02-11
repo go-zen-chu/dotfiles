@@ -33,13 +33,15 @@ fi
 if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]] ; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
-
 # setup .vimrc
 if [[ -f "${HOME}/.vimrc" ]] ; then
     # backup
 	cp "${HOME}/.vimrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
 fi
 cp -f ./vim/.vimrc "${HOME}"
+
+# run vim command and install plugin
+vim -c ':PlugInstall' -c 'qa!'
 
 echo_green "[INFO] Finish setup vim"
 
