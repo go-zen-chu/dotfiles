@@ -7,3 +7,4 @@ go get -u github.com/cweill/gotests/...
 # dev tool
 go get golang.org/x/tools/gopls@latest
 go get -u github.com/krishicks/minio/mc
+go get -u github.com/ramya-rao-a/go-outline
