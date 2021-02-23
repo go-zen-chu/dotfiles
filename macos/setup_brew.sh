@@ -2,7 +2,6 @@
 set -u
 
 source ./make/util.sh
-
 echo_green "[INFO] Setup brew"
 setup_type="$1"
 
@@ -36,6 +35,7 @@ brew install tree
 brew install gnu-sed
 brew install tig
 brew install shellcheck
+brew install shfmt
 brew install anyenv
 # cloud tools
 brew install kubectl
