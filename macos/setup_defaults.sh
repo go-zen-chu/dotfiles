@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -eu
 
-echo "[INFO] Setup macOS defaults"
+source ./make/util.sh
+echo_green  "[INFO] Setup macOS defaults"
 
 # screenshot setting
 defaults write com.apple.screencapture name "screenshot"
+# disable system ui sound (includes screenshot sound)
+defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
 
 #========================== Keyboard Settings ==========================
 # Enable full keyboard access for all controls
