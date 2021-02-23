@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-set -ux
+set -u
 
 source ./make/util.sh
-
 echo_green "[INFO] setup tmux"
 os=$(check_os)
 # check command exists
