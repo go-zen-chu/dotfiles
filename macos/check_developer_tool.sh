@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ux
+set -u
 
 echo "[INFO] Checking developer tools"
 # if installed returns 0 else install

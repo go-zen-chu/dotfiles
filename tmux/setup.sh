@@ -14,15 +14,15 @@ if ! hash tmux 2>/dev/null ; then
 		;;
 	"CentOS")
 	    declare TMUX_VERSION="2.8"
-	    pushd "${PWD}"
+	    pushd "${PWD}" || exit
 	    yum install -y gcc make libevent-devel ncurses-devel
-	    cd /usr/local/src
+	    cd /usr/local/src || exit
 	    curl -o tmux-${TMUX_VERSION}.tar.gz -L https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz
 	    tar -xvf tmux-${TMUX_VERSION}.tar.gz
-	    cd tmux-${TMUX_VERSION}
+	    cd tmux-${TMUX_VERSION} || exit
 	    ./configure && make
 	    make install > /dev/null
-	    popd
+	    popd || exit
 		;;
     "ArchLinux")
 	    # will install tmux >= 3.0

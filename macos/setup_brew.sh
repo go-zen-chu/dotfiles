@@ -4,6 +4,14 @@ set -u
 source ./make/util.sh
 
 echo_green "[INFO] Setup brew"
+setup_type="$1"
+
+if [[ "$setup_type" == "minimum" || "$setup_type" == "personal" ]]; then
+  echo_green "setup with $setup_type mode"
+else
+  echo_red "invalid setup type: $1. valid option [minimum, personal]"
+  exit 1
+fi
 
 if ! hash brew 2>/dev/null ; then
   # install homebrew without prompt
@@ -28,22 +36,24 @@ brew install tree
 brew install gnu-sed
 brew install tig
 brew install shellcheck
-# personal dev
-brew install hugo
-brew install sass/sass/sass
-# brew install qemu
+brew install anyenv
 # cloud tools
-#brew install cloudfoundry/tap/cf-cli
-#brew install bosh-cli
 brew install kubectl
 brew install ansible
 brew install terraform
-brew install anyenv
+
+if [[ "$setup_type" == "personal" ]]; then
+  # blog tools
+  brew install hugo
+  brew install sass/sass/sass
+  # os tools
+  brew install qemu
+fi
 
 # install GUI tools 
 #brew install --cask adapter
 brew install --cask appcleaner
-brew install --cask lfred
+brew install --cask alfred
 echo "INFO: setup sync config with powerpack"
 brew install --cask amethyst
 # setup keyboard custom setting
@@ -52,26 +62,28 @@ if [ ! -d "${HOME}/.config/karabiner" ] ; then
   mkdir -p "${HOME}/.config"
   cp -R ./macos/karabiner ${HOME}/.config
 fi
+
 brew install --cask google-chrome
 brew install --cask google-backup-and-sync # used to be google-drive
 brew install --cask google-japanese-ime
-brew install --cask slack
-brew install --cask zoomus
 brew install --cask kap
-
 # dev
 brew install --cask iterm2
 brew install --cask visual-studio-code
-brew install --cask google-cloud-sdk
 brew install --cask wireshark
 brew install --cask docker
-# brew install --cask hex-fiend
-# brew install --cask virtualbox
-# brew install --cask balenaetcher # os image tool
 brew install --cask jasper # github viewer
 
-# echo tools that cannot be installed via cask
-echo_green "need to install manually"
-echo_yellow "> Install Pixelmator"
-echo_yellow "> Install Bear"
-echo_yellow "> Install LINE"
+if [[ "$setup_type" == "personal" ]]; then
+  brew install --cask slack
+  brew install --cask zoomus
+  # dev
+  brew install --cask google-cloud-sdk
+  brew install --cask hex-fiend
+  brew install --cask balenaetcher # os image tool
+  # echo tools that cannot be installed via cask
+  echo_yellow "need to install manually via AppStore"
+  echo_yellow "> Pixelmator"
+  echo_yellow "> Bear"
+  echo_yellow "> LINE"
+fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ux
+set -u
 
 source ./make/util.sh
 
