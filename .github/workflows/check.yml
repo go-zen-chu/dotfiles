@@ -11,4 +11,4 @@ jobs:
     - name: Run setup.sh
       run: |
         # TIPS: don't use yes command since it causes long execution in container
-        make setup-mac
+        make setup-mac-personal
