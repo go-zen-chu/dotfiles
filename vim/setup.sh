@@ -6,7 +6,7 @@ source ./make/util.sh
 echo_green "[INFO] setup vim"
 os=$(check_os)
 # check command exists
-if ! hash vim 2>/dev/null ; then
+if ! hash vim 2>/dev/null; then
 	case "${os}" in
 	"MacOS")
 		brew install vim
@@ -14,7 +14,7 @@ if ! hash vim 2>/dev/null ; then
 	"CentOS")
 		sudo yum install -y vim
 		;;
-    "ArchLinux")
+	"ArchLinux")
 		sudo pacman -Sy --noconfirm vim
 		;;
 	esac
@@ -24,18 +24,18 @@ fi
 vim --version
 
 # copy all things inside .vim
-if [[ ! -d "${HOME}/.vim" ]] ; then
+if [[ ! -d "${HOME}/.vim" ]]; then
 	cp -r ./vim/.vim "${HOME}"
 	chown -R "${USER}" "${HOME}/.vim"
 fi
 
 # install vim-plug
-if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]] ; then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]]; then
+	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 # setup .vimrc
-if [[ -f "${HOME}/.vimrc" ]] ; then
-    # backup
+if [[ -f "${HOME}/.vimrc" ]]; then
+	# backup
 	cp "${HOME}/.vimrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
 fi
 cp -f ./vim/.vimrc "${HOME}"
@@ -44,4 +44,3 @@ cp -f ./vim/.vimrc "${HOME}"
 vim -c ':PlugInstall' -c 'qa!'
 
 echo_green "[INFO] Finish setup vim"
-

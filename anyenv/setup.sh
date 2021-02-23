@@ -3,14 +3,14 @@ set -eu
 
 echo "[INFO] Setup anyenv"
 
-if [[ ! -d "${HOME}/.anyenv" ]] ; then
-    git clone https://github.com/riywo/anyenv "${HOME}/.anyenv"
+if [[ ! -d "${HOME}/.anyenv" ]]; then
+	git clone https://github.com/riywo/anyenv "${HOME}/.anyenv"
 fi
 # update path for now
 export PATH=${HOME}/.anyenv/bin:$PATH
 
 anyenv init || true # for skipping CI
-anyenv install --force-init 
+anyenv install --force-init
 
 anyenv install pyenv
 anyenv install goenv
@@ -29,4 +29,3 @@ nodenv install $NODE_VERSION
 npm i -g bash-language-server
 npm i -g markdownlint
 npm i -g textlint
-

@@ -4,14 +4,14 @@ set -u
 source ./make/util.sh
 echo_green "[INFO] Setup git"
 
-# ignore generated files 
+# ignore generated files
 git config --global core.excludesfile "${HOME}/dotfiles/git/global-ignore"
 git config --global push.default current
-git config --global pull.rebase false  
+git config --global pull.rebase false
 
 os=$(check_os)
 # check command exists
-if ! hash tig 2>/dev/null ; then
+if ! hash tig 2>/dev/null; then
 	case "${os}" in
 	"MacOS")
 		brew install tig
@@ -24,7 +24,7 @@ if ! hash tig 2>/dev/null ; then
 		;;
 	esac
 fi
-if [[ ! -f "${HOME}/.tigrc" ]] ; then
+if [[ ! -f "${HOME}/.tigrc" ]]; then
 	cp ./git/.tigrc "${HOME}"
 fi
 echo_green "[INFO] Finish setup git"
