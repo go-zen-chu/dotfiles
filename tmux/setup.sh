@@ -40,8 +40,12 @@ fi
 
 # set tmux config
 if [[ -f "${HOME}/.tmux.conf" ]]; then
-	# backup
-	cp "${HOME}/.tmux.conf" "${HOME}/.tmux.conf.$(date '+%Y%m%d-%H%M%S').bk"
+	if diff "${HOME}/.tmux.conf" ./tmux/.tmux.conf >/dev/null; then 
+		echo_green ".tmux.conf is same as dotfiles"
+	else
+		# backup
+		cp "${HOME}/.tmux.conf" "${HOME}/.tmux.conf.$(date '+%Y%m%d-%H%M%S').bk"
+	fi
 fi
 cp -f ./tmux/.tmux.conf "${HOME}"
 

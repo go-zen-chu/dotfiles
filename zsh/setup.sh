@@ -33,8 +33,12 @@ if [[ ! -f "${HOME}/local.zsh" ]]; then
 fi
 
 if [[ -f "${HOME}/.zshrc" ]]; then
-	# backup
-	cp "${HOME}/.zshrc" "${HOME}/.zshrc.$(date '+%Y%m%d-%H%M%S').bk"
+	if diff "${HOME}/.zshrc" ./zsh/.zshrc >/dev/null; then 
+		echo_green ".zshrc is same as dotfiles"
+	else
+		# backup
+		cp "${HOME}/.zshrc" "${HOME}/.zshrc.$(date '+%Y%m%d-%H%M%S').bk"
+	fi
 fi
 cp -f ./zsh/.zshrc "${HOME}"
 

@@ -35,8 +35,12 @@ if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]]; then
 fi
 # setup .vimrc
 if [[ -f "${HOME}/.vimrc" ]]; then
-	# backup
-	cp "${HOME}/.vimrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
+	if diff "${HOME}/.vimrc" ./vim/.vimrc >/dev/null; then 
+		echo_green ".vimrc is same as dotfiles"
+	else
+		# backup
+		cp "${HOME}/.vimrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
+	fi
 fi
 cp -f ./vim/.vimrc "${HOME}"
 
