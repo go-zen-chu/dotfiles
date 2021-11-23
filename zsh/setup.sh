@@ -23,11 +23,6 @@ if ! hash zsh 2>/dev/null; then
 	esac
 fi
 
-# install zinit
-if [[ ! -d "${HOME}/.zinit" ]]; then
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
-fi
-
 if [[ ! -f "${HOME}/local.zsh" ]]; then
 	cp -i ./zsh/local.zsh "${HOME}"
 fi

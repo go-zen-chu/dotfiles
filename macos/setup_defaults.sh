@@ -12,7 +12,6 @@ defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
 #========================== Keyboard Settings ==========================
 # Enable full keyboard access for all controls
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-#
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 2
 # Set a shorter Delay until key repeat

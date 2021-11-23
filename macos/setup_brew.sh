@@ -14,6 +14,7 @@ fi
 
 if ! hash brew 2>/dev/null; then
 	# install homebrew without prompt
+	# https://brew.sh/
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" </dev/null
 fi
 
@@ -35,7 +36,6 @@ brew install tree
 brew install gnu-sed
 brew install tig
 brew install shellcheck
-brew install shfmt
 brew install anyenv
 # cloud tools
 brew install kubectl
