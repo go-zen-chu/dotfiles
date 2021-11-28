@@ -10,3 +10,8 @@ source $HOME/dotfiles/zsh/settings.zsh
 source $HOME/dotfiles/zsh/path.zsh
 # import env independent settings. Should be located in $HOME and be customized
 source $HOME/local.zsh
+
+# for profiling zsh (requires zmodload zsh/zprof && zprof in .zshenv)
+if type "zprof" > /dev/null; then
+    zprof
+fi

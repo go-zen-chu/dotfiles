@@ -4,11 +4,49 @@ path=(/usr/local/bin(N-/) $path)
 # if anyenv exists
 path=($HOME/.anyenv/bin(N-/) $path)
 if type "anyenv" > /dev/null; then
-  eval "$(anyenv init -)"
+  anyenv() {
+    unfunction "$0"
+    source <(anyenv init -)
+    $0 "$@"
+  }
+  pyenv() {
+    unfunction "$0"
+    # init anyenv to load xxenv paths
+    anyenv -v
+    source <(pyenv init -)
+    $0 "$@"
+  }
+  goenv() {
+    unfunction "$0"
+    # init anyenv to load xxenv paths
+    anyenv -v
+    source <(goenv init -)
+    $0 "$@"
+  }
+  rbenv() {
+    unfunction "$0"
+    # init anyenv to load xxenv paths
+    anyenv -v
+    source <(rbenv init -)
+    $0 "$@"
+  }
+  nodenv() {
+    unfunction "$0"
+    # init anyenv to load xxenv paths
+    anyenv -v
+    source <(nodenv init -)
+    $0 "$@"
+  }
 fi
+
 # if direnv exists
 if type "direnv" > /dev/null; then
-  eval "$(direnv hook zsh)"
+  # lazy load completion things. https://frederic-hemberger.de/notes/shell/speed-up-initial-zsh-startup-with-lazy-loading/
+  direnv() {
+    unfunction "$0"
+    source <(direnv hook zsh)
+    $0 "$@"
+  }
 fi
 
 # golang

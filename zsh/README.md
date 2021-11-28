@@ -13,3 +13,17 @@ git submodule add https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME
 # update installed submodules
 df-zsh-plugin-update
 ```
+
+## profiling
+
+```shell
+echo "zmodload zsh/zprof && zprof" > ~/.zshenv
+```
+
+Create new zsh session.
+
+Remove file after initialization
+
+```shell
+rm ~/.zshenv
+```

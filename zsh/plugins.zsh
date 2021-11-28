@@ -5,6 +5,10 @@ compinit
 DOTFILES_INSTALLED_PATH="$HOME"
 DOTFILES_PATH="${DOTFILES_INSTALLED_PATH}/dotfiles"
 DOTFILES_ZSH_PLUGINS_PATH="${DOTFILES_PATH}/zsh/plugins"
+DOTFILES_ZSH_CACHE_PATH="${DOTFILES_PATH}/zsh/cache"
+
+# used in oh-my-zsh
+ZSH_CACHE_DIR="${DOTFILES_ZSH_CACHE_PATH}"
 
 # update installed plugins
 alias df-zsh-plugin-update='dotfiles_zsh_plugin_update'
