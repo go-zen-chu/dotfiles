@@ -2,14 +2,28 @@
 autoload -Uz compinit
 compinit
 
+DOTFILES_INSTALLED_PATH="$HOME"
+DOTFILES_PATH="${DOTFILES_INSTALLED_PATH}/dotfiles"
+DOTFILES_ZSH_PLUGINS_PATH="${DOTFILES_PATH}/zsh/plugins"
+
+# update installed plugins
+alias df-zsh-plugin-update='dotfiles_zsh_plugin_update'
+dotfiles_zsh_plugin_update(){
+  pushd "${DOTFILES_PATH}/zsh"
+  echo "[dotfiles/zsh] Update plugins..."
+  git submodule update --init --recursive
+  popd
+}
+
 # alias
-source plugins/ohmyzsh/plugins/git/git.plugin.zsh
-source plugins/ohmyzsh/plugins/kubectl/kubectl.plugin.zsh
+source ${DOTFILES_ZSH_PLUGINS_PATH}/ohmyzsh/plugins/git/git.plugin.zsh
+source ${DOTFILES_ZSH_PLUGINS_PATH}/ohmyzsh/plugins/kubectl/kubectl.plugin.zsh
 
 # completions
 ## https://github.com/zsh-users/zsh-completions#manual-installation
-fpath=(plugins/zsh-completions/src $fpath)
+fpath=(${DOTFILES_ZSH_PLUGINS_PATH}/zsh-completions/src $fpath)
 
+## lazy load completion things. https://frederic-hemberger.de/notes/shell/speed-up-initial-zsh-startup-with-lazy-loading/
 ## Check if 'kubectl' is a command in $PATH
 if [ $commands[kubectl] ]; then
   # Placeholder 'kubectl' shell function:
@@ -24,10 +38,10 @@ if [ $commands[kubectl] ]; then
 fi
 
 # inputs
-source plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ${DOTFILES_ZSH_PLUGINS_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # prompt
-source plugins/kube-ps1/kube-ps1.sh
+source ${DOTFILES_ZSH_PLUGINS_PATH}/kube-ps1/kube-ps1.sh
 
 # should load after compinit. https://github.com/zsh-users/zsh-syntax-highlighting#faq
-source plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ${DOTFILES_ZSH_PLUGINS_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

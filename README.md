@@ -7,6 +7,9 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ## How to use
 
 ```bash
+# pull with submodules
+git pull --recursive git@github.com:go-zen-chu/dotfiles.git
+
 # check what use can install
 make help
 
@@ -25,4 +28,3 @@ make vim
 - MacOS
 - ArchLinux
 - CentOS
-

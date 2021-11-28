@@ -37,6 +37,7 @@ brew install gnu-sed
 brew install tig
 brew install shellcheck
 brew install anyenv
+brew install fzf
 # cloud tools
 brew install kubectl
 brew install ansible
