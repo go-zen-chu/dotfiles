@@ -9,7 +9,6 @@ if ! hash tmux 2>/dev/null; then
 	case "${os}" in
 	"MacOS")
 		brew install tmux
-		brew install reattach-to-user-namespace
 		;;
 	"CentOS")
 		declare TMUX_VERSION="2.8"
