@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+GO_VERSION="1.17.2"
+goenv install $GO_VERSION
+goenv global $GO_VERSION
+
 # test tools
-go get -u github.com/golang/mock/gomock
-go get -u github.com/cweill/gotests/...
+go install github.com/golang/mock/gomock
+go install github.com/cweill/gotests/...
 
 # dev tool
-go get golang.org/x/tools/gopls@latest
-go get -u github.com/krishicks/minio/mc
-go get -u github.com/ramya-rao-a/go-outline
+go install golang.org/x/tools/gopls@latest
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
