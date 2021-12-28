@@ -54,6 +54,8 @@ if [ -d "${HOME}/go" ]; then
   GOPATH="${HOME}/go:$GOPATH" # append
   export GOPATH
   path+=(${HOME}/go/bin(N-/)) # append
+  # path to goenv inside anyenv
+  path=($HOME/.anyenv/envs/goenv/shims(N-/) $path)
 fi
 
 # export stored path
