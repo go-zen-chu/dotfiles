@@ -22,3 +22,8 @@ alias rmdir='rm -rf'
 alias cpdir='cp -R'
 alias gitlog='git log --graph --color --oneline'
 alias ecpath="tr ':' '\n' <<< $PATH"
+# ghq
+alias codeghq='code $(ghq list --full-path | fzf)'
+alias cdghq='cd $(ghq list --full-path | fzf)'
+# gh
+alias ghprsw='gh pr checkout $(gh pr list | fzf | awk "{print $1;}")'
