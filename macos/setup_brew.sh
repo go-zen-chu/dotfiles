@@ -40,6 +40,7 @@ brew install anyenv
 brew install fzf
 brew install ghq
 brew install gh
+gh config set editor vim
 # cloud tools
 brew install kubectl
 brew install ansible
