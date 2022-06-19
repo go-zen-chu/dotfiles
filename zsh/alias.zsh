@@ -27,3 +27,4 @@ alias codeghq='code $(ghq list --full-path | fzf)'
 alias cdghq='cd $(ghq list --full-path | fzf)'
 # gh
 alias ghprsw='gh pr checkout $(gh pr list | fzf | awk "{print $1;}")'
+alias ghprcrw='gh pr create | open'
