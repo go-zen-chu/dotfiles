@@ -1,5 +1,7 @@
 # add path if exists (N-)
 path=(/usr/local/bin(N-/) $path)
+# for Apple Silicon homebrew
+path=(/opt/homebrew/bin(N-/) $path)
 
 # if anyenv exists
 path=($HOME/.anyenv/bin(N-/) $path)
