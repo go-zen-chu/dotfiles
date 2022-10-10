@@ -16,8 +16,9 @@ fi
 
 mkdir ${backup_dir_path}
 cp -R ~/.ssh ${backup_dir_path}
-cp -R ~/.gnupg ${backup_dir_path}
+if [[ -d "~/.gnupg" ]]; then
+    cp -R ~/.gnupg ${backup_dir_path}
+fi
 cp -R ~/.config ${backup_dir_path}
 cp ~/local.zsh ${backup_dir_path}
 cp ~/.zsh_history ${backup_dir_path}
-

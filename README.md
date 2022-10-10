@@ -27,7 +27,7 @@ make vim
 ### Backup config
 
 ```bash
-
+make backup
 ```
 
 ## Supported OS
