@@ -26,6 +26,11 @@ function check_os() {
 	echo "${os}"
 }
 
+function check_cpu_arch() {
+	cpu_arch=$(uname -m)
+	echo "${cpu_arch}"
+}
+
 function echo_red() {
 	msg=$1
 	echo "$(tput setaf 1)${msg}$(tput sgr 0)"

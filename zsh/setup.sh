@@ -5,15 +5,26 @@ source ./make/util.sh
 
 echo_green "[INFO] setup zsh"
 os=$(check_os)
+# zsh is preinstalled in MacOS, so make sure brew installed zsh is used
+if [[ "${os}" == "MacOS" ]]; then
+	brew install zsh
+	zsh_path="/usr/local/bin/zsh"
+	cpu_arch=$(check_cpu_arch)
+	if [[ "${cpu_arch}" == "arm64" ]]; then
+		zsh_path="/opt/homebrew/bin/zsh"
+	fi
+	if [[ $(grep "${zsh_path}" /etc/shells) ]]; then
+		echo "${zsh_path} exists in /etc/shells"
+	else
+	    # set shell as zsh
+	    echo "${zsh_path}" | sudo tee -a /etc/shells
+	    chsh -s ${zsh_path} || true # for skipping in CI
+	fi
+fi
+
 # check command exists
 if ! hash zsh 2>/dev/null; then
 	case "${os}" in
-	"MacOS")
-		brew install zsh
-		# set shell as zsh
-		echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
-		chsh -s /usr/local/bin/zsh || true # for skipping in CI
-		;;
 	"CentOS")
 		sudo yum install -y zsh
 		;;

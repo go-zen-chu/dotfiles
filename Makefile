@@ -64,3 +64,8 @@ tmux:
 ## setup git
 git:
 	@./git/setup.sh
+
+.PHONY: backup
+## backup files
+backup:
+	@./make/backup.sh
