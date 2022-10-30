@@ -53,8 +53,8 @@ fi
 
 # golang
 if [ -d "${HOME}/go" ]; then
-  GOPATH="${HOME}/go:$GOPATH" # append
-  export GOPATH
+  # do not export GOPATH but use `go env`
+  go env GOPATH="${HOME}/go"
   path+=(${HOME}/go/bin(N-/)) # append
   # path to goenv inside anyenv
   path=($HOME/.anyenv/envs/goenv/shims(N-/) $path)
