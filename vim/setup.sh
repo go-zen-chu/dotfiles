@@ -41,7 +41,10 @@ if [[ -f "${HOME}/.vimrc" ]]; then
 fi
 cp -f ./vim/.vimrc "${HOME}"
 
-# run vim command and install plugin
-vim -c ':PlugInstall' -c 'qa!'
+# in CI environment, command below does not work (requires UI)
+if [[ ! -z $CI ]]; then
+    # run vim command and install plugin
+    vim -c ':PlugInstall' -c 'qa!'
+fi
 
 echo_green "[INFO] Finish setup vim"

@@ -29,17 +29,37 @@ function check_cpu_arch() {
 	echo "${cpu_arch}"
 }
 
-function echo_red() {
+function echo_color() {
 	msg=$1
-	echo "$(tput setaf 1)${msg}$(tput sgr 0)"
+	color=$2
+    # in CI environment, TERM env var might not set
+    if [[ ! -z $CI && -z $TERM ]]; then
+	    export TERM="xterm"
+	fi
+	case "${color}" in
+	"red")
+		echo "$(tput setaf 1)${msg}$(tput sgr 0)"
+		;;
+	"green")
+		echo "$(tput setaf 2)${msg}$(tput sgr 0)"
+		;;
+	"yellow")
+		echo "$(tput setaf 3)${msg}$(tput sgr 0)"
+		;;
+	*)
+		echo "[util.sh error: unsupported color]${msg}"
+		;;
+	esac
+}
+
+function echo_red() {
+	echo_color $1 "red"
 }
 
 function echo_green() {
-	msg=$1
-	echo "$(tput setaf 2)${msg}$(tput sgr 0)"
+	echo_color $1 "green"
 }
 
 function echo_yellow() {
-	msg=$1
-	echo "$(tput setaf 3)${msg}$(tput sgr 0)"
+	echo_color $1 "yellow"
 }
