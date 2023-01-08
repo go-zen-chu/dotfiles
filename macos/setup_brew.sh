@@ -27,8 +27,8 @@ brew install git || true # || true for some CI fails
 brew install openssl     # not supported from El Capitan
 brew install wget
 brew install rsync
-brew install nmap # for checking network
-brew install gibo # for creating .gitignore
+brew install nmap  # for checking network
+brew install gibo  # for creating .gitignore
 brew install watch # periodical command execution
 brew install tree
 brew install tig

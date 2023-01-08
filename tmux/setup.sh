@@ -26,7 +26,7 @@ fi
 
 # set tmux config
 if [[ -f "${HOME}/.tmux.conf" ]]; then
-	if diff "${HOME}/.tmux.conf" ./tmux/.tmux.conf >/dev/null; then 
+	if diff "${HOME}/.tmux.conf" ./tmux/.tmux.conf >/dev/null; then
 		echo_green ".tmux.conf is same as dotfiles"
 	else
 		# backup

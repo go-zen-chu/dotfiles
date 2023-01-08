@@ -32,7 +32,7 @@ if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]]; then
 fi
 # setup .vimrc
 if [[ -f "${HOME}/.vimrc" ]]; then
-	if diff "${HOME}/.vimrc" ./vim/.vimrc >/dev/null; then 
+	if diff "${HOME}/.vimrc" ./vim/.vimrc >/dev/null; then
 		echo_green ".vimrc is same as dotfiles"
 	else
 		# backup
@@ -43,8 +43,8 @@ cp -f ./vim/.vimrc "${HOME}"
 
 # in CI environment, command below does not work (requires UI)
 if [[ ! -z $CI ]]; then
-    # run vim command and install plugin
-    vim -c ':PlugInstall' -c 'qa!'
+	# run vim command and install plugin
+	vim -c ':PlugInstall' -c 'qa!'
 fi
 
 echo_green "[INFO] Finish setup vim"

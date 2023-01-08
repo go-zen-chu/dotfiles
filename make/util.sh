@@ -32,9 +32,9 @@ function check_cpu_arch() {
 function echo_color() {
 	msg=$1
 	color=$2
-    # in CI environment, TERM env var might not set
-    if [[ ! -z $CI && -z $TERM ]]; then
-	    export TERM="xterm"
+	# in CI environment, TERM env var might not set
+	if [[ ! -z $CI && -z $TERM ]]; then
+		export TERM="xterm"
 	fi
 	case "${color}" in
 	"red")
