@@ -7,8 +7,8 @@ jobs:
     runs-on: macOS-latest
     if: contains(github.event.head_commit.message, '[skip ci]') == false
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Run setup.sh
       run: |
         # TIPS: don't use yes command since it causes long execution in container
-        make setup-mac-personal
+        make setup-mac

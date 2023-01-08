@@ -9,9 +9,7 @@ function check_os() {
 		os="MacOS"
 		;;
 	"Linux")
-		if [[ -f /etc/redhat-release ]]; then
-			os="CentOS"
-		elif [[ -f /etc/arch-release ]]; then
+		if [[ -f /etc/arch-release ]]; then
 			os="ArchLinux"
 		else
 			echo "not supported linux" >&2

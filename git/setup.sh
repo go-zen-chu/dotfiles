@@ -16,9 +16,6 @@ if ! hash tig 2>/dev/null; then
 	"MacOS")
 		brew install tig
 		;;
-	"CentOS")
-		echo_red "TBD"
-		;;
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm tig
 		;;

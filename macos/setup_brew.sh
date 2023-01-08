@@ -29,30 +29,14 @@ brew install wget
 brew install rsync
 brew install nmap # for checking network
 brew install gibo # for creating .gitignore
-brew install direnv
 brew install watch # periodical command execution
-brew install jq
 brew install tree
-brew install gnu-sed
 brew install tig
-brew install shellcheck
 brew install anyenv
-brew install fzf
-brew install ghq
-brew install gh
-gh config set editor vim
 # cloud tools
-brew install kubectl
 brew install ansible
-brew install terraform
-
-if [[ "$setup_type" == "personal" ]]; then
-	# blog tools
-	brew install hugo
-	brew install sass/sass/sass
-	# os tools
-	brew install qemu
-fi
+# Automate App-Store installation
+brew install mas
 
 # install GUI tools
 #brew install --cask adapter
@@ -79,15 +63,18 @@ brew install --cask docker
 brew install --cask jasper # github viewer
 
 if [[ "$setup_type" == "personal" ]]; then
+	# blog tools
+	brew install hugo
+	brew install sass/sass/sass
+	# os tools
+	brew install qemu
+
 	brew install --cask slack
 	brew install --cask zoomus
 	# dev
 	brew install --cask google-cloud-sdk
 	brew install --cask hex-fiend
 	brew install --cask balenaetcher # os image tool
-	# echo tools that cannot be installed via cask
-	echo_yellow "need to install manually via AppStore"
-	echo_yellow "> Pixelmator"
-	echo_yellow "> Bear"
-	echo_yellow "> LINE"
+	# LINE
+	mas install 539883307
 fi

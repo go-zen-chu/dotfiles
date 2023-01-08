@@ -11,9 +11,6 @@ if ! hash vim 2>/dev/null; then
 	"MacOS")
 		brew install vim
 		;;
-	"CentOS")
-		sudo yum install -y vim
-		;;
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm vim
 		;;

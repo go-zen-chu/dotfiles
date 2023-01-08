@@ -25,9 +25,6 @@ fi
 # check command exists
 if ! hash zsh 2>/dev/null; then
 	case "${os}" in
-	"CentOS")
-		sudo yum install -y zsh
-		;;
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm zsh
 		;;
