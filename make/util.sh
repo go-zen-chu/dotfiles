@@ -53,13 +53,13 @@ function echo_color() {
 }
 
 function echo_red() {
-	echo_color $1 "red"
+	echo_color "$1" "red"
 }
 
 function echo_green() {
-	echo_color $1 "green"
+	echo_color "$1" "green"
 }
 
 function echo_yellow() {
-	echo_color $1 "yellow"
+	echo_color "$1" "yellow"
 }
