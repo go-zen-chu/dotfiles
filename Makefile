@@ -12,13 +12,8 @@ setup-mac: macos setup-common
 ## setup for macOS with personal development tools	
 setup-mac-personal: macos-personal setup-common
 
-.PHONY: setup-centos
-## setup centos from scratch 
-setup-centos: centos setup-common
-	@echo "setup CentOS finish"
-
 .PHONY: setup-arch
-## setup centos from scratch 
+## setup archlinux from scratch 
 setup-arch: setup-common
 	@echo "setup ArchLinux finish"
 
@@ -36,24 +31,24 @@ macos-personal:
 	@./macos/setup_defaults.sh
 	@./macos/setup_brew.sh personal
 
-.PHONY: centos
-## setup centos
-centos:
-	@./centos/setup.sh
-
 .PHONY: setup-common
 ## setup common packages
-setup-common: zsh vim tmux git
+setup-common: aqua zsh vim tmux git
 
-.PHONY: vim
-## setup vim
-vim:
-	@./vim/setup.sh
+.PHONY: aqua
+## setup aqua and install tools
+aqua:
+	@./aqua/setup.sh
 
 .PHONY: zsh
 ## setup zsh
 zsh:
 	@./zsh/setup.sh
+
+.PHONY: vim
+## setup vim
+vim:
+	@./vim/setup.sh
 
 .PHONY: tmux
 ## setup tmux

@@ -2,7 +2,7 @@
 set -eu
 
 source ./make/util.sh
-echo_green  "[INFO] Setup macOS defaults"
+echo_green "[INFO] Setup macOS defaults"
 
 # screenshot setting
 defaults write com.apple.screencapture name "screenshot"

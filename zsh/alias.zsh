@@ -1,11 +1,11 @@
 # OS independent setting
 declare os
 os=$(uname -s)
-if [[ ${os} == 'Darwin' ]] ; then
-  export LSCOLORS=bxfxcxdxgxegedabagacad
-  alias ls='ls -a -G -F'
-elif [[ ${os} == 'Linux' ]] ; then
-  alias ls='ls -a --color=auto -F'
+if [[ ${os} == 'Darwin' ]]; then
+	export LSCOLORS=bxfxcxdxgxegedabagacad
+	alias ls='ls -a -G -F'
+elif [[ ${os} == 'Linux' ]]; then
+	alias ls='ls -a --color=auto -F'
 fi
 
 # set global alias

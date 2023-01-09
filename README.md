@@ -34,4 +34,3 @@ make backup
 
 - MacOS
 - ArchLinux
-- CentOS

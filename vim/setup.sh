@@ -11,9 +11,6 @@ if ! hash vim 2>/dev/null; then
 	"MacOS")
 		brew install vim
 		;;
-	"CentOS")
-		sudo yum install -y vim
-		;;
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm vim
 		;;
@@ -29,13 +26,9 @@ if [[ ! -d "${HOME}/.vim" ]]; then
 	chown -R "${USER}" "${HOME}/.vim"
 fi
 
-# install vim-plug
-if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]]; then
-	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-fi
 # setup .vimrc
 if [[ -f "${HOME}/.vimrc" ]]; then
-	if diff "${HOME}/.vimrc" ./vim/.vimrc >/dev/null; then 
+	if diff "${HOME}/.vimrc" ./vim/.vimrc >/dev/null; then
 		echo_green ".vimrc is same as dotfiles"
 	else
 		# backup
@@ -44,7 +37,15 @@ if [[ -f "${HOME}/.vimrc" ]]; then
 fi
 cp -f ./vim/.vimrc "${HOME}"
 
-# run vim command and install plugin
-vim -c ':PlugInstall' -c 'qa!'
+# in CI environment, command below does not work (requires UI)
+if [[ -z $CI ]]; then
+	echo_green "[INFO] Setting up vim-plug in non-CI environment (CI=$CI)"
+	# install vim-plug
+	if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]]; then
+		curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	fi
+	# run vim command and install plugin
+	vim -c ':PlugInstall' -c 'qa!'
+fi
 
 echo_green "[INFO] Finish setup vim"
