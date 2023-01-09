@@ -33,18 +33,19 @@ function echo_color() {
 	msg=$1
 	color=$2
 	# in CI environment, TERM env var might not set
-	if [[ ! -z $CI && -z $TERM ]]; then
+	if [ ! -z $CI ] && [ -z $TERM ]; then
+		echo "[INFO] CI=${CI} and TERM=${TERM} is empty. Set TERM to xterm-color"
 		export TERM=xterm-color
 	fi
 	case "${color}" in
 	"red")
-		echo "$(tput setaf 1)${msg}$(tput sgr 0)"
+		echo "$(tput bold)$(tput setaf 1)${msg}$(tput sgr 0)"
 		;;
 	"green")
 		echo "$(tput setaf 2)${msg}$(tput sgr 0)"
 		;;
 	"yellow")
-		echo "$(tput setaf 3)${msg}$(tput sgr 0)"
+		echo "$(tput bold)$(tput setaf 3)${msg}$(tput sgr 0)"
 		;;
 	*)
 		echo "[util.sh error: unsupported color]${msg}"
