@@ -33,8 +33,8 @@ function echo_color() {
 	msg=$1
 	color=$2
 	# in CI environment, TERM env var might not set
-	if [ ! -z $CI ] && [ -z $TERM ]; then
-		echo "[INFO] CI=${CI} and TERM=${TERM} is empty. Set TERM to xterm-color"
+	if [[ -z "${TERM}" ]]; then
+		echo "[INFO] TERM=${TERM} is empty(CI=${CI}). Set TERM to xterm-color"
 		export TERM=xterm-color
 	fi
 	case "${color}" in

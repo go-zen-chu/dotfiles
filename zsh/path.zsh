@@ -66,9 +66,13 @@ if [[ -d "${HOME}/.local/share/aquaproj-aqua" ]]; then
   export AQUA_GLOBAL_CONFIG=${AQUA_GLOBAL_CONFIG:-}:${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml
 fi
 
+# python poetry
+if [[ -d "${HOME}/.local/bin" ]]; then
+  path=($HOME/.local/bin(N-/) $path)
+fi
+
 # export stored path
 export PATH
 
 # set XDG setting
 export XDG_CONFIG_HOME="${HOME}/.config"
-
