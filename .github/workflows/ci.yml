@@ -8,7 +8,7 @@ jobs:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
     steps:
     - uses: actions/checkout@v3
-    - name: Run setup.sh
+    - name: Run MacOS minimum setup
       run: |
         # TIPS: don't use yes command since it causes long execution in container
         make setup-mac
