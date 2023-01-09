@@ -48,7 +48,7 @@ brew install --cask amethyst
 brew install --cask karabiner-elements
 if [ ! -d "${HOME}/.config/karabiner" ]; then
 	mkdir -p "${HOME}/.config"
-	cp -R ./macos/karabiner ${HOME}/.config
+	cp -R ./macos/karabiner "${HOME}/.config"
 fi
 
 brew install --cask google-chrome
