@@ -12,3 +12,5 @@ jobs:
       run: |
         # TIPS: don't use yes command since it causes long execution in container
         make setup-mac
+      # ci should finish by 45min
+      timeout-minutes: 45

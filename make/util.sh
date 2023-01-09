@@ -34,7 +34,7 @@ function echo_color() {
 	color=$2
 	# in CI environment, TERM env var might not set
 	if [[ ! -z $CI && -z $TERM ]]; then
-		export TERM="xterm"
+		export TERM=xterm-color
 	fi
 	case "${color}" in
 	"red")
