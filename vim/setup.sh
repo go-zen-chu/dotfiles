@@ -38,7 +38,7 @@ fi
 cp -f ./vim/.vimrc "${HOME}"
 
 # in CI environment, command below does not work (requires UI)
-if [[ ! -z $CI ]]; then
+if [[ -z $CI ]]; then
 	echo_green "[INFO] Setting up vim-plug in non-CI environment (CI=$CI)"
 	# install vim-plug
 	if [[ ! -f "${HOME}/.vim/autoload/plug.vim" ]]; then
