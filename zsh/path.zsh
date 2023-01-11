@@ -1,3 +1,6 @@
+# set XDG setting
+export XDG_CONFIG_HOME="${HOME}/.config"
+
 # add path if exists (N-)
 path=(/usr/local/bin(N-/) $path)
 # for Apple Silicon homebrew
@@ -53,10 +56,6 @@ fi
 
 # golang
 if [ -d "${HOME}/go" ]; then
-  # lazy load goenv to run go command
-  goenv version
-  # do not export GOPATH but use `go env`
-  go env GOPATH="${HOME}/go"
   path+=(${HOME}/go/bin(N-/)) # append
   # path to goenv inside anyenv
   path=($HOME/.anyenv/envs/goenv/shims(N-/) $path)
@@ -76,5 +75,3 @@ fi
 # export stored path
 export PATH
 
-# set XDG setting
-export XDG_CONFIG_HOME="${HOME}/.config"
