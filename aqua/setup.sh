@@ -15,9 +15,18 @@ if hash gh 2>/dev/null; then
 fi
 # kubectl & krew should be installed via aqua
 if hash kubectl 2>/dev/null; then
-    kubectl krew install ctx \
-        ns \
-        access-matrix \
-        tree \
-        neat
+    if hash krew 2>/dev/null; then
+        # install krew to kubectl
+        krew install krew
+        kubectl krew install ctx \
+            ns \
+            access-matrix \
+            tree \
+            neat \
+            resource-capacity \
+            view-allocations \
+            iexec
+    else
+        echo_red "krew cannot be found. abort installing krew plugins"
+    fi
 fi
