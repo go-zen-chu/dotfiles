@@ -42,21 +42,21 @@ brew install mas
 #brew install --cask adapter
 brew install --cask appcleaner
 brew install --cask alfred
-echo "INFO: setup sync config with powerpack"
+echo_green "INFO: [Alfred] setup sync config with powerpack"
 brew install --cask amethyst
 # setup keyboard custom setting
 brew install --cask karabiner-elements
-if [ ! -d "${HOME}/.config/karabiner" ]; then
+if [[ ! -d "${HOME}/.config/karabiner" ]]; then
 	mkdir -p "${HOME}/.config"
 	cp -R ./macos/karabiner "${HOME}/.config"
 fi
-
 brew install --cask google-chrome
 brew install --cask google-backup-and-sync # used to be google-drive
 brew install --cask google-japanese-ime
 brew install --cask kap
 # dev
 brew install --cask iterm2
+echo_green "INFO: [iTerm2] set iterm config path to ${HOME}/dotfiles/macos/iterm/com.googlecode.iterm2.plist"
 brew install --cask visual-studio-code
 brew install --cask wireshark
 brew install --cask docker

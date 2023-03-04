@@ -14,11 +14,13 @@ else
 	echo_green "creating backup dir to ${backup_dir_path}"
 fi
 
-mkdir ${backup_dir_path}
-cp -R ~/.ssh ${backup_dir_path}
-if [[ -d "~/.gnupg" ]]; then
-	cp -R ~/.gnupg ${backup_dir_path}
+mkdir "${backup_dir_path}"
+cp -R ~/.ssh "${backup_dir_path}"
+if [[ -d "${HOME}/.gnupg" ]]; then
+	cp -R ~/.gnupg "${backup_dir_path}"
 fi
-cp -R ~/.config ${backup_dir_path}
-cp ~/local.zsh ${backup_dir_path}
-cp ~/.zsh_history ${backup_dir_path}
+# general config files
+cp -R ~/.config "${backup_dir_path}"
+# zsh
+cp ~/local.zsh "${backup_dir_path}"
+cp ~/.zsh_history "${backup_dir_path}"
