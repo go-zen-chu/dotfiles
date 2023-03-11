@@ -14,6 +14,9 @@ if ! hash tmux 2>/dev/null; then
 		# will install tmux >= 3.0
 		sudo pacman -Sy --noconfirm tmux
 		;;
+	"Ubuntu")
+		sudo apt-get install -y tmux
+		;;
 	esac
 fi
 

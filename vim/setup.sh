@@ -14,6 +14,9 @@ if ! hash vim 2>/dev/null; then
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm vim
 		;;
+	"Ubuntu")
+		sudo apt-get install -y vim
+		;;
 	esac
 fi
 

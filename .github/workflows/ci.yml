@@ -4,37 +4,37 @@ on: [pull_request]
 
 jobs:
   setup-mac:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     if: contains(github.event.head_commit.message, '[skip ci]') == false
     steps:
-    - uses: actions/checkout@v3
-    - name: Run MacOS minimum setup
-      run: |
-        # TIPS: don't use yes command since it causes long execution in container
-        make setup-mac
-      env:
-        # for tput coloring
-        TERM: xterm-color
-      # ci should finish by 45min
-      timeout-minutes: 45
-    - name: Send data to Slack webhook
-      id: slack
-      uses: slackapi/slack-github-action@v1.23.0
-      with:
-        # For posting a rich message using Block Kit
-        payload: |
-          {
-            "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      - uses: actions/checkout@v3
+      - name: Run MacOS minimum setup
+        run: |
+          # TIPS: don't use yes command since it causes long execution in container
+          make setup-mac
+        env:
+          # for tput coloring
+          TERM: xterm-color
+        # ci should finish by 45min
+        timeout-minutes: 45
+      - name: Send data to Slack webhook
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
                 }
-              }
-            ]
-          }
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

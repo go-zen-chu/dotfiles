@@ -11,6 +11,8 @@ function check_os() {
 	"Linux")
 		if [[ -f /etc/arch-release ]]; then
 			os="ArchLinux"
+		elif [[ -f /etc/lsb-release  ]]; then
+			os="Ubuntu"
 		else
 			echo "not supported linux" >&2
 			exit 1

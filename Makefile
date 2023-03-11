@@ -12,11 +12,6 @@ setup-mac: macos setup-common
 ## setup for macOS with personal development tools	
 setup-mac-personal: macos-personal setup-common
 
-.PHONY: setup-arch
-## setup archlinux from scratch 
-setup-arch: setup-common
-	@echo "setup ArchLinux finish"
-
 .PHONY: macos
 ## setup macos with minimum setup
 macos:
@@ -30,6 +25,16 @@ macos-personal:
 	@./macos/check_developer_tool.sh
 	@./macos/setup_defaults.sh
 	@./macos/setup_brew.sh personal
+
+.PHONY: setup-arch
+## setup archlinux from scratch 
+setup-arch: setup-common
+	@echo "setup ArchLinux finish"
+
+.PHONY: setup-ubuntu
+### setup ubuntu from scratch
+setup-ubuntu: setup-common
+	@echo "setup Ubuntu finish"
 
 .PHONY: setup-common
 ## setup common packages

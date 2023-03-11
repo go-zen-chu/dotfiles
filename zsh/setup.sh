@@ -28,6 +28,9 @@ if ! hash zsh 2>/dev/null; then
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm zsh
 		;;
+	"Ubuntu")
+		sudo apt-get install -y zsh
+		;;
 	esac
 fi
 

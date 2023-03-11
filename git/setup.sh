@@ -19,6 +19,9 @@ if ! hash tig 2>/dev/null; then
 	"ArchLinux")
 		sudo pacman -Sy --noconfirm tig
 		;;
+	"Ubuntu")
+		sudo apt-get install -y tig
+		;;
 	esac
 fi
 if [[ ! -f "${HOME}/.tigrc" ]]; then
