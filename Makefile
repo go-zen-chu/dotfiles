@@ -31,6 +31,12 @@ macos-personal:
 setup-arch: setup-common
 	@echo "setup ArchLinux finish"
 
+.PHONY: setup-windows
+## setup windows from scratch 
+setup-windows:
+	cat ./windows/README.md
+	@echo "setup Windows finish"
+
 .PHONY: setup-ubuntu
 ### setup ubuntu from scratch
 setup-ubuntu: setup-ubuntu-config setup-common
