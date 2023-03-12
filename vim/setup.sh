@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -u
+set -eu
 
 source ./make/util.sh
 
@@ -41,6 +41,7 @@ fi
 cp -f ./vim/.vimrc "${HOME}"
 
 # in CI environment, command below does not work (requires UI)
+set +u
 if [[ -z $CI ]]; then
 	echo_green "[INFO] Setting up vim-plug in non-CI environment (CI=$CI)"
 	# install vim-plug
@@ -50,5 +51,6 @@ if [[ -z $CI ]]; then
 	# run vim command and install plugin
 	vim -c ':PlugInstall' -c 'qa!'
 fi
+set -u
 
 echo_green "[INFO] Finish setup vim"

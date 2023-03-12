@@ -9,6 +9,8 @@ cp ./aqua/aqua.yaml "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml"
 # set to global config
 export AQUA_GLOBAL_CONFIG=${AQUA_GLOBAL_CONFIG:-}:${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml
 aqua i -a
+# add krew plugin path after krew installed
+export PATH="${HOME}/.krew/bin:$PATH"
 # gh should be installed via aqua
 if hash gh 2>/dev/null; then
     gh config set editor vim

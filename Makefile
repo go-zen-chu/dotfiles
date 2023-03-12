@@ -33,8 +33,13 @@ setup-arch: setup-common
 
 .PHONY: setup-ubuntu
 ### setup ubuntu from scratch
-setup-ubuntu: setup-common
+setup-ubuntu: setup-ubuntu-config setup-common
 	@echo "setup Ubuntu finish"
+
+.PHONY: setup-ubuntu-config
+### set config for ubuntu from scratch
+setup-ubuntu-config:
+	sudo dpkg-reconfigure locales
 
 .PHONY: setup-common
 ## setup common packages
