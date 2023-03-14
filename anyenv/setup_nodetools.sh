@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NODE_VERSION="16.13.1"
+NODE_VERSION="18.15.0"
 nodenv install $NODE_VERSION
 nodenv global $NODE_VERSION
 

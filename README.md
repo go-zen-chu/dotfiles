@@ -21,7 +21,7 @@ make setup-mac-personal
 # setup all for archlinux
 make setup-arch
 
-# setup only vim
+setup only vim
 make vim
 ```
 

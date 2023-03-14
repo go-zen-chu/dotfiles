@@ -49,7 +49,7 @@ setup-ubuntu-config:
 
 .PHONY: setup-common
 ## setup common packages
-setup-common: aqua zsh vim tmux git
+setup-common: aqua zsh vim tmux git anyenv
 
 .PHONY: aqua
 ## setup aqua and install tools
@@ -75,6 +75,11 @@ tmux:
 ## setup git
 git:
 	@./git/setup.sh
+
+.PHONY: anyenv
+## setup anyenv
+anyenv:
+	@./anyenv/setup.sh
 
 .PHONY: backup
 ## backup files

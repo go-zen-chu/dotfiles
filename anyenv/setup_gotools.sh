@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-GO_VERSION="1.17.2"
+cd "${HOME}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
+
+GO_VERSION="1.19.4"
 goenv install $GO_VERSION
 goenv global $GO_VERSION
 
