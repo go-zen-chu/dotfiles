@@ -15,37 +15,33 @@ setup-mac-personal: macos-personal setup-common
 .PHONY: macos
 ## setup macos with minimum setup
 macos:
-	@./macos/check_developer_tool.sh
-	@./macos/setup_defaults.sh
-	@./macos/setup_brew.sh minimum
+	@./os-macos/check_developer_tool.sh
+	@./os-macos/setup_defaults.sh
+	@./os-macos/setup_brew.sh minimum
 
 .PHONY: macos-personal
 ## setup macos with personal dev tools
 macos-personal:
-	@./macos/check_developer_tool.sh
-	@./macos/setup_defaults.sh
-	@./macos/setup_brew.sh personal
+	@./os-macos/check_developer_tool.sh
+	@./os-macos/setup_defaults.sh
+	@./os-macos/setup_brew.sh personal
+
+.PHONY: setup-windows
+## setup windows from scratch 
+setup-windows:
+	cat ./os-windows/README.md
+	@echo "setup Windows finish"
+
+.PHONY: setup-ubuntu
+### setup ubuntu from scratch
+setup-ubuntu: setup-common
+	@./os-ubuntu/setup.sh
+	@echo "setup Ubuntu finish"
 
 .PHONY: setup-arch
 ## setup archlinux from scratch 
 setup-arch: setup-common
 	@echo "setup ArchLinux finish"
-
-.PHONY: setup-windows
-## setup windows from scratch 
-setup-windows:
-	cat ./windows/README.md
-	@echo "setup Windows finish"
-
-.PHONY: setup-ubuntu
-### setup ubuntu from scratch
-setup-ubuntu: setup-ubuntu-config setup-common
-	@echo "setup Ubuntu finish"
-
-.PHONY: setup-ubuntu-config
-### set config for ubuntu from scratch
-setup-ubuntu-config:
-	sudo dpkg-reconfigure locales
 
 .PHONY: setup-common
 ## setup common packages
