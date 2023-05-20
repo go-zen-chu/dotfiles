@@ -3,6 +3,7 @@ $packages = @(
     # install basic tools
     "Google.Chrome",
     "Google.Drive",
+    "Google.JapaneseIME",
     "Microsoft.PowerToys",
     # communication tools
     "Zoom.Zoom",
