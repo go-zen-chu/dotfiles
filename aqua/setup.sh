@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 set -u
 
-curl -sSfL https://raw.githubusercontent.com/aquaproj/aqua-installer/v2.0.2/aqua-installer | bash
+curl -sSfL -O https://raw.githubusercontent.com/aquaproj/aqua-installer/v2.1.1/aqua-installer
+echo "c2af02bdd15da6794f9c98db40332c804224930212f553a805425441f8331665  aqua-installer" | sha256sum -c
+chmod +x aqua-installer
+./aqua-installer
+rm ./aqua-installer
 # temporary add to PATH (add to PATH in zshrc for permanent configuration)
 export PATH="${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin:$PATH"
 mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua"
-cp ./aqua/aqua.yaml "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml"
+ln -s ./aqua/aqua.yaml "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml"
 # set to global config
 export AQUA_GLOBAL_CONFIG=${AQUA_GLOBAL_CONFIG:-}:${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml
 aqua i -a
