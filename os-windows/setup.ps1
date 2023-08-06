@@ -18,7 +18,8 @@ $packages = @(
     # get dnssd.dll not found error because of lack of Bonjour
     #"Apple.iTunes",
     # development tools
-    "Microsoft.VisualStudioCode"
+    "Microsoft.VisualStudioCode",
+    "Docker.DockerDesktop"
 )
 foreach ($package in $packages) {
     winget install $package -e
