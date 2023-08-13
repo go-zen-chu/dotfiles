@@ -10,16 +10,16 @@ rm ./aqua-installer
 export PATH="${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin:$PATH"
 mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua"
 # create hard link (not symbolic link)
+rm "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml"
 ln ./aqua/aqua.yaml "${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml"
 # set to global config
 export AQUA_GLOBAL_CONFIG=${AQUA_GLOBAL_CONFIG:-}:${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml
 aqua i -a
+
+##### Initial setting for installed tools #####
+
 # add krew plugin path after krew installed
 export PATH="${HOME}/.krew/bin:$PATH"
-# gh should be installed via aqua
-if hash gh 2>/dev/null; then
-    gh config set editor vim
-fi
 # kubectl & krew should be installed via aqua
 if hash kubectl 2>/dev/null; then
     if hash krew 2>/dev/null; then
@@ -32,8 +32,14 @@ if hash kubectl 2>/dev/null; then
             neat \
             resource-capacity \
             view-allocations \
-            iexec
+            iexec \
+            stern
     else
         echo_red "krew cannot be found. abort installing krew plugins"
     fi
+fi
+
+# gh should be installed via aqua
+if hash gh 2>/dev/null; then
+    gh config set editor vim
 fi
