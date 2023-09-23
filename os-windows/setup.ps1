@@ -19,7 +19,8 @@ $packages = @(
     #"Apple.iTunes",
     # development tools
     "Microsoft.VisualStudioCode",
-    "Docker.DockerDesktop"
+    "Docker.DockerDesktop",
+    "jasperapp.jasper"
 )
 foreach ($package in $packages) {
     winget install $package -e
