@@ -59,7 +59,7 @@ brew install --cask iterm2
 echo_green "INFO: [iTerm2] set iterm config path to ${HOME}/dotfiles/macos/iterm/com.googlecode.iterm2.plist"
 brew install --cask visual-studio-code
 brew install --cask wireshark
-brew install --cask docker
+brew install --cask postman
 brew install --cask jasper # github viewer
 
 if [[ "$setup_type" == "personal" ]]; then
