@@ -1,0 +1,169 @@
+{
+    "title": "XPPen Ack05 向けキーカスタマイズ",
+    "rules": [
+        {
+            "description": "XPPen Ack05 だけキーを left_control + F11-F20 に remap する。アプリケーションでショートカットキーを調整する",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "simultaneous": [
+                            {
+                                "key_code": "z"
+                            },
+                            {
+                                "key_code": "left_control"
+                            }
+                        ],
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f11",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "left_shift",
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f12",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "simultaneous": [
+                            {
+                                "key_code": "o"
+                            },
+                            {
+                                "key_code": "left_control"
+                            }
+                        ],
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f13",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "spacebar"
+                    },
+                    "to": [
+                        {
+                            "key_code": "f14",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "left_control",
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f15",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
