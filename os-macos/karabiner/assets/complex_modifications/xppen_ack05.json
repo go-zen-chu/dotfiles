@@ -5,6 +5,237 @@
             "description": "XPPen Ack05 だけキーを left_control + F11-F20 に remap する。アプリケーションでショートカットキーを調整する",
             "manipulators": [
                 {
+                    "description": "K1",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "simultaneous": [
+                            {
+                                "key_code": "o"
+                            },
+                            {
+                                "key_ßcode": "left_control"
+                            }
+                        ],
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f11",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "description": "K2",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "simultaneous": [
+                            {
+                                "key_code": "n"
+                            },
+                            {
+                                "key_code": "left_control"
+                            }
+                        ],
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f12",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "description": "K3",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "f5",
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f13",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "description": "K4",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "left_shift",
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f14",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "description": "K5 (TBD. It will break other mapping)",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "left_control",
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "description": "K6",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "key_code": "left_option",
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f16",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "description": "K7",
+                    "type": "basic",
+                    "conditions": [
+                        {
+                            "type": "device_if",
+                            "identifiers": [
+                                {
+                                    "vendor_id": 10429,
+                                    "product_id": 514
+                                }
+                            ]
+                        }
+                    ],
+                    "from": {
+                        "simultaneous": [
+                            {
+                                "key_code": "s"
+                            },
+                            {
+                                "key_code": "left_control"
+                            }
+                        ],
+                        "modifiers": {
+                            "optional": [
+                                "any"
+                            ]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "f17",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "description": "K8",
                     "type": "basic",
                     "conditions": [
                         {
@@ -34,7 +265,7 @@
                     },
                     "to": [
                         {
-                            "key_code": "f11",
+                            "key_code": "f18",
                             "modifiers": [
                                 "left_control"
                             ]
@@ -42,6 +273,7 @@
                     ]
                 },
                 {
+                    "description": "K9",
                     "type": "basic",
                     "conditions": [
                         {
@@ -55,7 +287,7 @@
                         }
                     ],
                     "from": {
-                        "key_code": "left_shift",
+                        "key_code": "spacebar",
                         "modifiers": {
                             "optional": [
                                 "any"
@@ -64,7 +296,7 @@
                     },
                     "to": [
                         {
-                            "key_code": "f12",
+                            "key_code": "f19",
                             "modifiers": [
                                 "left_control"
                             ]
@@ -72,6 +304,7 @@
                     ]
                 },
                 {
+                    "description": "K10",
                     "type": "basic",
                     "conditions": [
                         {
@@ -87,10 +320,13 @@
                     "from": {
                         "simultaneous": [
                             {
-                                "key_code": "o"
+                                "key_code": "z"
                             },
                             {
                                 "key_code": "left_control"
+                            },
+                            {
+                                "key_code": "left_shift"
                             }
                         ],
                         "modifiers": {
@@ -101,62 +337,7 @@
                     },
                     "to": [
                         {
-                            "key_code": "f13",
-                            "modifiers": [
-                                "left_control"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "basic",
-                    "conditions": [
-                        {
-                            "type": "device_if",
-                            "identifiers": [
-                                {
-                                    "vendor_id": 10429,
-                                    "product_id": 514
-                                }
-                            ]
-                        }
-                    ],
-                    "from": {
-                        "key_code": "spacebar"
-                    },
-                    "to": [
-                        {
-                            "key_code": "f14",
-                            "modifiers": [
-                                "left_control"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "basic",
-                    "conditions": [
-                        {
-                            "type": "device_if",
-                            "identifiers": [
-                                {
-                                    "vendor_id": 10429,
-                                    "product_id": 514
-                                }
-                            ]
-                        }
-                    ],
-                    "from": {
-                        "key_code": "left_control",
-                        "modifiers": {
-                            "optional": [
-                                "any"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "key_code": "f15",
+                            "key_code": "f20",
                             "modifiers": [
                                 "left_control"
                             ]
