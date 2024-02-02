@@ -14,7 +14,6 @@ $packages = @(
     "Synology.DriveClient",
     "Wondershare.Filmora",
     "Doist.Todoist",
-    "TrackerSoftware.PDF-XChangeEditor",
     # get dnssd.dll not found error because of lack of Bonjour
     #"Apple.iTunes",
     # development tools
