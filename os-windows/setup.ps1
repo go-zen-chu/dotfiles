@@ -8,6 +8,7 @@ $packages = @(
     # communication tools
     "Zoom.Zoom",
     "LINE.LINE",
+    "Microsoft.Teams",
     "Mozilla.Thunderbird",
     "SlackTechnologies.Slack",
     # other tools
