@@ -33,7 +33,7 @@ brew install watch # periodical command execution
 brew install tree
 brew install tig
 brew install anyenv
-brwe install node
+brwe install node@20
 # cloud tools
 brew install ansible
 # Automate App-Store installation

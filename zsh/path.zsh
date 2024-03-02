@@ -53,6 +53,11 @@ if [ -d "${HOME}/go" ]; then
   path=($HOME/.anyenv/envs/goenv/shims(N-/) $path)
 fi
 
+# nodejs on ubuntu
+if [ -d "/usr/local/lib/nodejs" ]; then
+  path+=(/usr/local/lib/nodejs/node-v20.11.1-linux-x64/bin(N-/))
+fi
+
 # aqua
 if [[ -d "${HOME}/.local/share/aquaproj-aqua" ]]; then
   path=($HOME/.local/share/aquaproj-aqua/bin(N-/) $path)
