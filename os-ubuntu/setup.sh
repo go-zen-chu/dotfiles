@@ -11,5 +11,8 @@ sudo apt update
 # to enable cgo in golang, gcc is required
 sudo apt install -y gcc
 # development tools
-sudo apt install -y protobuf-compiler ansible
+sudo apt install -y \
+    protobuf-compiler \
+    ansible \
+    nodejs npm
 sudo apt clean
