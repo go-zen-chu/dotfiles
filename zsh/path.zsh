@@ -34,18 +34,6 @@ if type "anyenv" > /dev/null; then
     source <(goenv init -)
     $0 "$@"
   }
-  nodenv() {
-    unfunction "$0"
-    # init anyenv to load xxenv paths
-    anyenv -v
-    source <(nodenv init -)
-    $0 "$@"
-  }
-  node() {
-    unfunction "$0"
-    nodenv versions
-    $0 "$@"
-  }
 fi
 
 # if direnv exists

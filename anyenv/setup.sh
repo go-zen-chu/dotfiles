@@ -14,8 +14,6 @@ if [[ ! -d "${HOME}/.config/anyenv" ]]; then
 	anyenv install --force-init
 	anyenv install pyenv
 	anyenv install goenv
-	anyenv install rbenv
-	anyenv install nodenv
 fi
 
 echo "Finish setup anyenv. run exec $SHELL -l"
