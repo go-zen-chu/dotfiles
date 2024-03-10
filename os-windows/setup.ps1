@@ -20,7 +20,7 @@ $packages = @(
     # development tools
     "Microsoft.VisualStudioCode",
     "Docker.DockerDesktop",
-    "jasperapp.jasper"
+    "PostgreSQL.pgAdmin",
 )
 foreach ($package in $packages) {
     winget install $package -e
