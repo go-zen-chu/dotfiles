@@ -13,7 +13,6 @@ registries:
 packages:
   # terminal tools
   - name: junegunn/fzf@0.46.1
-  - name: charmbracelet/glow@v1.5.1
   - name: mikefarah/yq@v4.42.1
   - name: stedolan/jq@jq-1.7.1
   - name: direnv/direnv@v2.34.0
@@ -29,3 +28,4 @@ packages:
   - name: derailed/k9s@v0.32.3
   - name: kubernetes-sigs/kustomize@kustomize/v5.3.0
   - name: magefile/mage@v1.15.0
+  - name: simonwhitaker/gibo@v3.0.11
