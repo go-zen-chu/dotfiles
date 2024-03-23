@@ -8,18 +8,15 @@ $packages = @(
     # communication tools
     "Zoom.Zoom",
     "LINE.LINE",
-    "Microsoft.Teams",
     "Mozilla.Thunderbird",
     "SlackTechnologies.Slack",
     # other tools
     "Synology.DriveClient",
-    "Wondershare.Filmora",
     "Doist.Todoist",
     # get dnssd.dll not found error because of lack of Bonjour
     #"Apple.iTunes",
     # development tools
     "Microsoft.VisualStudioCode",
-    "Docker.DockerDesktop",
     "PostgreSQL.pgAdmin",
 )
 foreach ($package in $packages) {
