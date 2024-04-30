@@ -21,6 +21,7 @@ alias ll='ls -l'
 alias rmdir='rm -rf'
 alias cpdir='cp -R'
 alias gitlog='git log --graph --color --oneline'
+alias cdgr='cd $(git rev-parse --show-superproject-working-tree --show-toplevel | head -1)'
 alias ecpath="tr ':' '\n' <<< $PATH"
 # ghq
 alias codeghq='code $(ghq list --full-path | fzf)'
