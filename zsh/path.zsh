@@ -61,7 +61,7 @@ fi
 # aqua
 if [[ -d "${HOME}/.local/share/aquaproj-aqua" ]]; then
   path=($HOME/.local/share/aquaproj-aqua/bin(N-/) $path)
-  export AQUA_GLOBAL_CONFIG=${AQUA_GLOBAL_CONFIG:-}:${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml
+  export AQUA_GLOBAL_CONFIG=${XDG_CONFIG_HOME:-$HOME/.config}/aquaproj-aqua/aqua.yaml
 fi
 
 # kubectl krew
