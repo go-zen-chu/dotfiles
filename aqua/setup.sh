@@ -45,3 +45,15 @@ fi
 if hash gh 2>/dev/null; then
     gh config set editor vim
 fi
+
+# direnv configuration
+if hash direnv 2>/dev/null; then
+    direnv_config_path="${XDG_CONFIG_HOME:-$HOME/.config}/direnv"
+    mkdir -p "${direnv_config_path}"
+    if [ ! -f "${direnv_config_path}/direnv.toml" ]; then
+        cat <<EOF >"${direnv_config_path}/direnv.toml"
+[global]
+load_dotenv = true
+EOF
+    fi
+fi
