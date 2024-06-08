@@ -28,3 +28,8 @@ setopt ignore_eof
 setopt interactive_comments
 # share history with other tabs
 setopt share_history
+
+# if direnv exists
+if type "direnv" >/dev/null; then
+    source <(direnv hook zsh)
+fi

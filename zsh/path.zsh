@@ -36,16 +36,6 @@ if type "anyenv" > /dev/null; then
   }
 fi
 
-# if direnv exists
-if type "direnv" > /dev/null; then
-  # lazy load completion things. https://frederic-hemberger.de/notes/shell/speed-up-initial-zsh-startup-with-lazy-loading/
-  direnv() {
-    unfunction "$0"
-    source <(direnv hook zsh)
-    $0 "$@"
-  }
-fi
-
 # golang
 if [ -d "${HOME}/go" ]; then
   path+=(${HOME}/go/bin(N-/)) # append
