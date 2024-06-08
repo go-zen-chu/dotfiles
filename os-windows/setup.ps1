@@ -18,6 +18,7 @@ $packages = @(
     # development tools
     "Microsoft.VisualStudioCode",
     "PostgreSQL.pgAdmin",
+    "Google.CloudSDK",
 )
 foreach ($package in $packages) {
     winget install $package -e
