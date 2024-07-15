@@ -17,6 +17,7 @@ $packages = @(
     #"Apple.iTunes",
     # development tools
     "Microsoft.VisualStudioCode",
+    "tailscale.tailscale",
     "PostgreSQL.pgAdmin",
 )
 foreach ($package in $packages) {
