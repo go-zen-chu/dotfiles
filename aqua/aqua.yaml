@@ -17,15 +17,13 @@ packages:
   - name: stedolan/jq@jq-1.7.1
   - name: direnv/direnv@v2.34.0
   - name: x-motemen/ghq@v1.6.2
-  - name: cli/cli@v2.54.0
   - name: koalaman/shellcheck@v0.10.0
   - name: mvdan/sh@v3.8.0
-  - name: kubernetes/kubectl@v1.30.3
-  - name: kubernetes-sigs/krew@v0.4.4
-  - name: kubernetes-sigs/kind@v0.23.0
   - name: hashicorp/terraform@v1.9.4
   - name: hashicorp/vault@v1.17.3
-  - name: derailed/k9s@v0.32.5
-  - name: kubernetes-sigs/kustomize@kustomize/v5.4.3
   - name: magefile/mage@v1.15.0
   - name: simonwhitaker/gibo@v3.0.12
+  # kubernetes tools
+  - name: kubernetes-sigs/krew@v0.4.4
+  - name: kubernetes-sigs/kind@v0.23.0
+  - name: derailed/k9s@v0.32.5
