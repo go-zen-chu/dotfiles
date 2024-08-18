@@ -55,7 +55,8 @@ fi
 brew install --cask google-chrome
 brew install --cask google-backup-and-sync # used to be google-drive
 brew install --cask google-japanese-ime
-brew install --cask kap
+brew install --cask licecap
+brew install --cask raycast
 # dev
 brew install --cask iterm2
 echo_green "INFO: [iTerm2] set iterm config path to ${HOME}/dotfiles/macos/iterm/com.googlecode.iterm2.plist"
@@ -75,6 +76,6 @@ if [[ "$setup_type" == "personal" ]]; then
 	brew install --cask google-cloud-sdk
 	brew install --cask hex-fiend
 	brew install --cask balenaetcher # os image tool
-	# LINE
-	mas install 539883307
+	mas install 539883307            # LINE
+	mas install 585829637            # Todoist
 fi
