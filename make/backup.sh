@@ -15,12 +15,21 @@ else
 fi
 
 mkdir "${backup_dir_path}"
+# ssh
 cp -R ~/.ssh "${backup_dir_path}"
 if [[ -d "${HOME}/.gnupg" ]]; then
 	cp -R ~/.gnupg "${backup_dir_path}"
 fi
 # general config files
-cp -R ~/.config "${backup_dir_path}"
+if [[ -d "${HOME}/.config" ]]; then
+	cp -R ~/.config "${backup_dir_path}"
+fi
 # zsh
 cp ~/local.zsh "${backup_dir_path}"
 cp ~/.zsh_history "${backup_dir_path}"
+
+# atuin
+if [[ -d "${HOME}/.local/share/atuin" ]]; then
+	mkdir -p "${backup_dir_path}/.local/share/"
+	cp -R ~/.local/share/atuin "${backup_dir_path}"
+fi
