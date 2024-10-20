@@ -2,7 +2,7 @@
     "title": "XPPen Ack05 向けキーカスタマイズ",
     "rules": [
         {
-            "description": "XPPen Ack05 だけキーを left_control + F11-F20 に remap する。アプリケーションでショートカットキーを調整する",
+            "description": "XPPen Ack05 だけキーを left_control + left_shift + 1-9,0 に remap する。アプリケーションでショートカットキーを調整する",
             "manipulators": [
                 {
                     "description": "K1",
@@ -24,7 +24,7 @@
                                 "key_code": "o"
                             },
                             {
-                                "key_ßcode": "left_control"
+                                "key_code": "left_control"
                             }
                         ],
                         "modifiers": {
@@ -35,9 +35,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f11",
+                            "key_code": "1",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -73,9 +74,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f12",
+                            "key_code": "2",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -104,9 +106,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f13",
+                            "key_code": "3",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -135,15 +138,16 @@
                     },
                     "to": [
                         {
-                            "key_code": "f14",
+                            "key_code": "4",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
                 },
                 {
-                    "description": "K5 (TBD. It will break other mapping)",
+                    "description": "K5 (TBD. It will break K7)",
                     "type": "basic",
                     "conditions": [
                         {
@@ -163,7 +167,14 @@
                                 "any"
                             ]
                         }
-                    }
+                    },
+                    "to": [
+                        {
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ]
                 },
                 {
                     "description": "K6",
@@ -189,9 +200,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f16",
+                            "key_code": "6",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -214,9 +226,6 @@
                         "simultaneous": [
                             {
                                 "key_code": "s"
-                            },
-                            {
-                                "key_code": "left_control"
                             }
                         ],
                         "modifiers": {
@@ -227,9 +236,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f17",
+                            "key_code": "7",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -252,9 +262,6 @@
                         "simultaneous": [
                             {
                                 "key_code": "z"
-                            },
-                            {
-                                "key_code": "left_control"
                             }
                         ],
                         "modifiers": {
@@ -265,9 +272,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f18",
+                            "key_code": "8",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -296,9 +304,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f19",
+                            "key_code": "9",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
@@ -337,9 +346,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "f20",
+                            "key_code": "0",
                             "modifiers": [
-                                "left_control"
+                                "left_control",
+                                "left_shift"
                             ]
                         }
                     ]
