@@ -57,6 +57,7 @@ brew install --cask google-backup-and-sync # used to be google-drive
 brew install --cask google-japanese-ime
 brew install --cask licecap
 brew install --cask raycast
+brew install --cask hiddenbar
 # dev
 brew install --cask iterm2
 echo_green "INFO: [iTerm2] set iterm config path to ${HOME}/dotfiles/macos/iterm/com.googlecode.iterm2.plist"

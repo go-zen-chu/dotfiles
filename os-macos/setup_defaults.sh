@@ -60,6 +60,10 @@ defaults write com.apple.dock showAppExposeGestureEnabled -bool true
 defaults write com.apple.dock showDesktopGestureEnabled -bool true
 defaults write com.apple.dock showLaunchpadGestureEnabled -bool true
 
+#========================== Menu bar Settings ==========================
+defaults -currentHost write -globalDomain NSStatusItemSpacing -int 6
+defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 6
+
 #========================== Dock and Finder Settings ==========================
 # show hidden files in finder
 defaults write com.apple.finder AppleShowAllFiles YES
