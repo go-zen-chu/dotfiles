@@ -2,7 +2,9 @@ Write-Host "Setup for Windows..." -ForegroundColor Cyan
 $packages = @(  
     # install basic tools
     "Google.Drive",
+    # input system
     "Google.JapaneseIME",
+    "AutoHotkey.AutoHotkey",
     "Microsoft.PowerToys",
     # communication tools
     "Zoom.Zoom",
