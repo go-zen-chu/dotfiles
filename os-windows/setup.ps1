@@ -2,6 +2,7 @@ Write-Host "Setup for Windows..." -ForegroundColor Cyan
 $packages = @(  
     # install basic tools
     "Google.Drive",
+    "Amazon.Kindle",
     # input system
     "Google.JapaneseIME",
     "AutoHotkey.AutoHotkey",
