@@ -14,6 +14,7 @@ if [ -d "${HOME}/go" ]; then
   path+=(${HOME}/go/bin(N-/)) # append
   # path to goenv inside anyenv
   path=($HOME/.anyenv/envs/goenv/shims(N-/) $path)
+  path=($(go env GOPATH)/bin(N-/) $path)
 fi
 
 # nodejs on ubuntu
