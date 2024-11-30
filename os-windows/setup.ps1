@@ -19,6 +19,7 @@ $packages = @(
     # development tools
     "Microsoft.VisualStudioCode",
     "tailscale.tailscale",
+    "Unity.UnityHub",
     "PostgreSQL.pgAdmin"
 )
 foreach ($package in $packages) {
