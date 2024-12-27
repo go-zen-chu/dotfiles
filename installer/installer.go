@@ -44,15 +44,11 @@ func NewDotfilesInstaller(req DotfilesInstallerRequirements) DotfilesInstaller {
 }
 
 func (d *dotfilesInstaller) Startup() (string, error) {
-	d.printer.Emphasize("[welcome to dotfiles installer, let's start setup]")
+	d.ShowWelcomeMessage()
 
-	d.printer.Info("Checking OS...")
-	os, err := ios.GetOS()
-	if err != nil {
-		return "", fmt.Errorf("while checking OS info: %w", err)
+	if err := d.CheckOS(); err != nil {
+		return "", fmt.Errorf("while checking os: %w", err)
 	}
-	d.os = os
-	d.printer.Info("OS: %s", os)
 
 	d.printer.Info("Choose command to execute: [%s]\n> ", strings.Join(commandList, ", "))
 	input, err := d.stdinReader.ReadString('\n')
@@ -67,6 +63,21 @@ func (d *dotfilesInstaller) Startup() (string, error) {
 		return "", fmt.Errorf("invalid command: %s (avilable commands: [%s])", input, strings.Join(commandList, ", "))
 	}
 	return input, nil
+}
+
+func (d *dotfilesInstaller) ShowWelcomeMessage() {
+	d.printer.Emphasize("[welcome to dotfiles installer, let's start setup]")
+}
+
+func (d *dotfilesInstaller) CheckOS() error {
+	d.printer.Info("Checking OS...")
+	os, err := ios.GetOS()
+	if err != nil {
+		return fmt.Errorf("get OS: %w", err)
+	}
+	d.os = os
+	d.printer.Info("OS: %s", os)
+	return nil
 }
 
 func (d *dotfilesInstaller) Install(cmd string) error {
