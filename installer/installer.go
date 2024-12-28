@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"slices"
 	"strings"
 	"time"
@@ -11,7 +12,6 @@ import (
 	ios "github.com/go-zen-chu/dotfiles/installer/os"
 
 	"github.com/go-zen-chu/dotfiles/internal/printer"
-	// gbt "github.com/go-zen-chu/go-build-tools"
 )
 
 var (
@@ -83,7 +83,47 @@ func (d *dotfilesInstaller) CheckOS() error {
 func (d *dotfilesInstaller) Install(cmd string) error {
 	d.printer.Emphasize("Installing dotfiles")
 
+	// setup package manager and install tools
+	err := d.SetupPackageManager()
+	if err != nil {
+		return fmt.Errorf("setup package manager: %w", err)
+	}
+	// install and setup git
+	// install and setup zsh
+	// install and setup tmux
+	// install and setup vim
+	// install and setup anyenv
+	// install and setup golang
+
 	// gbt.RunLongRunningCmdWithLog()
+	d.WaitUserInput()
+	return nil
+}
+
+const (
+	installHomebrewCommand = "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+)
+
+func (d *dotfilesInstaller) SetupPackageManager() error {
+	switch d.os {
+	case "darwin":
+	case "ubuntu":
+		// stdout, stderr, err := gbt.RunLongRunningCmdWithLog(installHomebrewCommand)
+		// if err != nil {
+		// 	return fmt.Errorf("fail install homebrew stdout: %s, stderr: %s, error: %w", stdout, stderr, err)
+		// }
+		// d.printer.Stdout(stdout)
+		// d.printer.Stderr(stderr)
+		cmd1 := exec.Command("/bin/bash", "-c", "\"#!/bin/bash\necho hello\"")
+		out, err := cmd1.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("fail install homebrew stdout/err: %s, error: %w", out, err)
+		}
+		d.printer.Stdout(string(out))
+	case "windows":
+		d.printer.Info("no setup for windows")
+	}
+	d.printer.Info("setup package manager done")
 	return nil
 }
 
