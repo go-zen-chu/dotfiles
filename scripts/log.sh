@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 LOG_LEVEL_ERROR=0
 LOG_LEVEL_WARN=1
 LOG_LEVEL_INFO=2
@@ -39,6 +41,16 @@ log() {
         *) echo "[$timestamp](invalid level) $message" >&2 ;;
         esac
     fi
+}
+
+get_log_level() {
+    case $1 in
+    "$LOG_LEVEL_ERROR") echo "error" ;;
+    "$LOG_LEVEL_WARN") echo "warn" ;;
+    "$LOG_LEVEL_INFO") echo "info" ;;
+    "$LOG_LEVEL_DEBUG") echo "debug" ;;
+    *) echo "unknown" ;;
+    esac
 }
 
 echo_green() {

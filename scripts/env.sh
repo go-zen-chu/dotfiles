@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 check_os() {
     local os
     os=$(uname -s)
@@ -28,4 +30,12 @@ check_cpu_arch() {
 
 check_current_user() {
     whoami
+}
+
+check_ci() {
+    if [[ -n "${CI-}" ]]; then
+        echo "true"
+    else
+        echo "false"
+    fi
 }

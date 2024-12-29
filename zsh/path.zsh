@@ -3,9 +3,11 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 
 # add path if exists (N-)
 path=(/usr/local/bin(N-/) $path)
-# for Apple Silicon homebrew
-path=(/opt/homebrew/sbin(N-/) $path)
-path=(/opt/homebrew/bin(N-/) $path)
+# homebrew
+path=(/opt/homebrew/bin(N-/) $path) # for Apple Silicon
+path=(/opt/homebrew/sbin(N-/) $path) # for Apple Silicon
+path=(/home/linuxbrew/.linuxbrew/bin(N-/) $path) # for linux
+path=(/home/linuxbrew/.linuxbrew/sbin(N-/) $path) # for linux
 
 path=($HOME/.anyenv/bin(N-/) $path)
 
