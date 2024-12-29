@@ -79,11 +79,11 @@ setup_package_manager() {
 }
 
 brew_install() {
-    if ! hash "$1" 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] $1 not installed. Installing..."
+    if [ ! -f "$homebrew_bin_path/$1" ] 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[ ] $1 not installed (homebrew). Installing..."
         brew install "$1"
     else
-        log "$LOG_LEVEL_INFO" "[✓] $1 installed"
+        log "$LOG_LEVEL_INFO" "[✓] $1 installed (homebrew)"
     fi
 }
 
