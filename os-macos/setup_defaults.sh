@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 
-source ./make/util.sh
-echo_green "[INFO] Setup macOS defaults"
-
 # screenshot setting
 defaults write com.apple.screencapture name "screenshot"
 # disable system ui sound (includes screenshot sound)

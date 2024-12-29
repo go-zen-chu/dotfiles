@@ -59,6 +59,17 @@ check_env() {
     echo "Log level  : $(get_log_level "$log_level")"
 }
 
+macos_check_developer_tool() {
+    echo_blue "Checking developer tools..."
+
+    if ! xcode-select -p; then
+        log "$LOG_LEVEL_INFO" "[ ] developer tool not installed. Installing..."
+        xcode-select --install
+    else
+        log "$LOG_LEVEL_INFO" "[✓] developer tool is already installed"
+    fi
+}
+
 setup_package_manager() {
     echo_blue "Setup package manager..."
 
@@ -182,6 +193,9 @@ startup "$@" # parse arguments givent to this script
 
 case "${os}" in
 "macos")
+    macos_check_developer_tool
+    source ./os-macos/setup_defaults.sh
+
     homebrew_bin_path="/opt/homebrew/bin"
     setup_package_manager
     setup_basic_tools macos_setup_basic_tools
