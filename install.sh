@@ -119,6 +119,7 @@ setup_basic_tools() {
 
     # kubernetes tools
     brew_install kubectl
+    brew_install kustomize
     brew_install krew
     brew_install k9s
 
