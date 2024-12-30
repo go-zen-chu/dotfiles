@@ -21,12 +21,20 @@ macos_setup_basic_tools() {
     brew install --cask appcleaner
     brew install --cask microsoft-edge
     brew install --cask hiddenbar
-    brew install --cask karabiner-elements
     brew install --cask licecap
     brew install --cask raycast
+    setup_karabiner
     # development tools
     brew install --cask visual-studio-code
     brew install --cask wireshark
+}
+
+setup_karabiner() {
+    brew install --cask karabiner-elements
+    if [[ -n ${config_dir} && ! -d "${config_dir}/karabiner" ]]; then
+        mkdir -p "${config_dir}"
+        cp -R ./os-macos/karabiner "${config_dir}"
+    fi
 }
 
 macos_setup_personal_machine_tools() {

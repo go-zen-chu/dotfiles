@@ -12,6 +12,7 @@ flg_personal_mode="false"
 log_level=$LOG_LEVEL_INFO
 os=""
 home_dir="${HOME}"
+config_dir="${home_dir}/.config"
 is_ci="false"
 
 homebrew_bin_path="/opt/homebrew/bin"
@@ -58,6 +59,7 @@ check_env() {
     echo "CPU        : $(check_cpu_arch)"
     echo "User       : $(check_current_user)"
     echo "HOME       : ${home_dir}"
+    echo "Config Dir : ${config_dir}"
     echo "Is CI      : $(check_ci)"
     echo "Log level  : $(get_log_level "$log_level")"
 }
@@ -95,9 +97,9 @@ setup_basic_tools() {
 
     # git related
     setup_git
+    setup_gh
     brew_install gibo
     brew_install ghq
-    brew_install gh
 
     # terminal tools
     brew_install openssl
@@ -107,10 +109,10 @@ setup_basic_tools() {
     brew_install jq
     brew_install yq
     brew_install tree
-    brew_install direnv
     brew_install shellcheck
     brew_install terraform
     brew_install ansible
+    setup_direnv
 
     # golang related tools
     brew_install mage
@@ -123,8 +125,8 @@ setup_basic_tools() {
     # kubernetes tools
     brew_install kubectl
     brew_install kustomize
-    brew_install krew
     brew_install k9s
+    setup_krew
 
     if [ $# -eq 1 ]; then
         local -n setup_os_specific_func=$1
@@ -136,9 +138,48 @@ setup_git() {
     echo_blue "Setup git..."
 
     brew_install git
-    git config --global core.excludesfile "${HOME}/dotfiles/git/global-ignore"
+    git config --global core.excludesfile "${home_dir}/dotfiles/git/global-ignore"
     git config --global push.default current
     git config --global pull.rebase false
+}
+
+setup_gh() {
+    echo_blue "Setup gh..."
+
+    brew_install gh
+    gh config set editor vim
+}
+
+setup_direnv() {
+    echo_blue "Setup direnv..."
+
+    brew_install direnv
+
+    local direnv_config_path="${config_dir}/direnv"
+    mkdir -p "${direnv_config_path}"
+    if [ ! -f "${direnv_config_path}/direnv.toml" ]; then
+        cat <<EOF >"${direnv_config_path}/direnv.toml"
+[global]
+load_dotenv = true
+EOF
+    fi
+}
+
+setup_krew() {
+    echo_blue "Setup krew..."
+
+    brew_install krew
+    export PATH="${home_dir}/.krew/bin:$PATH"
+    kubectl krew update
+    kubectl krew install ctx \
+        ns \
+        access-matrix \
+        tree \
+        neat \
+        resource-capacity \
+        view-allocations \
+        iexec \
+        stern
 }
 
 setup_personal_machine_tools() {
