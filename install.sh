@@ -4,12 +4,14 @@ set -eu
 
 source ./scripts/log.sh
 source ./scripts/env.sh
+source ./os-macos/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
 
 log_level=$LOG_LEVEL_INFO
 os=""
+home_dir="${HOME}"
 is_ci="false"
 
 homebrew_bin_path="/opt/homebrew/bin"
@@ -55,19 +57,9 @@ check_env() {
     echo "OS         : ${os}"
     echo "CPU        : $(check_cpu_arch)"
     echo "User       : $(check_current_user)"
+    echo "HOME       : ${home_dir}"
     echo "Is CI      : $(check_ci)"
     echo "Log level  : $(get_log_level "$log_level")"
-}
-
-macos_check_developer_tool() {
-    echo_blue "Checking developer tools..."
-
-    if ! xcode-select -p; then
-        log "$LOG_LEVEL_INFO" "[ ] developer tool not installed. Installing..."
-        xcode-select --install
-    else
-        log "$LOG_LEVEL_INFO" "[✓] developer tool is already installed"
-    fi
 }
 
 setup_package_manager() {
@@ -102,7 +94,7 @@ setup_basic_tools() {
     echo_blue "Setup basic tools..."
 
     # git related
-    brew_install git
+    setup_git
     brew_install gibo
     brew_install ghq
     brew_install gh
@@ -140,20 +132,13 @@ setup_basic_tools() {
     fi
 }
 
-macos_setup_basic_tools() {
-    echo_blue "Setup macos specific tools..."
+setup_git() {
+    echo_blue "Setup git..."
 
-    brew_install watch
-    brew install --cask mas # tool that install app from app store
-    brew install --cask appcleaner
-    brew install --cask microsoft-edge
-    brew install --cask hiddenbar
-    brew install --cask karabiner-elements
-    brew install --cask licecap
-    brew install --cask raycast
-    # development tools
-    brew install --cask visual-studio-code
-    brew install --cask wireshark
+    brew_install git
+    git config --global core.excludesfile "${HOME}/dotfiles/git/global-ignore"
+    git config --global push.default current
+    git config --global pull.rebase false
 }
 
 setup_personal_machine_tools() {
@@ -172,18 +157,6 @@ setup_personal_machine_tools() {
     fi
 }
 
-macos_setup_personal_machine_tools() {
-    echo_blue "Setup macos personal machine tools..."
-
-    brew install --cask slack
-    brew install --cask zoomus
-    mas install 539883307 # LINE
-    # development tools
-    brew install --cask google-cloud-sdk
-    brew install --cask hex-fiend
-    brew install --cask balenaetcher
-}
-
 setup_zsh() {
     echo_blue "Setup zsh..."
 
@@ -194,7 +167,7 @@ startup "$@" # parse arguments givent to this script
 case "${os}" in
 "macos")
     macos_check_developer_tool
-    source ./os-macos/setup_defaults.sh
+    macos_setup_defaults
 
     homebrew_bin_path="/opt/homebrew/bin"
     setup_package_manager
