@@ -59,13 +59,14 @@ check_env() {
     echo_blue "Checking environment..."
 
     os=$(check_os)
+    is_ci=$(check_ci)
     echo "OS            : ${os}"
     echo "CPU           : $(check_cpu_arch)"
     echo "Bash Version  : ${BASH_VERSION}"
     echo "User          : $(check_current_user)"
     echo "HOME          : ${home_dir}"
     echo "Config Dir    : ${config_dir}"
-    echo "Is CI         : $(check_ci)"
+    echo "Is CI         : ${is_ci}"
     echo "Log level     : $(get_log_level "$log_level")"
 }
 
@@ -149,6 +150,8 @@ setup_git() {
     echo_blue "Setup git..."
 
     brew_install git
+    # in first install global config is not created
+    touch "${home_dir}/.gitconfig"
 
     local git_config_global_result
     git_config_global_result="$(git config --global --list)"

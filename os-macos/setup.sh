@@ -17,7 +17,7 @@ macos_setup_basic_tools() {
     echo_blue "Setup macos specific tools..."
 
     brew_install watch
-    brew install --cask mas # tool that install app from app store
+    brew_install mas # tool that install app from app store
     brew install --cask appcleaner
     brew install --cask microsoft-edge
     brew install --cask hiddenbar
