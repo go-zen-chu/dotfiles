@@ -16,17 +16,19 @@ macos_check_developer_tool() {
 macos_setup_basic_tools() {
     echo_blue "Setup macos specific tools..."
 
-    brew_install watch
-    brew_install mas # tool that install app from app store
-    brew install --cask appcleaner
-    brew install --cask microsoft-edge
-    brew install --cask hiddenbar
-    brew install --cask licecap
-    brew install --cask raycast
     setup_karabiner
-    # development tools
-    brew install --cask visual-studio-code
-    brew install --cask wireshark
+    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
+    if [ "${is_ci}" = "false" ]; then
+        brew_install watch
+        brew install --cask appcleaner
+        brew install --cask microsoft-edge
+        brew install --cask hiddenbar
+        brew install --cask licecap
+        brew install --cask raycast
+        # development tools
+        brew install --cask visual-studio-code
+        brew install --cask wireshark
+    fi
 }
 
 setup_karabiner() {
@@ -40,13 +42,18 @@ setup_karabiner() {
 macos_setup_personal_machine_tools() {
     echo_blue "Setup macos personal machine tools..."
 
-    brew install --cask slack
-    brew install --cask zoomus
+    brew_install mas      # tool that install app from app store
     mas install 539883307 # LINE
-    # development tools
-    brew install --cask google-cloud-sdk
-    brew install --cask hex-fiend
-    brew install --cask balenaetcher
+
+    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
+    if [ "${is_ci}" = "false" ]; then
+        brew install --cask slack
+        brew install --cask zoomus
+        # development tools
+        brew install --cask google-cloud-sdk
+        brew install --cask hex-fiend
+        brew install --cask balenaetcher
+    fi
 }
 
 macos_setup_defaults() {

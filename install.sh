@@ -243,7 +243,7 @@ setup_personal_machine_tools() {
     brew_install sass/sass/sass
 
     if [ $# -eq 1 ]; then
-        local -n setup_os_specific_func=$1
+        local setup_os_specific_func=$1
         $setup_os_specific_func
     fi
 }
@@ -338,3 +338,4 @@ case "${os}" in
 esac
 
 echo_green "setup finished successfully!"
+log "$LOG_LEVEL_INFO" "done"
