@@ -5,9 +5,7 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 path=(/usr/local/bin(N-/) $path)
 # homebrew
 path=(/opt/homebrew/bin(N-/) $path) # for Apple Silicon
-path=(/opt/homebrew/sbin(N-/) $path) # for Apple Silicon
 path=(/home/linuxbrew/.linuxbrew/bin(N-/) $path) # for linux
-path=(/home/linuxbrew/.linuxbrew/sbin(N-/) $path) # for linux
 
 path=($HOME/.anyenv/bin(N-/) $path)
 
@@ -19,15 +17,13 @@ if [ -d "${HOME}/go" ]; then
   path=($(go env GOPATH)/bin(N-/) $path)
 fi
 
-# nodejs on ubuntu
-if [ -d "/usr/local/lib/nodejs" ]; then
-  path+=(/usr/local/lib/nodejs/node-v20.11.1-linux-x64/bin(N-/))
+# nodejs installed by homebrew
+if [ -d "$(brew --prefix node@22)" ]; then
+  path+=($(brew --prefix node@22)/bin(N-/) $path)
 fi
-
-# aqua
-if [[ -d "${HOME}/.local/share/aquaproj-aqua" ]]; then
-  path=($HOME/.local/share/aquaproj-aqua/bin(N-/) $path)
-  export AQUA_GLOBAL_CONFIG=${HOME}/dotfiles/aqua/aqua.yaml
+if hash pnpm 2>/dev/null; then
+  export PNPM_HOME="${HOME}/.local/share/pnpm"
+  path+=($PNPM_HOME $path)
 fi
 
 # kubectl krew

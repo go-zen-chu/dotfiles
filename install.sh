@@ -8,29 +8,29 @@ source ./os-macos/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
+arg_git_email=""
 
 log_level=$LOG_LEVEL_INFO
 os=""
 home_dir="${HOME}"
 config_dir="${home_dir}/.config"
 is_ci="false"
+homebrew_bin_path="/undefined"
 
-homebrew_bin_path="/opt/homebrew/bin"
+### setup methods
 
 startup() {
     log "$LOG_LEVEL_INFO" "Start dotfile install script"
     cmdname=$(basename "$0")
 
     local OPTIND
-    while getopts "vp" opt; do
+    while getopts "vpe:" opt; do
         case $opt in
+        "e") arg_git_email="$OPTARG" ;;
         "v") flg_verbose="true" ;;
-        "p")
-            flg_personal_mode="true"
-            echo "flag personal"
-            ;;
+        "p") flg_personal_mode="true" ;;
         *)
-            echo "Usage: $cmdname [-v (verbose)] [-p (personal mode)]" 1>&2
+            echo "Usage: $cmdname [-e (git email)] [-v (verbose)] [-p (personal mode)]" 1>&2
             exit 0
             ;;
         esac
@@ -42,6 +42,10 @@ startup() {
         log_level=$LOG_LEVEL_INFO
     fi
     init_log "$log_level"
+
+    if [ -z "$arg_git_email" ]; then
+        log "$LOG_LEVEL_ERROR" "-e option (git email) is required"
+    fi
 
     check_env
 
@@ -84,12 +88,15 @@ setup_package_manager() {
 }
 
 brew_install() {
-    if [ ! -f "$homebrew_bin_path/$1" ] 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] $1 not installed (homebrew). Installing..."
-        brew install "$1"
-    else
-        log "$LOG_LEVEL_INFO" "[✓] $1 installed (homebrew)"
+    if [ -f "${homebrew_bin_path}/$1" ]; then
+        log "$LOG_LEVEL_INFO" "[✓] $1 installed (path: ${homebrew_bin_path}/$1)"
+        return
+    elif [ -d "$(brew --prefix "$1")" ] 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] $1 installed (path: $(brew --prefix "$1"))"
+        return
     fi
+    log "$LOG_LEVEL_INFO" "[ ] $1 not installed (homebrew). Installing..."
+    brew install "$1"
 }
 
 setup_basic_tools() {
@@ -120,7 +127,7 @@ setup_basic_tools() {
 
     # language tools
     brew_install anyenv
-    brew_install node@22
+    setup_node
 
     # kubernetes tools
     brew_install kubectl
@@ -138,9 +145,17 @@ setup_git() {
     echo_blue "Setup git..."
 
     brew_install git
-    git config --global core.excludesfile "${home_dir}/dotfiles/git/global-ignore"
-    git config --global push.default current
-    git config --global pull.rebase false
+
+    local git_config_global_result
+    git_config_global_result="$(git config --global --list)"
+
+    if [ -z "${git_config_global_result}" ]; then
+        git config --global user.name "Akira Masuda"
+        git config --global user.email "${arg_git_email}"
+        git config --global core.excludesfile "${home_dir}/dotfiles/git/global-ignore"
+        git config --global push.default current
+        git config --global pull.rebase false
+    fi
 }
 
 setup_gh() {
@@ -155,7 +170,8 @@ setup_direnv() {
 
     brew_install direnv
 
-    local direnv_config_path="${config_dir}/direnv"
+    local direnv_config_path
+    direnv_config_path="${config_dir}/direnv"
     mkdir -p "${direnv_config_path}"
     if [ ! -f "${direnv_config_path}/direnv.toml" ]; then
         cat <<EOF >"${direnv_config_path}/direnv.toml"
@@ -165,10 +181,37 @@ EOF
     fi
 }
 
+setup_anyenv() {
+    echo_blue "Setup anyenv..."
+
+    brew_install anyenv
+    anyenv init
+    anyenv install --force-init
+    anyenv install pyenv
+    anyenv install goenv
+}
+
+setup_node() {
+    echo_blue "Setup node..."
+
+    brew_install "node@22"
+    local node_path
+    node_path="$(brew --prefix node@22)/bin"
+    export PATH="${node_path}:$PATH"
+
+    npm install -g pnpm
+    npm install -g typescript
+    npm install -g bash-language-server
+}
+
 setup_krew() {
     echo_blue "Setup krew..."
 
     brew_install krew
+
+    # local krew_path
+    # krew_path="$(brew --prefix krew)/bin"
+    # export PATH="${home_dir}/.krew/bin:${krew_path}:$PATH"
     export PATH="${home_dir}/.krew/bin:$PATH"
     kubectl krew update
     kubectl krew install ctx \
@@ -201,9 +244,67 @@ setup_personal_machine_tools() {
 setup_zsh() {
     echo_blue "Setup zsh..."
 
+    # make sure install zsh plugins
+    git submodule update --init --recursive
+    brew_install zsh
+    local zsh_path="${homebrew_bin_path}/zsh"
+
+    # change default shell
+    if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
+        echo "${zsh_path}" | sudo tee -a /etc/shells
+        chsh -s "${zsh_path}"
+    fi
+
+    # configure
+    if [ -f "${home_dir}/local.zsh" ]; then
+        cp ./zsh/local.zsh "${home_dir}"
+    fi
+    local local_zshrc_path="${home_dir}/.zshrc"
+    if [ -f "${local_zshrc_path}" ] && ! diff "${local_zshrc_path}" ./zsh/local.zsh >/dev/null 2>&1; then
+        cp "${local_zshrc_path}" "${local_zshrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
+    fi
+    cp -f ./zsh/.zshrc "${home_dir}"
 }
 
-startup "$@" # parse arguments givent to this script
+setup_vim() {
+    echo_blue "Setup vim..."
+
+    brew_install vim
+    local vimrc_path="${home_dir}/.vimrc"
+
+    # configure
+    if [ ! -d "${home_dir}/.vim" ]; then
+        # make and copy all things inside .vim
+        cp -r ./vim/.vim "${home_dir}"
+    fi
+    if [ -f "${vimrc_path}" ] && ! diff "${vimrc_path}" ./vim/.vimrc >/dev/null 2>&1; then
+        cp "${vimrc_path}" "${vimrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
+    fi
+    cp -f ./vim/.vimrc "${home_dir}"
+}
+
+setup_tmux() {
+    echo_blue "Setup tmux..."
+
+    brew_install tmux
+
+    # configure
+    local tmux_conf_path="${home_dir}/.tmux.conf"
+    if [ -f "${tmux_conf_path}" ] && ! diff "${tmux_conf_path}" ./tmux/.tmux.conf >/dev/null 2>&1; then
+        cp "${tmux_conf_path}" "${tmux_conf_path}.$(date '+%Y%m%d-%H%M%S').bk"
+    fi
+    cp -f ./tmux/.tmux.conf "${home_dir}"
+
+    if [ ! -d "${home_dir}/.tmux/plugins/tpm" ]; then
+        git clone https://github.com/tmux-plugins/tpm "${home_dir}/.tmux/plugins/tpm"
+    fi
+
+    echo_green "[IMPORTANT] Make sure to run ctrl+b ctrl+I for installing tmux plugins"
+}
+
+### install
+
+startup "$@" # parse arguments given to this script
 
 case "${os}" in
 "macos")
@@ -214,11 +315,19 @@ case "${os}" in
     setup_package_manager
     setup_basic_tools macos_setup_basic_tools
     setup_personal_machine_tools macos_setup_personal_machine_tools
+    setup_zsh
+    setup_vim
+    setup_tmux
     ;;
 "ubuntu")
     homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin"
     setup_package_manager
     setup_basic_tools
     setup_personal_machine_tools
+    setup_zsh
+    setup_vim
+    setup_tmux
     ;;
 esac
+
+echo_green "setup finished successfully!"
