@@ -59,13 +59,14 @@ check_env() {
     echo_blue "Checking environment..."
 
     os=$(check_os)
-    echo "OS         : ${os}"
-    echo "CPU        : $(check_cpu_arch)"
-    echo "User       : $(check_current_user)"
-    echo "HOME       : ${home_dir}"
-    echo "Config Dir : ${config_dir}"
-    echo "Is CI      : $(check_ci)"
-    echo "Log level  : $(get_log_level "$log_level")"
+    echo "OS            : ${os}"
+    echo "CPU           : $(check_cpu_arch)"
+    echo "Bash Version  : ${BASH_VERSION}"
+    echo "User          : $(check_current_user)"
+    echo "HOME          : ${home_dir}"
+    echo "Config Dir    : ${config_dir}"
+    echo "Is CI         : $(check_ci)"
+    echo "Log level     : $(get_log_level "$log_level")"
 }
 
 setup_package_manager() {
@@ -102,41 +103,44 @@ brew_install() {
 setup_basic_tools() {
     echo_blue "Setup basic tools..."
 
-    # git related
     setup_git
-    setup_gh
-    brew_install gibo
-    brew_install ghq
 
-    # terminal tools
-    brew_install openssl
-    brew_install wget
-    brew_install rsync
-    brew_install fzf
-    brew_install jq
-    brew_install yq
-    brew_install tree
-    brew_install shellcheck
-    brew_install terraform
-    brew_install ansible
-    setup_direnv
+    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
+    if [ "${is_ci}" = "false" ]; then
+        setup_gh
+        brew_install gibo
+        brew_install ghq
 
-    # golang related tools
-    brew_install mage
-    brew_install golangci-lint
+        # terminal tools
+        brew_install openssl
+        brew_install wget
+        brew_install rsync
+        brew_install fzf
+        brew_install jq
+        brew_install yq
+        brew_install tree
+        brew_install shellcheck
+        brew_install terraform
+        brew_install ansible
+        setup_direnv
 
-    # language tools
-    brew_install anyenv
-    setup_node
+        # golang related tools
+        brew_install mage
+        brew_install golangci-lint
 
-    # kubernetes tools
-    brew_install kubectl
-    brew_install kustomize
-    brew_install k9s
-    setup_krew
+        # language tools
+        brew_install anyenv
+        setup_node
+
+        # kubernetes tools
+        brew_install kubectl
+        brew_install kustomize
+        brew_install k9s
+        setup_krew
+    fi
 
     if [ $# -eq 1 ]; then
-        local -n setup_os_specific_func=$1
+        local setup_os_specific_func=$1
         $setup_os_specific_func
     fi
 }
