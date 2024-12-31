@@ -99,6 +99,7 @@ brew_install() {
     fi
     log "$LOG_LEVEL_INFO" "[ ] $1 not installed (homebrew). Installing..."
     brew install "$1"
+    log "$LOG_LEVEL_INFO" "[✓] $1 install finished"
 }
 
 setup_basic_tools() {
