@@ -42,12 +42,13 @@ setup_karabiner() {
 macos_setup_personal_machine_tools() {
     echo_blue "Setup macos personal machine tools..."
 
-    brew_install mas # tool that install app from app store
-    mas version
-    mas install 539883307 # LINE
-
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
+        brew_install mas # tool that install app from app store
+        # you cannot run mas install on CI because you need to be once installed in AppStore
+        # https://github.com/mas-cli/mas?tab=readme-ov-file#mas-install
+        mas install 539883307 # LINE
+
         brew install --cask slack
         brew install --cask zoomus
         # development tools
