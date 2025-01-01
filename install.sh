@@ -240,8 +240,10 @@ setup_personal_machine_tools() {
     fi
     echo_blue "Setup personal machine tools..."
 
-    brew_install hugo
-    brew_install sass/sass/sass
+    if [ "${is_ci}" = "false" ]; then
+        brew_install hugo
+        brew_install sass/sass/sass
+    fi
 
     if [ $# -eq 1 ]; then
         local setup_os_specific_func=$1
