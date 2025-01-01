@@ -42,7 +42,8 @@ setup_karabiner() {
 macos_setup_personal_machine_tools() {
     echo_blue "Setup macos personal machine tools..."
 
-    brew_install mas      # tool that install app from app store
+    brew_install mas # tool that install app from app store
+    mas version
     mas install 539883307 # LINE
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
