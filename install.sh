@@ -93,16 +93,18 @@ setup_package_manager() {
 }
 
 brew_install() {
-    if [ -f "${homebrew_bin_path}/$1" ]; then
-        log "$LOG_LEVEL_INFO" "[✓] $1 installed (path: ${homebrew_bin_path}/$1)"
+    local tool_name
+    tool_name=$1
+    if [ -f "${homebrew_bin_path}/${tool_name}" ]; then
+        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: ${homebrew_bin_path}/${tool_name})"
         return
-    elif [ -d "$(brew --prefix "$1")" ] 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] $1 installed (path: $(brew --prefix "$1"))"
+    elif [ -d "$(brew --prefix "${tool_name}")" ] 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: $(brew --prefix "${tool_name}"))"
         return
     fi
-    log "$LOG_LEVEL_INFO" "[ ] $1 not installed (homebrew). Installing..."
-    brew install "$1"
-    log "$LOG_LEVEL_INFO" "[✓] $1 install finished"
+    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed (homebrew). Installing..."
+    brew install "${tool_name}"
+    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
 }
 
 setup_basic_tools() {
@@ -197,6 +199,7 @@ setup_anyenv() {
 
     brew_install anyenv
 
+    log "$LOG_LEVEL_INFO" "anyenv initializing..."
     # anyenv init finishes exit 1 somehow..
     set +e
     anyenv init
@@ -214,17 +217,50 @@ setup_anyenv() {
     log "$LOG_LEVEL_INFO" "eval anyenv init..."
     eval "$(anyenv init -)"
 
-    log "$LOG_LEVEL_INFO" "Update pyenv and goenv..."
     cd "${home_dir}/.anyenv/envs/pyenv/plugins/python-build/../.." && git pull && cd -
     cd "${home_dir}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
 
+    log "$LOG_LEVEL_INFO" "install python..."
     pyenv install "${pyenv_python_version}"
     pyenv global "${pyenv_python_version}"
     pyenv rehash
 
+    log "$LOG_LEVEL_INFO" "install go..."
     goenv install "${goenv_go_version}"
     goenv global "${goenv_go_version}"
-    goenv init
+    goenv rehash
+
+    log "$LOG_LEVEL_INFO" "eval goenv init..."
+    eval "$(goenv init -)"
+
+    setup_gotools
+}
+
+go_install() {
+    local tool_name
+    tool_name=$1
+    local tool_url
+    tool_url=$2
+
+    if hash "${tool_name}" 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} is already installed"
+        return
+    fi
+    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed. Installing..."
+    go install "${tool_url}"
+    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
+}
+
+setup_gotools() {
+    echo_blue "Setup go tools..."
+
+    # generate test code
+    go_install "gotests" "github.com/cweill/gotests"
+    # colorize test output
+    go_install "gotest" "github.com/rakyll/gotest"
+    go_install "gomock" "github.com/golang/mock/gomock"
+
+    go_install "gopls" "golang.org/x/tools/gopls@latest"
 }
 
 setup_node() {
@@ -290,7 +326,7 @@ setup_zsh() {
     # change default shell
     if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
         echo "${zsh_path}" | sudo tee -a /etc/shells
-        chsh -s "${zsh_path}"
+        sudo chsh -s "${zsh_path}"
     fi
 
     # configure
