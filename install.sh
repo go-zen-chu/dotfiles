@@ -302,6 +302,17 @@ setup_krew() {
         stern
 }
 
+setup_atuin() {
+    echo_blue "Setup atuin..."
+
+    brew_install atuin
+
+    if [ "${flg_personal_mode}" = "false" ]; then
+        return
+    fi
+    atuin login
+}
+
 setup_personal_machine_tools() {
     if [ "$flg_personal_mode" = "false" ]; then
         echo_blue "Skip setup personal machine tools"
