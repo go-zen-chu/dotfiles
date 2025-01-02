@@ -2,10 +2,12 @@
 
 [![Actions Status](https://github.com/go-zen-chu/dotfiles/workflows/CI/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions)
 
-| Supported OS |
-| ------------ |
-| MacOS |
-| Ubuntu |
+[![Actions Status](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-installer.yml/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-installer.yml)
+
+Supported OS
+
+- MacOS
+- Ubuntu
 
 My configuration files for DRY. CI is performed on GitHub Actions.
 
@@ -14,7 +16,7 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ### Setup a new machine
 
 ```bash
-# run downloader.sh for downloading latest dotfiles without git
+# run downloader.sh for downloading latest dotfiles (using git command)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/master/downloader.sh)"
 
 # install dotfiles
@@ -26,4 +28,3 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ```bash
 # TBD
 ```
-
