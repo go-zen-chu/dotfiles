@@ -201,6 +201,8 @@ setup_anyenv() {
     set +e
     anyenv init
     set -e
+    log "$LOG_LEVEL_INFO" "anyenv install init..."
+    anyenv install --init
     log "$LOG_LEVEL_INFO" "eval anyenv..."
     eval "$(anyenv init -)"
     log "$LOG_LEVEL_INFO" "pyenv initializing..."
