@@ -198,6 +198,7 @@ setup_anyenv() {
     brew_install anyenv
 
     log "$LOG_LEVEL_INFO" "anyenv initializing..."
+    anyenv init
     eval "$(anyenv init -)"
     anyenv install pyenv
     anyenv install goenv
