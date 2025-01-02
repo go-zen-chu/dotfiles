@@ -329,7 +329,12 @@ setup_zsh() {
     # change default shell
     if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
         echo "${zsh_path}" | sudo tee -a /etc/shells
-        sudo chsh -s "${zsh_path}"
+        if [ "${is_ci}" = "false" ]; then
+            log "$LOG_LEVEL_INFO" "running chsh..."
+            chsh -s "${zsh_path}"
+        else
+            log "$LOG_LEVEL_INFO" "skip chsh for CI because it has no password given"
+        fi
     fi
 
     # configure
