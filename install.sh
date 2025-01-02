@@ -199,8 +199,11 @@ setup_anyenv() {
 
     log "$LOG_LEVEL_INFO" "anyenv initializing..."
     anyenv init
+    log "$LOG_LEVEL_INFO" "eval anyenv..."
     eval "$(anyenv init -)"
+    log "$LOG_LEVEL_INFO" "pyenv initializing..."
     anyenv install pyenv
+    log "$LOG_LEVEL_INFO" "goenv initializing..."
     anyenv install goenv
 
     # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
