@@ -1,8 +1,7 @@
 # dotfiles
 
-[![Actions Status](https://github.com/go-zen-chu/dotfiles/workflows/CI/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions)
-
 [![Actions Status](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-installer.yml/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-installer.yml)
+[![Actions Status](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-downloader.yml/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-downloader.yml)
 
 Supported OS
 
