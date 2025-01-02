@@ -198,7 +198,9 @@ setup_anyenv() {
     brew_install anyenv
 
     log "$LOG_LEVEL_INFO" "anyenv initializing..."
+    set +e
     anyenv init
+    set -e
     log "$LOG_LEVEL_INFO" "eval anyenv..."
     eval "$(anyenv init -)"
     log "$LOG_LEVEL_INFO" "pyenv initializing..."
