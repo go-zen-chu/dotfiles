@@ -7,8 +7,8 @@ on:
       - main
   push:
     paths:
-      - "**/*.sh"
       - "!**/downloader.sh"
+      - "**/*.sh"
 
 jobs:
   setup-mac:
