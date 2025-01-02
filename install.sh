@@ -255,10 +255,10 @@ setup_gotools() {
     echo_blue "Setup go tools..."
 
     # generate test code
-    go_install "gotests" "github.com/cweill/gotests"
+    go_install "gotests" "github.com/cweill/gotests/gotests@latest"
     # colorize test output
-    go_install "gotest" "github.com/rakyll/gotest"
-    go_install "gomock" "github.com/golang/mock/gomock"
+    go_install "gotest" "github.com/rakyll/gotest@latest"
+    go_install "gomock" "go.uber.org/mock/mockgen@latest"
 
     go_install "gopls" "golang.org/x/tools/gopls@latest"
 }
