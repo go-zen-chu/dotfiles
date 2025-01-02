@@ -1,0 +1,42 @@
+name: Check downloader.sh
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "downloader.sh"
+
+jobs:
+  run-downloader:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run downloader
+        run: |
+          /bin/bash -c "$(curl -fsSL "https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/${{ github.head_ref }}/downloader.sh")"
+  slack-notification:
+    needs: [run-downloader]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send data to Slack webhook (on failure)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

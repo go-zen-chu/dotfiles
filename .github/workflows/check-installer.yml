@@ -1,24 +1,41 @@
-name: CI
+name: Check installer.sh
 
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "!downloader.sh"
+      - "**/*.sh"
 
 jobs:
   setup-mac:
     runs-on: macos-latest
-    if: contains(github.event.head_commit.message, '[skip ci]') == false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run MacOS minimum setup
         run: |
-          # TIPS: don't use yes command since it causes long execution in container
-          make setup-mac
+          ./install.sh -p -e "actions@github.com"
         env:
           # for tput coloring
           TERM: xterm-color
-        # ci should finish by 45min
-        timeout-minutes: 45
-      - name: Send data to Slack webhook
-        id: slack
+  setup-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Ubuntu minimum setup
+        run: |
+          ./install.sh -p -e "actions@github.com"
+        env:
+          # for tput coloring
+          TERM: xterm-color
+  slack-notification:
+    needs: [setup-mac, setup-ubuntu]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send data to Slack webhook (on failure)
         uses: slackapi/slack-github-action@v1.23.0
         with:
           # For posting a rich message using Block Kit

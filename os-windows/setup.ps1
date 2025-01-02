@@ -1,24 +1,26 @@
 Write-Host "Setup for Windows..." -ForegroundColor Cyan 
 $packages = @(  
     # install basic tools
-    "Google.Chrome",
     "Google.Drive",
+    "Amazon.Kindle",
+    # input system
     "Google.JapaneseIME",
+    "AutoHotkey.AutoHotkey",
     "Microsoft.PowerToys",
     # communication tools
     "Zoom.Zoom",
     "LINE.LINE",
-    "Mozilla.Thunderbird",
     "SlackTechnologies.Slack",
     # other tools
     "Synology.DriveClient",
-    "Doist.Todoist",
+    "Amazon.Kindle",
     # get dnssd.dll not found error because of lack of Bonjour
     #"Apple.iTunes",
     # development tools
     "Microsoft.VisualStudioCode",
     "tailscale.tailscale",
-    "PostgreSQL.pgAdmin",
+    "Unity.UnityHub",
+    "PostgreSQL.pgAdmin"
 )
 foreach ($package in $packages) {
     winget install $package -e
