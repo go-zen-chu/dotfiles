@@ -1,6 +1,14 @@
-name: CI
+name: Check installer.sh
 
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+  push:
+    paths:
+      - "**/*.sh"
+      - "!**/downloader.sh"
 
 jobs:
   setup-mac:
