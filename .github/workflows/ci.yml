@@ -14,28 +14,6 @@ jobs:
         env:
           # for tput coloring
           TERM: xterm-color
-      - &slack_notification
-        name: Send data to Slack webhook
-        if: always()
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          # For posting a rich message using Block Kit
-          payload: |
-            {
-              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
   setup-ubuntu:
     runs-on: ubuntu-latest
     if: contains(github.event.head_commit.message, '[skip ci]') == false
@@ -47,4 +25,26 @@ jobs:
         env:
           # for tput coloring
           TERM: xterm-color
-      - <<: *slack_notification
+  slack-notification:
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send data to Slack webhook (on failure)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "text": "GitHub Action build result: FAILURE\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: FAILURE\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
