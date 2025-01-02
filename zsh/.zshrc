@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
-# To profile zsh, uncomment below
-zmodload zsh/zprof && zprof
+# TIPS: To profile zsh, uncomment below
+#zmodload zsh/zprof && zprof
 
 source $HOME/dotfiles/zsh/plugins.zsh
 source $HOME/dotfiles/zsh/fzf.zsh

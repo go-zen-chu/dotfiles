@@ -13,6 +13,10 @@ HISTFILE=${HOME}/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 HISTTIMEFORMAT='%Y/%m/%d %H:%M:%S '
+setopt share_history # share history with other windows
+setopt inc_append_history
+setopt hist_ignore_dups
+setopt hist_reduce_blanks
 
 # pushd automatically when cd
 setopt auto_pushd
@@ -26,5 +30,3 @@ setopt no_flow_control
 setopt ignore_eof
 # recognize # as comment in commandline
 setopt interactive_comments
-# share history with other tabs
-setopt share_history

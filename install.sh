@@ -18,6 +18,7 @@ config_dir="${home_dir}/.config"
 is_ci="false"
 homebrew_bin_path="/undefined"
 
+nodejs_version="22"
 pyenv_python_version="3.13"
 goenv_go_version="1.23"
 
@@ -112,11 +113,12 @@ setup_basic_tools() {
     echo_blue "Setup basic tools..."
 
     setup_git
+    setup_gh
+    setup_direnv
     setup_anyenv
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
-        setup_gh
         brew_install gibo
         brew_install ghq
 
@@ -131,7 +133,6 @@ setup_basic_tools() {
         brew_install shellcheck
         brew_install terraform
         brew_install ansible
-        setup_direnv
 
         # golang related tools
         brew_install mage
@@ -269,9 +270,9 @@ setup_gotools() {
 setup_node() {
     echo_blue "Setup node..."
 
-    brew_install "node@22"
+    brew_install "node@${nodejs_version}"
     local node_path
-    node_path="$(brew --prefix node@22)/bin"
+    node_path="$(brew --prefix node@${nodejs_version})/bin"
     export PATH="${node_path}:$PATH"
 
     npm install -g pnpm
