@@ -197,14 +197,12 @@ setup_anyenv() {
 
     brew_install anyenv
 
-    log "$LOG_LEVEL_INFO" "anyenv initializing..."
+    # anyenv init finishes exit 1 somehow..
     set +e
     anyenv init
     set -e
-    log "$LOG_LEVEL_INFO" "anyenv install init..."
+    # anyenv install --init will fail due to ~/.config/anyenv not exists
     anyenv install --force-init
-    log "$LOG_LEVEL_INFO" "eval anyenv..."
-    eval "$(anyenv init -)"
     log "$LOG_LEVEL_INFO" "pyenv initializing..."
     anyenv install pyenv
     log "$LOG_LEVEL_INFO" "goenv initializing..."
@@ -213,8 +211,12 @@ setup_anyenv() {
     # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
     $SHELL -l
 
-    cd /home/am/.anyenv/envs/pyenv/plugins/python-build/../.. && git pull && cd -
-    cd "${HOME}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
+    log "$LOG_LEVEL_INFO" "eval anyenv init..."
+    eval "$(anyenv init -)"
+
+    log "$LOG_LEVEL_INFO" "Update pyenv and goenv..."
+    cd "${home_dir}/.anyenv/envs/pyenv/plugins/python-build/../.." && git pull && cd -
+    cd "${home_dir}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
 
     pyenv install "${pyenv_python_version}"
     pyenv global "${pyenv_python_version}"
