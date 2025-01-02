@@ -196,8 +196,9 @@ setup_anyenv() {
     echo_blue "Setup anyenv..."
 
     brew_install anyenv
-    anyenv init
-    anyenv install --force-init
+
+    log "$LOG_LEVEL_INFO" "anyenv initializing..."
+    eval "$(anyenv init -)"
     anyenv install pyenv
     anyenv install goenv
 
