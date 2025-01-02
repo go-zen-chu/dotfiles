@@ -116,6 +116,7 @@ setup_basic_tools() {
     setup_gh
     setup_direnv
     setup_anyenv
+    setup_atuin
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
