@@ -17,6 +17,9 @@ config_dir="${home_dir}/.config"
 is_ci="false"
 homebrew_bin_path="/undefined"
 
+pyenv_python_version="3.13"
+goenv_go_version="1.23"
+
 ### setup methods
 
 startup() {
@@ -106,6 +109,7 @@ setup_basic_tools() {
     echo_blue "Setup basic tools..."
 
     setup_git
+    setup_anyenv
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
@@ -131,7 +135,6 @@ setup_basic_tools() {
         brew_install golangci-lint
 
         # language tools
-        brew_install anyenv
         setup_node
 
         # kubernetes tools
@@ -197,6 +200,20 @@ setup_anyenv() {
     anyenv install --force-init
     anyenv install pyenv
     anyenv install goenv
+
+    # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
+    $SHELL -l
+
+    cd /home/am/.anyenv/envs/pyenv/plugins/python-build/../.. && git pull && cd -
+    cd "${HOME}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
+
+    pyenv install "${pyenv_python_version}"
+    pyenv global "${pyenv_python_version}"
+    pyenv rehash
+
+    goenv install "${goenv_go_version}"
+    goenv global "${goenv_go_version}"
+    goenv init
 }
 
 setup_node() {
