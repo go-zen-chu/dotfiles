@@ -2,6 +2,11 @@
 
 [![Actions Status](https://github.com/go-zen-chu/dotfiles/workflows/CI/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions)
 
+| Supported OS |
+| ------------ |
+| MacOS |
+| Ubuntu |
+
 My configuration files for DRY. CI is performed on GitHub Actions.
 
 ## How to use
@@ -9,29 +14,16 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ### Setup a new machine
 
 ```bash
-# clone with submodules
-git clone --recursive https://github.com/go-zen-chu/dotfiles.git
+# run downloader.sh for downloading latest dotfiles without git
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/master/downloader.sh)"
 
-# check what use can install
-make help
-# setup all for mac
-make setup-mac
-# setup all for personal mac
-make setup-mac-personal
-# setup all for archlinux
-make setup-arch
-
-setup only vim
-make vim
+# install dotfiles
+./install.sh -e "your git email here"
 ```
 
 ### Backup config
 
 ```bash
-make backup
+# TBD
 ```
 
-## Supported OS
-
-- MacOS
-- ArchLinux
