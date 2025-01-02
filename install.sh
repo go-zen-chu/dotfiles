@@ -8,6 +8,7 @@ source ./os-macos/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
+git_user_name="Akira Masuda"
 arg_git_email=""
 
 log_level=$LOG_LEVEL_INFO
@@ -16,6 +17,9 @@ home_dir="${HOME}"
 config_dir="${home_dir}/.config"
 is_ci="false"
 homebrew_bin_path="/undefined"
+
+pyenv_python_version="3.13"
+goenv_go_version="1.23"
 
 ### setup methods
 
@@ -90,22 +94,25 @@ setup_package_manager() {
 }
 
 brew_install() {
-    if [ -f "${homebrew_bin_path}/$1" ]; then
-        log "$LOG_LEVEL_INFO" "[✓] $1 installed (path: ${homebrew_bin_path}/$1)"
+    local tool_name
+    tool_name=$1
+    if [ -f "${homebrew_bin_path}/${tool_name}" ]; then
+        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: ${homebrew_bin_path}/${tool_name})"
         return
-    elif [ -d "$(brew --prefix "$1")" ] 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] $1 installed (path: $(brew --prefix "$1"))"
+    elif [ -d "$(brew --prefix "${tool_name}")" ] 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: $(brew --prefix "${tool_name}"))"
         return
     fi
-    log "$LOG_LEVEL_INFO" "[ ] $1 not installed (homebrew). Installing..."
-    brew install "$1"
-    log "$LOG_LEVEL_INFO" "[✓] $1 install finished"
+    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed (homebrew). Installing..."
+    brew install "${tool_name}"
+    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
 }
 
 setup_basic_tools() {
     echo_blue "Setup basic tools..."
 
     setup_git
+    setup_anyenv
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
@@ -131,7 +138,6 @@ setup_basic_tools() {
         brew_install golangci-lint
 
         # language tools
-        brew_install anyenv
         setup_node
 
         # kubernetes tools
@@ -158,7 +164,7 @@ setup_git() {
     git_config_global_result="$(git config --global --list)"
 
     if [ -z "${git_config_global_result}" ]; then
-        git config --global user.name "Akira Masuda"
+        git config --global user.name "${git_user_name}"
         git config --global user.email "${arg_git_email}"
         git config --global core.excludesfile "${home_dir}/dotfiles/git/global-ignore"
         git config --global push.default current
@@ -193,10 +199,71 @@ setup_anyenv() {
     echo_blue "Setup anyenv..."
 
     brew_install anyenv
+
+    log "$LOG_LEVEL_INFO" "anyenv initializing..."
+    # anyenv init finishes exit 1 somehow..
+    set +e
     anyenv init
+    set -e
+    # anyenv install --init will fail due to ~/.config/anyenv not exists
     anyenv install --force-init
+    log "$LOG_LEVEL_INFO" "pyenv initializing..."
     anyenv install pyenv
+    log "$LOG_LEVEL_INFO" "goenv initializing..."
     anyenv install goenv
+
+    # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
+    $SHELL -l
+
+    log "$LOG_LEVEL_INFO" "eval anyenv init..."
+    eval "$(anyenv init -)"
+
+    cd "${home_dir}/.anyenv/envs/pyenv/plugins/python-build/../.." && git pull && cd -
+    cd "${home_dir}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
+
+    if [ "${is_ci}" = "false" ]; then
+        log "$LOG_LEVEL_INFO" "install pyenv..."
+        pyenv install "${pyenv_python_version}"
+        pyenv global "${pyenv_python_version}"
+        pyenv rehash
+    fi
+
+    log "$LOG_LEVEL_INFO" "install go..."
+    goenv install "${goenv_go_version}"
+    goenv global "${goenv_go_version}"
+    goenv rehash
+
+    log "$LOG_LEVEL_INFO" "eval goenv init..."
+    eval "$(goenv init -)"
+
+    setup_gotools
+}
+
+go_install() {
+    local tool_name
+    tool_name=$1
+    local tool_url
+    tool_url=$2
+
+    if hash "${tool_name}" 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} is already installed"
+        return
+    fi
+    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed. Installing..."
+    go install "${tool_url}"
+    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
+}
+
+setup_gotools() {
+    echo_blue "Setup go tools..."
+
+    # generate test code
+    go_install "gotests" "github.com/cweill/gotests/gotests@latest"
+    # colorize test output
+    go_install "gotest" "github.com/rakyll/gotest@latest"
+    go_install "gomock" "go.uber.org/mock/mockgen@latest"
+
+    go_install "gopls" "golang.org/x/tools/gopls@latest"
 }
 
 setup_node() {
@@ -262,7 +329,12 @@ setup_zsh() {
     # change default shell
     if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
         echo "${zsh_path}" | sudo tee -a /etc/shells
-        chsh -s "${zsh_path}"
+        if [ "${is_ci}" = "false" ]; then
+            log "$LOG_LEVEL_INFO" "running chsh..."
+            chsh -s "${zsh_path}"
+        else
+            log "$LOG_LEVEL_INFO" "skip chsh for CI because it has no password given"
+        fi
     fi
 
     # configure
