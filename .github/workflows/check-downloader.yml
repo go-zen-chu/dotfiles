@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Run downloader
         run: |
-          /bin/bash -c "$(curl -fsSL "https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/master/downloader.sh")"
+          /bin/bash -c "$(curl -fsSL "https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/downloader/downloader.sh")"
   slack-notification:
     needs: [run-downloader]
     runs-on: ubuntu-latest
