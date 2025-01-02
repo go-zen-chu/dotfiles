@@ -8,6 +8,7 @@ source ./os-macos/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
+git_user_name="Akira Masuda"
 arg_git_email=""
 
 log_level=$LOG_LEVEL_INFO
@@ -163,7 +164,7 @@ setup_git() {
     git_config_global_result="$(git config --global --list)"
 
     if [ -z "${git_config_global_result}" ]; then
-        git config --global user.name "Akira Masuda"
+        git config --global user.name "${git_user_name}"
         git config --global user.email "${arg_git_email}"
         git config --global core.excludesfile "${home_dir}/dotfiles/git/global-ignore"
         git config --global push.default current
@@ -220,10 +221,12 @@ setup_anyenv() {
     cd "${home_dir}/.anyenv/envs/pyenv/plugins/python-build/../.." && git pull && cd -
     cd "${home_dir}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
 
-    log "$LOG_LEVEL_INFO" "install python..."
-    pyenv install "${pyenv_python_version}"
-    pyenv global "${pyenv_python_version}"
-    pyenv rehash
+    if [ "${is_ci}" = "false" ]; then
+        log "$LOG_LEVEL_INFO" "install pyenv..."
+        pyenv install "${pyenv_python_version}"
+        pyenv global "${pyenv_python_version}"
+        pyenv rehash
+    fi
 
     log "$LOG_LEVEL_INFO" "install go..."
     goenv install "${goenv_go_version}"
