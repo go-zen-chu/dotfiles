@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "!downloader.sh"
+      - "!backup.sh"
       - "**/*.sh"
 
 jobs:
