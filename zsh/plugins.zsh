@@ -1,6 +1,13 @@
 # enable completion
 autoload -Uz compinit
-compinit
+today_date=$(date +'%Y%m%d')
+zcompdump_modified_date=$(date -r "${HOME}/.zcompdump" +'%Y%m%d')
+# TIPS: check updated date of .zcompdump for recraeate completion cache
+if [ "${today_date}" != "${zcompdump_modified_date}" ]; then
+	compinit
+else
+	compinit -C
+fi
 
 DOTFILES_INSTALLED_PATH="$HOME"
 DOTFILES_PATH="${DOTFILES_INSTALLED_PATH}/dotfiles"
