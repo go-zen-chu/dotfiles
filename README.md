@@ -2,6 +2,7 @@
 
 [![Actions Status](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-installer.yml/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-installer.yml)
 [![Actions Status](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-downloader.yml/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-downloader.yml)
+[![Actions Status](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-backup.yml/badge.svg)](https://github.com/go-zen-chu/dotfiles/actions/workflows/check-backup.yml)
 
 Supported OS
 
@@ -22,8 +23,8 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ./install.sh -e "your git email here"
 ```
 
-### Backup config
+### Backup config & secrets
 
 ```bash
-# TBD
+./backup.sh -p "path/to/cloudstorage"
 ```
