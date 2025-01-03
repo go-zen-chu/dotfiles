@@ -16,7 +16,10 @@ HISTTIMEFORMAT='%Y/%m/%d %H:%M:%S '
 setopt share_history # share history with other windows
 setopt inc_append_history
 setopt hist_ignore_dups
+setopt hist_ignore_all_dups
 setopt hist_reduce_blanks
+setopt hist_expire_dups_first
+setopt hist_save_no_dups
 
 # pushd automatically when cd
 setopt auto_pushd
