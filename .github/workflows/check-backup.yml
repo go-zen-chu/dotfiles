@@ -12,9 +12,12 @@ jobs:
   run-backup:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Run backup
         run: |
-          /bin/bash -c "$(curl -fsSL "https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/${{ github.head_ref }}/backup.sh")"
+          mkdir cloudstorage
+          ./backup.sh -p ./cloudstorage
+          ls -al ./cloudstorage
   slack-notification:
     needs: [run-downloader]
     runs-on: ubuntu-latest
