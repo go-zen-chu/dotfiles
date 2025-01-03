@@ -306,11 +306,12 @@ setup_atuin() {
     echo_blue "Setup atuin..."
 
     brew_install atuin
-    atuin import auto
 
     if [ "${flg_personal_mode}" = "false" ] || [ "${is_ci}" = "true" ]; then
         return
     fi
+    # TIPS: in CI, .bas_history does not exists which cause an error
+    atuin import auto
     # this will sync history between other pcs
     atuin login
 }
