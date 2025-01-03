@@ -1,4 +1,4 @@
-name: Check installer.sh
+name: Check backup.sh
 
 on:
   pull_request:
@@ -6,33 +6,20 @@ on:
       - master
       - main
     paths:
-      - "!downloader.sh"
-      - "!backup.sh"
-      - "**/*.sh"
+      - "backup.sh"
 
 jobs:
-  setup-mac:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run MacOS minimum setup
-        run: |
-          ./install.sh -p -e "actions@github.com"
-        env:
-          # for tput coloring
-          TERM: xterm-color
-  setup-ubuntu:
+  run-backup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Ubuntu minimum setup
+      - name: Run backup
         run: |
-          ./install.sh -p -e "actions@github.com"
-        env:
-          # for tput coloring
-          TERM: xterm-color
+          mkdir cloudstorage
+          ./backup.sh -p ./cloudstorage
+          ls -al ./cloudstorage
   slack-notification:
-    needs: [setup-mac, setup-ubuntu]
+    needs: [run-downloader]
     runs-on: ubuntu-latest
     if: always()
     steps:
