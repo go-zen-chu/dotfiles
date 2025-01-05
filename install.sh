@@ -116,6 +116,7 @@ setup_basic_tools() {
     setup_gh
     setup_direnv
     setup_anyenv
+    setup_node
     setup_atuin
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
@@ -138,9 +139,6 @@ setup_basic_tools() {
         # golang related tools
         brew_install mage
         brew_install golangci-lint
-
-        # language tools
-        setup_node
 
         # kubernetes tools
         brew_install kubectl
