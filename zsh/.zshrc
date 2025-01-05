@@ -7,6 +7,7 @@ source $HOME/dotfiles/zsh/plugins.zsh
 source $HOME/dotfiles/zsh/fzf.zsh
 # make settings below overwrite plugin settings (if exists)
 source $HOME/dotfiles/zsh/zsh_config.zsh
+source $HOME/dotfiles/zsh/ssh.zsh
 source $HOME/dotfiles/zsh/prompt.zsh
 source $HOME/dotfiles/zsh/alias.zsh
 source $HOME/dotfiles/zsh/key.zsh
