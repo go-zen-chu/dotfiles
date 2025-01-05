@@ -277,8 +277,11 @@ setup_node() {
     export PATH="${node_path}:$PATH"
 
     npm install -g pnpm
-    npm install -g typescript
-    npm install -g bash-language-server
+    export PNPM_HOME="${home_dir}/.local/share/pnpm"
+    export PATH="${PNPM_HOME}:$PATH"
+    pnpm install -g typescript
+    pnpm install -g bash-language-server
+    pnpm install -g textlint
 }
 
 setup_krew() {

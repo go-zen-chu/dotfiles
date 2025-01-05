@@ -1,7 +1,7 @@
 # Make sure to load after path configuration
 
 if type "direnv" >/dev/null; then
-    source <(direnv hook zsh)
+    #source <(direnv hook zsh)
 fi
 
 if type "anyenv" >/dev/null; then
