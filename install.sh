@@ -225,6 +225,7 @@ setup_anyenv() {
         log "$LOG_LEVEL_INFO" "goenv already initialized"
     fi
 
+    # TIPS: we may not need this
     # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
     # exec $SHELL -l
 
