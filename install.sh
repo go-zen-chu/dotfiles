@@ -364,7 +364,6 @@ linux_setup_personal_machine_tools() {
     log "$LOG_LEVEL_INFO" "[ ] tailscale not installed. Installing..."
     curl -fsSL https://tailscale.com/install.sh | sh
     log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
-
 }
 
 setup_zsh() {
@@ -454,7 +453,7 @@ case "${os}" in
     homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin"
     setup_package_manager
     setup_basic_tools
-    setup_personal_machine_tools
+    setup_personal_machine_tools linux_setup_personal_machine_tools
     setup_zsh
     setup_vim
     setup_tmux
