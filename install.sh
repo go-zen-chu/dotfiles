@@ -354,6 +354,19 @@ setup_personal_machine_tools() {
     fi
 }
 
+linux_setup_personal_machine_tools() {
+    echo_blue "Setup personal machine tools for linux..."
+
+    if hash tailscale 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] tailscale is already installed"
+        return
+    fi
+    log "$LOG_LEVEL_INFO" "[ ] tailscale not installed. Installing..."
+    curl -fsSL https://tailscale.com/install.sh | sh
+    log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
+
+}
+
 setup_zsh() {
     echo_blue "Setup zsh..."
 
