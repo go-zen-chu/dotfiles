@@ -52,6 +52,7 @@ macos_setup_personal_machine_tools() {
         brew install --cask slack
         brew install --cask zoom
         # development tools
+        brew install --cask tailscale
         brew install --cask google-cloud-sdk
         brew install --cask hex-fiend
         brew install --cask balenaetcher
