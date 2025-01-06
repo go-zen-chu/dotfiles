@@ -50,7 +50,7 @@ macos_setup_personal_machine_tools() {
         mas install 539883307 # LINE
 
         brew install --cask slack
-        brew install --cask zoomus
+        brew install --cask zoom
         # development tools
         brew install --cask google-cloud-sdk
         brew install --cask hex-fiend

@@ -374,7 +374,7 @@ setup_zsh() {
     fi
 
     # configure
-    if [ -f "${home_dir}/local.zsh" ]; then
+    if [ ! -f "${home_dir}/local.zsh" ]; then
         cp ./zsh/local.zsh "${home_dir}"
     fi
     local local_zshrc_path="${home_dir}/.zshrc"
