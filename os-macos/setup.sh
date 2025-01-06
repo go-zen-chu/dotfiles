@@ -59,6 +59,8 @@ macos_setup_personal_machine_tools() {
 }
 
 macos_setup_defaults() {
+    echo_blue "Setup macos defaults..."
+
     # screenshot setting
     defaults write com.apple.screencapture name "screenshot"
     # disable system ui sound (includes screenshot sound)
