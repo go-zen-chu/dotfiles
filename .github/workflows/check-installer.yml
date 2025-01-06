@@ -15,7 +15,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run MacOS minimum setup
+      - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
         env:
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Ubuntu minimum setup
+      - name: Run Ubuntu personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
         env:

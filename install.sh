@@ -200,20 +200,34 @@ setup_anyenv() {
 
     brew_install anyenv
 
-    log "$LOG_LEVEL_INFO" "anyenv initializing..."
-    # anyenv init finishes exit 1 somehow..
-    set +e
-    anyenv init
-    set -e
-    # anyenv install --init will fail due to ~/.config/anyenv not exists
-    anyenv install --force-init
-    log "$LOG_LEVEL_INFO" "pyenv initializing..."
-    anyenv install pyenv
-    log "$LOG_LEVEL_INFO" "goenv initializing..."
-    anyenv install goenv
+    if [ ! -d "${home_dir}/.config/anyenv/anyenv-install" ]; then
+        log "$LOG_LEVEL_INFO" "anyenv initializing..."
+        set +e # anyenv init finishes exit 1 somehow
+        anyenv init
+        # TIPS: anyenv install --init will fail due to ~/.config/anyenv not exists
+        anyenv install --force-init
+        set -e
+    else
+        log "$LOG_LEVEL_INFO" "anyenv already initialized"
+    fi
 
+    if [ ! -f "${home_dir}/.anyenv/envs/pyenv/bin/pyenv" ]; then
+        log "$LOG_LEVEL_INFO" "pyenv initializing..."
+        anyenv install pyenv
+    else
+        log "$LOG_LEVEL_INFO" "pyenv already initialized"
+    fi
+
+    if [ ! -f "${home_dir}/.anyenv/envs/goenv/bin/goenv" ]; then
+        log "$LOG_LEVEL_INFO" "goenv initializing..."
+        anyenv install goenv
+    else
+        log "$LOG_LEVEL_INFO" "goenv already initialized"
+    fi
+
+    # TIPS: we may not need this
     # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
-    $SHELL -l
+    # exec $SHELL -l
 
     log "$LOG_LEVEL_INFO" "eval anyenv init..."
     eval "$(anyenv init -)"
@@ -223,13 +237,17 @@ setup_anyenv() {
 
     if [ "${is_ci}" = "false" ]; then
         log "$LOG_LEVEL_INFO" "install pyenv..."
+        set +e # when skipping pyenv install, it got exit 1
         pyenv install "${pyenv_python_version}"
+        set -e
         pyenv global "${pyenv_python_version}"
         pyenv rehash
     fi
 
     log "$LOG_LEVEL_INFO" "install go..."
+    set +e # when skipping goenv install, it got exit 1
     goenv install "${goenv_go_version}"
+    set -e
     goenv global "${goenv_go_version}"
     goenv rehash
 
@@ -313,8 +331,9 @@ setup_atuin() {
     fi
     # TIPS: in CI, .bas_history does not exists which cause an error
     atuin import auto
-    # this will sync history between other pcs
+    set +e # ignore error when login failed
     atuin login
+    set -e
 }
 
 setup_personal_machine_tools() {
