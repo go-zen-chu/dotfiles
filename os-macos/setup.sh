@@ -25,6 +25,7 @@ macos_setup_basic_tools() {
         brew install --cask hiddenbar
         brew install --cask licecap
         brew install --cask raycast
+        brew install --cask alacritty
         # development tools
         brew install --cask visual-studio-code
         brew install --cask wireshark
