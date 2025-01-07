@@ -364,7 +364,9 @@ linux_setup_personal_machine_tools() {
     log "$LOG_LEVEL_INFO" "[ ] tailscale not installed. Installing..."
     curl -fsSL https://tailscale.com/install.sh | sh
     log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
+    set +e
     sudo tailscale up
+    set -e
 }
 
 setup_zsh() {
