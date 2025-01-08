@@ -462,6 +462,8 @@ setup_tmux() {
 
     if [ -f "${home_dir}/.tmux/plugins/tpm/bin/install_plugins" ]; then
         log "$LOG_LEVEL_INFO" "run tpm tmux plugin install"
+        # initialize tpm to set TMUX_PLUGIN_MANAGER_PATH
+        "${home_dir}/.tmux/plugins/tpm/tpm"
         "${home_dir}/.tmux/plugins/tpm/bin/install_plugins"
     else
         log "$LOG_LEVEL_ERROR" "cannot find tpm binary"
