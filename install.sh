@@ -360,18 +360,20 @@ linux_setup_personal_machine_tools() {
     # tailscale
     if hash tailscale 2>/dev/null; then
         log "$LOG_LEVEL_INFO" "[✓] tailscale is already installed"
-        return
+    else
+        log "$LOG_LEVEL_INFO" "[ ] tailscale not installed. Installing..."
+        curl -fsSL https://tailscale.com/install.sh | sh
+        log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
+        echo_green "run 'sudo tailscale up' for joining to tailscale network"
     fi
-    log "$LOG_LEVEL_INFO" "[ ] tailscale not installed. Installing..."
-    curl -fsSL https://tailscale.com/install.sh | sh
-    log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
-    echo_green "run 'sudo tailscale up' for joining to tailscale network"
 
-    # xdg-open for tmux-plugin
-    if ! hash xdg-open 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] xdg-open not installed. Installing..."
+    # xdg-open requred for tmux-plugin tmux-open
+    if hash xdg-open 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] xdg-utils is already installed"
+    else
+        log "$LOG_LEVEL_INFO" "[ ] xdg-utils not installed. Installing..."
         linux_package_install "xdg-utils"
-        log "$LOG_LEVEL_INFO" "[✓] xdg-open install finished"
+        log "$LOG_LEVEL_INFO" "[✓] xdg-utils install finished"
     fi
 }
 
