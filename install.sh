@@ -458,7 +458,12 @@ setup_tmux() {
         git clone https://github.com/tmux-plugins/tpm "${home_dir}/.tmux/plugins/tpm"
     fi
 
-    echo_green "[IMPORTANT] Make sure to run ctrl+b ctrl+I for installing tmux plugins"
+    if [ -f "${home_dir}/.tmux/plugins/tpm/bin/install_plugins" ]; then
+        log "$LOG_LEVEL_INFO" "run tpm tmux plugin install"
+        "${home_dir}/.tmux/plugins/tpm/bin/install_plugins"
+    else
+        log "$LOG_LEVEL_ERROR" "cannot find tpm binary"
+    fi
 }
 
 ### install
