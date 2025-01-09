@@ -15,10 +15,12 @@ check_os() {
             os="ubuntu"
         else
             os="unsupported linux"
+            log "$LOG_LEVEL_ERROR" "${os}"
         fi
         ;;
     *)
         os="unsupported: ${os}"
+        log "$LOG_LEVEL_ERROR" "${os}"
         ;;
     esac
     echo "${os}"
