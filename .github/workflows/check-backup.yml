@@ -19,7 +19,7 @@ jobs:
           ./backup.sh -p ./cloudstorage
           ls -al ./cloudstorage
   slack-notification:
-    needs: [run-downloader]
+    needs: [run-backup]
     runs-on: ubuntu-latest
     if: always()
     steps:
