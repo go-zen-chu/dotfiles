@@ -26,5 +26,6 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ### Backup config & secrets
 
 ```bash
+cd $HOME/dotfiles
 ./backup.sh -p "path/to/cloudstorage"
 ```

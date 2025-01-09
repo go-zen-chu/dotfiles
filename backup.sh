@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-dotfiles_location="${HOME}/dotfiles"
-source "${dotfiles_location}/scripts/log.sh"
+source "./scripts/log.sh"
 
 set -eu
 
@@ -37,27 +36,42 @@ fi
 log "$LOG_LEVEL_INFO" "[backup.sh] Create backup dir to ${backup_dir_path}"
 mkdir -p "${backup_dir_path}"
 
-cp -R ~/.ssh "${backup_dir_path}"
-log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup ssh finished"
+if [[ -d "${HOME}/.ssh" ]]; then
+	cp -R ~/.ssh "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup ssh finished"
+else
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .ssh folder found"
+fi
 
 if [[ -d "${HOME}/.gnupg" ]]; then
 	cp -R ~/.gnupg "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup gnupg finished"
+else
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .gnupg folder found"
 fi
-log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup gnupg finished"
 
 if [[ -d "${HOME}/.config" ]]; then
 	cp -R ~/.config "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .config finished"
+else
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .config folder found"
 fi
-log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .config finished"
 
-cp ~/local.zsh "${backup_dir_path}"
-cp ~/.zsh_history "${backup_dir_path}"
-log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup zsh config and history finished"
+if [[ -f "${HOME}/local.zsh" ]]; then
+	cp ~/local.zsh "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zshrc finished"
+fi
+if [[ -f "${HOME}/.zsh_history" ]]; then
+	cp ~/.zsh_history "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zsh_history finished"
+fi
 
 if [[ -d "${HOME}/.local/share/atuin" ]]; then
 	mkdir -p "${backup_dir_path}/.local/share/"
 	cp -R ~/.local/share/atuin "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup atuin database finished"
+else
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No atuin database found"
 fi
-log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup atuin database finished"
 
-echo_blue "Finish backup"
+echo_blue "[backup.sh] $(date '+%Y%m%d-%H%M%S') Finish backup"
