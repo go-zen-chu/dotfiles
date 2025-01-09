@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-dotfiles_location="${HOME}/dotfiles"
-source "${dotfiles_location}/scripts/log.sh"
+source "./scripts/log.sh"
 
 set -eu
 
