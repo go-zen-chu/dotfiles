@@ -6,9 +6,10 @@ on:
       - master
       - main
     paths:
+      - "**/*.sh"
+      # negative pattern
       - "!downloader.sh"
       - "!backup.sh"
-      - "**/*.sh"
 
 jobs:
   setup-mac:
