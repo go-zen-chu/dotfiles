@@ -60,4 +60,4 @@ if [[ -d "${HOME}/.local/share/atuin" ]]; then
 fi
 log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup atuin database finished"
 
-echo_blue "Finish backup"
+echo_blue "[backup.sh] $(date '+%Y%m%d-%H%M%S') Finish backup"
