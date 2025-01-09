@@ -292,12 +292,33 @@ setup_node() {
     node_path="$(brew --prefix node@${nodejs_version})/bin"
     export PATH="${node_path}:$PATH"
 
-    npm install -g pnpm
-    export PNPM_HOME="${home_dir}/.local/share/pnpm"
-    export PATH="${PNPM_HOME}:$PATH"
-    pnpm install -g typescript
-    pnpm install -g bash-language-server
-    pnpm install -g textlint
+    if hash pnpm 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] pnpm already installed"
+    else
+        log "$LOG_LEVEL_INFO" "[ ] pnpm not installed. Installing..."
+        npm install -g pnpm
+        export PNPM_HOME="${home_dir}/.local/share/pnpm"
+        export PATH="${PNPM_HOME}:$PATH"
+        log "$LOG_LEVEL_INFO" "[✓] pnpm install finished"
+    fi
+
+    if ! hash tsc 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[ ] typescript not installed. Installing..."
+        pnpm install -g typescript
+        log "$LOG_LEVEL_INFO" "[✓] typescript install finished"
+    fi
+
+    if ! hash bash-language-server 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[ ] bash-language-server not installed. Installing..."
+        pnpm install -g bash-language-server
+        log "$LOG_LEVEL_INFO" "[✓] bash-language-server install finished"
+    fi
+
+    if ! hash textlint 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[ ] textlint not installed. Installing..."
+        pnpm install -g textlint
+        log "$LOG_LEVEL_INFO" "[✓] textlint install finished"
+    fi
 }
 
 setup_krew() {
