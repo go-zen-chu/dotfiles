@@ -18,6 +18,9 @@ jobs:
           mkdir cloudstorage
           ./backup.sh -p ./cloudstorage
           ls -al ./cloudstorage
+        env:
+          # for tput coloring
+          TERM: xterm-color
   slack-notification:
     needs: [run-backup]
     runs-on: ubuntu-latest
