@@ -29,3 +29,6 @@ alias cdghq='cd $(ghq list --full-path | fzf)'
 # gh
 alias ghprsw='gh pr checkout $(gh pr list | fzf | awk "{print $1;}")'
 alias ghprcrw='gh pr create | open'
+# kubectl
+alias k="kubectl"
+alias kgall='kubectl get -A "$(kubectl api-resources --namespaced=true --verbs=list --output=name | tr "\n" "," | sed -e 's/,$//')"'
