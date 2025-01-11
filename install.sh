@@ -131,6 +131,7 @@ setup_basic_tools() {
         brew_install fzf
         brew_install jq
         brew_install yq
+        brew_install bat
         brew_install tree
         brew_install shellcheck
         brew_install terraform
