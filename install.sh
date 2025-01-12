@@ -5,6 +5,7 @@ set -eu
 source ./scripts/log.sh
 source ./scripts/env.sh
 source ./os-macos/setup.sh
+source ./os-linux/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
@@ -375,49 +376,6 @@ setup_personal_machine_tools() {
         local setup_os_specific_func=$1
         $setup_os_specific_func
     fi
-}
-
-linux_setup_personal_machine_tools() {
-    echo_blue "Setup personal machine tools for linux..."
-
-    # tailscale
-    if hash tailscale 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] tailscale is already installed"
-    else
-        log "$LOG_LEVEL_INFO" "[ ] tailscale not installed. Installing..."
-        curl -fsSL https://tailscale.com/install.sh | sh
-        log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
-        echo_green "run 'sudo tailscale up' for joining to tailscale network"
-    fi
-
-    # xdg-open requred for tmux-plugin tmux-open
-    if hash xdg-open 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] xdg-utils is already installed"
-    else
-        log "$LOG_LEVEL_INFO" "[ ] xdg-utils not installed. Installing..."
-        linux_package_install "xdg-utils"
-        log "$LOG_LEVEL_INFO" "[✓] xdg-utils install finished"
-    fi
-}
-
-linux_package_list_updated="false"
-
-linux_package_install() {
-    local package_name
-    package_name=$1
-
-    case "${os}" in
-    "ubuntu")
-        if [ "${linux_package_list_updated}" = "false" ]; then
-            sudo apt-get update
-            linux_package_list_updated="true"
-        fi
-        sudo apt-get install -y "${package_name}"
-        ;;
-    "*")
-        log "$LOG_LEVEL_ERROR" "skip package install for ${os} because it is not supported"
-        ;;
-    esac
 }
 
 setup_zsh() {

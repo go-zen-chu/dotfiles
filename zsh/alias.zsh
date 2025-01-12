@@ -11,7 +11,13 @@ fi
 # set global alias
 alias -g L='| less -iMRS'
 alias -g G='| grep --color=auto'
-alias -g P='| pbcopy'
+if hash pbcopy 2>/dev/null; then
+	alias -g P='| pbcopy'
+fi
+if hash xclip 2>/dev/null; then
+	alias -g P='| xclip -selection clipboard'
+	alias xclip='xclip -selection clipboard'
+fi
 alias -g X='| xargs'
 
 # relogin current shell
@@ -35,7 +41,8 @@ if hash gh 2>/dev/null; then
 fi
 # kubectl
 if hash kubectl 2>/dev/null; then
-	alias k="kubectl"
+	alias -g k="kubectl"
+	# get all resources except events
 	alias kgall='kubectl get -A "$(kubectl api-resources --namespaced=true --verbs=list --output=name | grep -v "events" | tr "\n" "," | sed -e 's/,$//')"'
 fi
 if hash bat 2>/dev/null; then
