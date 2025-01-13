@@ -44,6 +44,11 @@ if hash kubectl 2>/dev/null; then
 	alias -g k="kubectl"
 	# get all resources except events
 	alias kgall='kubectl get -A "$(kubectl api-resources --namespaced=true --verbs=list --output=name | grep -v "events" | tr "\n" "," | sed -e 's/,$//')"'
+	# get all resource in specific namespace
+	kgalln() {
+		ns=$1
+		kubectl get -n "${ns}" "$(kubectl api-resources --namespaced=true --verbs=list --output=name | grep -v "events" | tr "\n" "," | sed -e 's/,$//')"
+	}
 fi
 if hash bat 2>/dev/null; then
 	alias cat='bat --paging=never'
