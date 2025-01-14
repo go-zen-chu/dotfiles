@@ -29,17 +29,15 @@ alias cpdir='cp -R'
 alias gitlog='git log --graph --color --oneline'
 alias cdgr='cd $(git rev-parse --show-superproject-working-tree --show-toplevel | head -1)'
 alias ecpath="tr ':' '\n' <<< $PATH"
-# ghq
+
 if hash ghq 2>/dev/null; then
 	alias codeghq='code $(ghq list --full-path | fzf)'
 	alias cdghq='cd $(ghq list --full-path | fzf)'
 fi
-# gh
 if hash gh 2>/dev/null; then
 	alias ghprsw='gh pr checkout $(gh pr list | fzf | awk "{print $1;}")'
 	alias ghprcrw='gh pr create | open'
 fi
-# kubectl
 if hash kubectl 2>/dev/null; then
 	alias -g k="kubectl"
 	# get all resources except events
@@ -53,4 +51,7 @@ fi
 if hash bat 2>/dev/null; then
 	alias cat='bat --paging=never'
 	alias less='bat'
+fi
+if hash doggo 2>/dev/null; then
+	alias dig='doggo'
 fi
