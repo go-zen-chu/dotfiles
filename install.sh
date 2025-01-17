@@ -138,6 +138,7 @@ setup_basic_tools() {
         brew_install shellcheck
         brew_install terraform
         brew_install ansible
+        brew_install ansible-lint # used in vscode ansible
 
         # golang related tools
         brew_install mage
