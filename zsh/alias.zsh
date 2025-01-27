@@ -18,18 +18,24 @@ if hash xclip 2>/dev/null; then
 	alias -g P='| xclip -selection clipboard'
 	alias xclip='xclip -selection clipboard'
 fi
-alias -g X='| xargs'
 
-# relogin current shell
+# utilities
+# refresh current shell without creating a child process
 alias relogin='exec $SHELL -l'
 alias history='history -E 1 | less'
 alias ll='ls -l'
 alias rmdir='rm -rf'
 alias cpdir='cp -R'
+alias echopath='echo "$PATH" | tr ":" "\n"'
+mkdir_touch() {
+	mkdir -p "$(dirname $1)"
+	touch "$1"
+}
+alias touch='mkdir_touch'
+
+# git
 alias gitlog='git log --graph --color --oneline'
 alias cdgr='cd $(git rev-parse --show-superproject-working-tree --show-toplevel | head -1)'
-alias ecpath="tr ':' '\n' <<< $PATH"
-
 if hash ghq 2>/dev/null; then
 	alias codeghq='code $(ghq list --full-path | fzf)'
 	alias cdghq='cd $(ghq list --full-path | fzf)'
