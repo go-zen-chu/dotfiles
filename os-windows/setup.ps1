@@ -1,18 +1,14 @@
 Write-Host "Setup for Windows..." -ForegroundColor Cyan 
 $packages = @(  
+    "Microsoft.PowerToys",
     "Google.Drive",
     "Amazon.Kindle",
-    # input system
-    "AutoHotkey.AutoHotkey",
-    "Microsoft.PowerToys",
+    "Synology.DriveClient",
+    "Vivaldi.Vivaldi",
     # communication tools
     "Zoom.Zoom",
     "LINE.LINE",
     "SlackTechnologies.Slack",
-    # other tools
-    "Synology.DriveClient",
-    # get dnssd.dll not found error because of lack of Bonjour
-    #"Apple.iTunes",
     # development tools
     "Microsoft.VisualStudioCode",
     "tailscale.tailscale",
