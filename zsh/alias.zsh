@@ -28,8 +28,9 @@ alias rmdir='rm -rf'
 alias cpdir='cp -R'
 alias echopath='echo "$PATH" | tr ":" "\n"'
 mkdir_touch() {
-	mkdir -p "$(dirname $1)"
-	touch "$1"
+	mkdir -p "$(dirname ${argv[-1]})"
+	touch $@
+	echo "runned: mkdir -p $(dirname ${argv[-1]}); touch $@"
 }
 alias touch='mkdir_touch'
 
