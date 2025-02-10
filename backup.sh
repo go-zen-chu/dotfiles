@@ -36,6 +36,17 @@ fi
 log "$LOG_LEVEL_INFO" "[backup.sh] Create backup dir to ${backup_dir_path}"
 mkdir -p "${backup_dir_path}"
 
+# TIPS: Make important files to be backed up first because some cloud-storage may took time to upload directory
+if [[ -f "${HOME}/local.zsh" ]]; then
+	cp ~/local.zsh "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zshrc finished"
+fi
+
+if [[ -f "${HOME}/.zsh_history" ]]; then
+	cp ~/.zsh_history "${backup_dir_path}"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zsh_history finished"
+fi
+
 if [[ -d "${HOME}/.ssh" ]]; then
 	cp -R ~/.ssh "${backup_dir_path}"
 	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup ssh finished"
@@ -55,15 +66,6 @@ if [[ -d "${HOME}/.config" ]]; then
 	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .config finished"
 else
 	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .config folder found"
-fi
-
-if [[ -f "${HOME}/local.zsh" ]]; then
-	cp ~/local.zsh "${backup_dir_path}"
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zshrc finished"
-fi
-if [[ -f "${HOME}/.zsh_history" ]]; then
-	cp ~/.zsh_history "${backup_dir_path}"
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zsh_history finished"
 fi
 
 if [[ -d "${HOME}/.local/share/atuin" ]]; then
