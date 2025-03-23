@@ -9,7 +9,8 @@ elif [[ ${os} == 'Linux' ]]; then
 fi
 
 # set global alias
-alias -g L='| less -iMRS'
+alias -g L='| \less -iMRS' # less is aliased to bat
+alias -g LY='| less -l yaml'
 alias -g G='| grep --color=auto'
 if hash pbcopy 2>/dev/null; then
 	alias -g P='| pbcopy'
@@ -41,11 +42,20 @@ if hash ghq 2>/dev/null; then
 	alias codeghq='code $(ghq list --full-path | fzf)'
 	alias cdghq='cd $(ghq list --full-path | fzf)'
 fi
+
+# gh
 if hash gh 2>/dev/null; then
 	alias ghprsw='gh pr checkout $(gh pr list | fzf | awk "{print $1;}")'
 	alias ghprcrw='gh pr create | open'
 fi
+
+# kubectl
 if hash kubectl 2>/dev/null; then
+	if hash kubecolor 2>/dev/null; then
+		alias kubectl='kubecolor'
+		# by default kubecolor fail to complete kubectl commands so this can make it work
+		compdef kubecolor=kubectl
+	fi
 	alias -g k="kubectl"
 	# get all resources except events
 	alias kgall='kubectl get -A "$(kubectl api-resources --namespaced=true --verbs=list --output=name | grep -v "events" | tr "\n" "," | sed -e 's/,$//')"'
@@ -55,10 +65,14 @@ if hash kubectl 2>/dev/null; then
 		kubectl get -n "${ns}" "$(kubectl api-resources --namespaced=true --verbs=list --output=name | grep -v "events" | tr "\n" "," | sed -e 's/,$//')"
 	}
 fi
+
+# bat
 if hash bat 2>/dev/null; then
 	alias cat='bat --paging=never'
 	alias less='bat'
 fi
+
+# doggo
 if hash doggo 2>/dev/null; then
 	alias dig='doggo'
 fi
