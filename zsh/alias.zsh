@@ -53,6 +53,8 @@ fi
 if hash kubectl 2>/dev/null; then
 	if hash kubecolor 2>/dev/null; then
 		alias kubectl='kubecolor'
+		# by default kubecolor fail to complete kubectl commands so this can make it work
+		compdef kubecolor=kubectl
 	fi
 	alias -g k="kubectl"
 	# get all resources except events
