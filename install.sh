@@ -135,7 +135,7 @@ setup_basic_tools() {
         brew_install bat   # cat, less alternatives
         brew_install doggo # dig alternatives
         brew_install tree
-        brew_install jsoonet
+        brew_install jsonnet
         brew_install shellcheck
         # cloud tools
         brew_install terraform
