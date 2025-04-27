@@ -4,7 +4,7 @@ $packages = @(
     "Google.Drive",
     "Amazon.Kindle",
     "Synology.DriveClient",
-    "Vivaldi.Vivaldi",
+    "Adobe.Acrobat.Reader.64-bit",
     # communication tools
     "Zoom.Zoom",
     "LINE.LINE",
