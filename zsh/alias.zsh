@@ -64,6 +64,12 @@ if hash kubectl 2>/dev/null; then
 		ns=$1
 		kubectl get -n "${ns}" "$(kubectl api-resources --namespaced=true --verbs=list --output=name | grep -v "events" | tr "\n" "," | sed -e 's/,$//')"
 	}
+
+	# delete crd related to the domain
+	kdelcrd() {
+		domain=$1
+		kubectl get crd | grep "${domain}" | awk '{ print $1}' | xargs kubectl delete crd
+	}
 fi
 
 # bat
