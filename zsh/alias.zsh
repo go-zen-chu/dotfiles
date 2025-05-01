@@ -42,6 +42,12 @@ if hash ghq 2>/dev/null; then
 	alias codeghq='code $(ghq list --full-path | fzf)'
 	alias cdghq='cd $(ghq list --full-path | fzf)'
 fi
+gq() {
+	comment=$1
+	git add --all
+	git commit -a -m "${comment}"
+	git push
+}
 
 # gh
 if hash gh 2>/dev/null; then
