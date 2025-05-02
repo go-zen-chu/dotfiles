@@ -22,11 +22,11 @@ macos_setup_basic_tools() {
         brew_install watch
         brew install --cask appcleaner
         brew install --cask microsoft-edge
-        brew install --cask vivaldi
         brew install --cask hiddenbar
         brew install --cask licecap
         brew install --cask raycast
         # development tools
+        brew install --cask google-cloud-sdk
         brew install --cask visual-studio-code
         brew install --cask wireshark
     fi

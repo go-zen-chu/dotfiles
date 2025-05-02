@@ -29,6 +29,23 @@ linux_setup_personal_machine_tools() {
         linux_package_install "xdg-utils"
         log "$LOG_LEVEL_INFO" "[✓] xdg-utils install finished"
     fi
+
+    # google-cloud-sdk
+    if hash gcloud 2>/dev/null; then
+        log "$LOG_LEVEL_INFO" "[✓] google-cloud-sdk is already installed"
+    else
+        log "$LOG_LEVEL_INFO" "[ ] google-cloud-sdk not installed. Installing..."
+        case "${os}" in
+        "ubuntu")
+            sudo snap install google-cloud-cli --classic
+            gcloud init --skip-diagnostics
+            log "$LOG_LEVEL_INFO" "[✓] google-cloud-sdk install finished"
+            ;;
+        "*")
+            log "$LOG_LEVEL_WARN" "skip google-cloud-sdk install for ${os} because it is not supported"
+            ;;
+        esac
+    fi
 }
 
 linux_package_list_updated="false"
