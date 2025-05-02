@@ -7,6 +7,9 @@ export XDG_DATA_HOME="${HOME}/.local/share"
 path=(/opt/homebrew/bin(N-/) $path) # for Apple Silicon
 path=(/home/linuxbrew/.linuxbrew/bin(N-/) $path) # for linux
 
+# ubuntu snap
+path=(/snap/bin(N-/) $path)
+
 # anyenv
 path=("${HOME}/.anyenv/bin"(N-/) $path)
 

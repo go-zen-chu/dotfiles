@@ -21,7 +21,7 @@ homebrew_bin_path="/undefined"
 
 nodejs_version="22"
 pyenv_python_version="3.13"
-goenv_go_version="1.23"
+goenv_go_version="1.24"
 
 ### setup methods
 
