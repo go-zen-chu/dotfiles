@@ -43,10 +43,15 @@ if hash ghq 2>/dev/null; then
 	alias cdghq='cd $(ghq list --full-path | fzf)'
 fi
 gq() {
+	# git add, commit, push in 1 command
 	comment=$1
 	git add --all
 	git commit -a -m "${comment}"
 	git push
+}
+gprnb() {
+	# clean up merged branches
+	git fetch --prune && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D
 }
 
 # gh
