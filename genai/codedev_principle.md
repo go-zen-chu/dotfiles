@@ -49,3 +49,10 @@ Generate code that follows these constraints and architectural principles. The g
 
 - Prefer standard library packages.
 - Avoid third-party packages unless necessary anytime.
+- Every function must include a top-level comment that clearly describes what the function does. This comment should be declarative, explaining the function's purpose and responsibility, not its implementation details.
+- Do not include inline comments inside the function body if the logic is self-explanatory from the code itself. Only add inline comments when:
+    - The logic is non-obvious or counterintuitive.
+    - The code implements a workaround or external specification.
+    - The reasoning behind a seemingly redundant operation needs clarification.
+- Comments should support the reader's understanding of the "why", not repeat the "how" that is already evident in clean code.
+
