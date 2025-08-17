@@ -119,6 +119,7 @@ setup_basic_tools() {
     setup_anyenv
     setup_node
     setup_atuin
+    setup_claude_code
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
@@ -137,6 +138,7 @@ setup_basic_tools() {
         brew_install tree
         brew_install jsonnet
         brew_install shellcheck
+        brew_install gitleaks
         # cloud tools
         brew_install terraform
         brew_install ansible
@@ -363,6 +365,17 @@ setup_atuin() {
     set +e # ignore error when login failed
     atuin login
     set -e
+}
+
+setup_claude_code() {
+    echo_blue "Setup claude code..."
+
+    brew_install claude-code
+
+    mkdir -p "${home_dir}/.claude"
+    cp ./genai/codedev_principle.md "${home_dir}/.claude/CLAUDE.md"
+
+    log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
 }
 
 setup_personal_machine_tools() {
