@@ -1,30 +1,30 @@
 #!/usr/bin/env node
 
 /**
- * テスト実行スクリプト
- * jsdom環境でCredentialsAlertのテストを実行
+ * Test execution script for CredentialsAlert
+ * Runs tests in jsdom environment
  */
 
 const path = require('path');
 
-// テストランナーを読み込み
+// Load test runner
 const testRunner = require('./test-runner');
 
-console.log('🚀 CredentialsAlert テストスイート開始');
+console.log('🚀 CredentialsAlert Test Suite Started');
 console.log('='.repeat(50));
 
 try {
-    // テストファイルを読み込んで実行
+    // Load and execute test files
     require('./credentials-alert.test.js');
 
-    // テスト結果を表示
+    // Display test results
     const success = testRunner.printResults();
 
-    // 終了コードを設定（CI用）
+    // Set exit code for CI
     process.exit(success ? 0 : 1);
 
 } catch (error) {
-    console.error('❌ テスト実行中にエラーが発生しました:');
+    console.error('❌ Error occurred during test execution:');
     console.error(error.message);
     console.error(error.stack);
     process.exit(1);

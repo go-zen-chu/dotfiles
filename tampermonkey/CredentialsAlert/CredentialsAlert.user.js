@@ -3,7 +3,7 @@
 // @namespace    github.com/go-zen-chu
 // @version      0.1
 // @description  Watch out! You might input credentials!
-// @author       Akira Masuda
+// @author       go-zen-chu
 // @licence      MIT
 // @match        https://*/*
 // @icon         https://img.icons8.com/?size=64&id=82753&format=png

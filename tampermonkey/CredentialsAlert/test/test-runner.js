@@ -1,6 +1,6 @@
 /**
- * 軽量テストフレームワーク
- * 外部ライブラリに依存しないシンプルなテストランナー
+ * Lightweight test framework for CredentialsAlert
+ * Simple test runner without external library dependencies
  */
 
 class TestRunner {
@@ -14,6 +14,9 @@ class TestRunner {
         };
     }
 
+    /**
+     * Groups related test cases under a descriptive suite name
+     */
     describe(suiteName, fn) {
         this.currentSuite = suiteName;
         console.log(`\n📋 ${suiteName}`);
@@ -21,6 +24,9 @@ class TestRunner {
         this.currentSuite = null;
     }
 
+    /**
+     * Executes individual test case and records the result
+     */
     it(testName, fn) {
         this.results.total++;
         try {
@@ -34,64 +40,83 @@ class TestRunner {
         }
     }
 
+    /**
+     * Asserts that a condition is true
+     */
     assert(condition, message = 'Assertion failed') {
         if (!condition) {
             throw new Error(message);
         }
     }
 
+    /**
+     * Asserts that two values are strictly equal
+     */
     assertEqual(actual, expected, message) {
         if (actual !== expected) {
             throw new Error(message || `Expected ${expected}, but got ${actual}`);
         }
     }
 
+    /**
+     * Asserts that a condition is true
+     */
     assertTrue(condition, message) {
         if (!condition) {
             throw new Error(message || 'Expected true, but got false');
         }
     }
 
+    /**
+     * Asserts that a condition is false
+     */
     assertFalse(condition, message) {
         if (condition) {
             throw new Error(message || 'Expected false, but got true');
         }
     }
 
+    /**
+     * Asserts that an element exists (not null or undefined)
+     */
     assertExists(element, message) {
         if (!element) {
             throw new Error(message || 'Expected element to exist, but it was null/undefined');
         }
     }
 
+    /**
+     * Asserts that an element does not exist (null or undefined)
+     */
     assertNotExists(element, message) {
         if (element) {
             throw new Error(message || 'Expected element to not exist, but it was found');
         }
     }
 
+    /**
+     * Prints test execution results and returns success status
+     */
     printResults() {
         console.log('\n' + '='.repeat(50));
-        console.log('📊 テスト結果');
+        console.log('📊 Test Results');
         console.log('='.repeat(50));
-        console.log(`総テスト数: ${this.results.total}`);
-        console.log(`成功: ${this.results.passed}`);
-        console.log(`失敗: ${this.results.failed}`);
+        console.log(`Total tests: ${this.results.total}`);
+        console.log(`Passed: ${this.results.passed}`);
+        console.log(`Failed: ${this.results.failed}`);
 
         if (this.results.failed === 0) {
-            console.log('🎉 すべてのテストが成功しました！');
+            console.log('🎉 All tests passed!');
             return true;
         } else {
-            console.log('💥 一部のテストが失敗しました');
+            console.log('💥 Some tests failed');
             return false;
         }
     }
 }
 
-// グローバルなテストランナーインスタンス
 const testRunner = new TestRunner();
 
-// グローバル関数として公開
 global.describe = testRunner.describe.bind(testRunner);
 global.it = testRunner.it.bind(testRunner);
 global.assert = testRunner.assert.bind(testRunner);

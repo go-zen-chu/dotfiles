@@ -1,22 +1,29 @@
 /**
- * CredentialsAlert.user.js のテストケース
+ * Test cases for CredentialsAlert.user.js
+ * Tests credential detection functionality in various scenarios
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// CredentialsAlertスクリプトを読み込み
-const scriptPath = path.join(__dirname, '..', 'CredentialsAlert.user.js');
-const scriptContent = fs.readFileSync(scriptPath, 'utf8');
+/**
+ * Loads and prepares the CredentialsAlert script for testing
+ */
+function loadCredentialsAlertScript() {
+    const scriptPath = path.join(__dirname, '..', 'CredentialsAlert.user.js');
+    const scriptContent = fs.readFileSync(scriptPath, 'utf8');
+    return scriptContent.replace(/\/\/ ==UserScript==[\s\S]*?\/\/ ==\/UserScript==\s*/, '');
+}
 
-// UserScriptヘッダーを除去してスクリプト本体のみを取得
-const scriptBody = scriptContent.replace(/\/\/ ==UserScript==[\s\S]*?\/\/ ==\/UserScript==\s*/, '');
+const scriptBody = loadCredentialsAlertScript();
 
-describe('CredentialsAlert スクリプトテスト', () => {
+describe('CredentialsAlert Script Tests', () => {
     let document, window, body;
 
-    // 各テスト前にDOM環境をセットアップ
-    function setupDOM() {
+    /**
+     * Sets up DOM environment for testing using jsdom
+     */
+    function setupTestEnvironment() {
         const { JSDOM } = require('jsdom');
         const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 
@@ -32,190 +39,198 @@ describe('CredentialsAlert スクリプトテスト', () => {
         return { document, window, body };
     }
 
-    // スクリプトを実行
-    function executeScript() {
-        // スクリプトをevalで実行（IIFEなので即座に実行される）
+    /**
+     * Executes the CredentialsAlert script in the test environment
+     */
+    function executeCredentialsAlertScript() {
         eval(scriptBody);
     }
 
-    // 入力イベントをシミュレート
-    function simulateInput(element, value) {
+    /**
+     * Creates and configures an input element for testing
+     */
+    function createTestInputElement() {
+        const input = document.createElement('input');
+        input.type = 'text';
+        body.appendChild(input);
+        return input;
+    }
+
+    /**
+     * Creates and configures a contenteditable element for testing
+     */
+    function createTestContentEditableElement() {
+        const div = document.createElement('div');
+        div.contentEditable = true;
+        body.appendChild(div);
+        return div;
+    }
+
+    /**
+     * Simulates user input on an input element
+     */
+    function simulateUserInput(element, value) {
         element.value = value;
         const event = new window.Event('input', { bubbles: true });
         element.dispatchEvent(event);
     }
 
-    // contenteditable要素の入力をシミュレート
+    /**
+     * Simulates user input on a contenteditable element
+     */
     function simulateContentEditableInput(element, text) {
         element.innerText = text;
         const event = new window.Event('input', { bubbles: true });
         element.dispatchEvent(event);
     }
 
-    it('検出単語が含まれる場合に警告が表示される', () => {
-        setupDOM();
-        executeScript();
+    /**
+     * Gets the credential alert element from the DOM
+     */
+    function getCredentialAlert() {
+        return document.getElementById('credential-alert');
+    }
 
-        // input要素を作成
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+    /**
+     * Removes existing credential alert if present
+     */
+    function clearExistingAlert() {
+        const alert = getCredentialAlert();
+        if (alert) {
+            alert.remove();
+        }
+    }
 
-        // "password"を入力
-        simulateInput(input, 'my password is secret');
+    it('If credential keywords are detected in input, it should display warning alert', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        // 警告要素が表示されることを確認
-        const alert = document.getElementById('credential-alert');
-        assertExists(alert, '警告要素が存在すること');
-        assertTrue(alert.textContent.includes('password'), '警告メッセージにpasswordが含まれること');
-        assertEqual(alert.style.backgroundColor, 'rgb(255, 0, 0)', '背景色が赤であること');
+        const input = createTestInputElement();
+        simulateUserInput(input, 'my password is secret');
+
+        const alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should exist when credential keyword is detected');
+        assertTrue(alert.textContent.includes('password'), 'Alert message should contain detected keyword');
+        assertEqual(alert.style.backgroundColor, 'rgb(255, 0, 0)', 'Alert background should be red');
     });
 
-    it('検出単語が含まれない場合に警告が表示されない', () => {
-        setupDOM();
-        executeScript();
+    it('If no credential keywords are detected, it should not display warning alert', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        // input要素を作成
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
+        simulateUserInput(input, 'hello world');
 
-        // 通常のテキストを入力
-        simulateInput(input, 'hello world');
-
-        // 警告要素が表示されないことを確認
-        const alert = document.getElementById('credential-alert');
-        assertNotExists(alert, '警告要素が存在しないこと');
+        const alert = getCredentialAlert();
+        assertNotExists(alert, 'Warning alert should not exist when no credential keywords are detected');
     });
 
-    it('大文字小文字を区別せずに検出する', () => {
-        setupDOM();
-        executeScript();
+    it('If credential keywords are in uppercase, it should detect them case-insensitively', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
+        simulateUserInput(input, 'My PASSWORD is here');
 
-        // 大文字で入力
-        simulateInput(input, 'My PASSWORD is here');
-
-        const alert = document.getElementById('credential-alert');
-        assertExists(alert, '大文字のPASSWORDでも警告が表示されること');
+        const alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed even for uppercase keywords');
     });
 
-    it('複数の検出単語をテストする', () => {
-        setupDOM();
-        executeScript();
+    it('If different credential keywords are used, it should detect all of them', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
 
-        // token を含むテキスト
-        simulateInput(input, 'api token here');
-        let alert = document.getElementById('credential-alert');
-        assertExists(alert, 'tokenで警告が表示されること');
+        // Test token detection
+        simulateUserInput(input, 'api token here');
+        let alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed for token keyword');
 
-        // 警告をクリア
-        if (alert) alert.remove();
+        clearExistingAlert();
 
-        // secret を含むテキスト
-        simulateInput(input, 'this is secret');
-        alert = document.getElementById('credential-alert');
-        assertExists(alert, 'secretで警告が表示されること');
+        // Test secret detection
+        simulateUserInput(input, 'this is secret');
+        alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed for secret keyword');
     });
 
-    it('疑わしい単語（doutfulWords）でも検出する', () => {
-        setupDOM();
-        executeScript();
+    it('If suspicious patterns like API keys or JWT tokens are detected, it should display warning', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
 
-        // api_key を含むテキスト
-        simulateInput(input, 'my api_key is here');
-        let alert = document.getElementById('credential-alert');
-        assertExists(alert, 'api_keyで警告が表示されること');
+        // Test API key detection
+        simulateUserInput(input, 'my api_key is here');
+        let alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed for API key pattern');
 
-        // 警告をクリア
-        if (alert) alert.remove();
+        clearExistingAlert();
 
-        // JWT形式の文字列
-        simulateInput(input, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
-        alert = document.getElementById('credential-alert');
-        assertExists(alert, 'JWT形式の文字列で警告が表示されること');
+        // Test JWT token detection
+        simulateUserInput(input, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
+        alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed for JWT token pattern');
     });
 
-    it('contenteditable要素でも動作する', () => {
-        setupDOM();
-        executeScript();
+    it('If credentials are entered in contenteditable elements, it should detect them', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        const div = document.createElement('div');
-        div.contentEditable = true;
-        body.appendChild(div);
+        const contentEditableDiv = createTestContentEditableElement();
+        simulateContentEditableInput(contentEditableDiv, 'password123');
 
-        // contenteditable要素に入力
-        simulateContentEditableInput(div, 'password123');
-
-        const alert = document.getElementById('credential-alert');
-        assertExists(alert, 'contenteditable要素でも警告が表示されること');
+        const alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed for contenteditable elements');
     });
 
-    it('警告が削除される', () => {
-        setupDOM();
-        executeScript();
+    it('If safe text is entered after credentials, it should remove the warning alert', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
 
-        // まず警告を表示
-        simulateInput(input, 'password');
-        let alert = document.getElementById('credential-alert');
-        assertExists(alert, '警告が表示されること');
+        // First display warning
+        simulateUserInput(input, 'password');
+        let alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert should be displayed initially');
 
-        // 安全なテキストに変更
-        simulateInput(input, 'safe text');
-        alert = document.getElementById('credential-alert');
-        assertNotExists(alert, '警告が削除されること');
+        // Then enter safe text
+        simulateUserInput(input, 'safe text');
+        alert = getCredentialAlert();
+        assertNotExists(alert, 'Warning alert should be removed when safe text is entered');
     });
 
-    it('警告要素のスタイルが正しく設定される', () => {
-        setupDOM();
-        executeScript();
+    it('If warning alert is displayed, it should have correct styling properties', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
+        simulateUserInput(input, 'token');
 
-        simulateInput(input, 'token');
-
-        const alert = document.getElementById('credential-alert');
-        assertExists(alert, '警告要素が存在すること');
-        assertEqual(alert.className, 'credential-alert', 'クラス名が正しいこと');
-        assertTrue(alert.style.fontWeight.includes('bold'), 'フォントが太字であること');
-        assertEqual(alert.style.backgroundColor, 'rgb(255, 0, 0)', '背景色が赤であること');
-        assertEqual(alert.style.color, 'rgb(255, 255, 255)', '文字色が白であること');
+        const alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert element should exist');
+        assertEqual(alert.className, 'credential-alert', 'Alert should have correct CSS class');
+        assertTrue(alert.style.fontWeight.includes('bold'), 'Alert text should be bold');
+        assertEqual(alert.style.backgroundColor, 'rgb(255, 0, 0)', 'Alert background should be red');
+        assertEqual(alert.style.color, 'rgb(255, 255, 255)', 'Alert text should be white');
     });
 
-    it('警告が画面上部に挿入される', () => {
-        setupDOM();
-        executeScript();
+    it('If warning alert is triggered, it should be inserted at the top of the page', () => {
+        setupTestEnvironment();
+        executeCredentialsAlertScript();
 
-        // body に既存の要素を追加
+        // Add existing content to body
         const existingDiv = document.createElement('div');
         existingDiv.textContent = 'existing content';
         body.appendChild(existingDiv);
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        body.appendChild(input);
+        const input = createTestInputElement();
+        simulateUserInput(input, 'secret');
 
-        simulateInput(input, 'secret');
-
-        const alert = document.getElementById('credential-alert');
-        assertExists(alert, '警告要素が存在すること');
-        assertEqual(body.firstChild, alert, '警告が最初の子要素として挿入されること');
+        const alert = getCredentialAlert();
+        assertExists(alert, 'Warning alert element should exist');
+        assertEqual(body.firstChild, alert, 'Alert should be inserted as the first child element');
     });
 });
