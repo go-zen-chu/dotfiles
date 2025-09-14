@@ -1,0 +1,14 @@
+{
+    "name": "credentials-alert-test",
+    "version": "0.0.1",
+    "description": "Test suite for CredentialsAlert Tampermonkey script",
+    "main": "CredentialsAlert.user.js",
+    "scripts": {
+        "test": "node test/run-tests.js"
+    },
+    "devDependencies": {
+        "jsdom": "^22.1.0"
+    },
+    "author": "go-zen-chu",
+    "license": "MIT"
+}
