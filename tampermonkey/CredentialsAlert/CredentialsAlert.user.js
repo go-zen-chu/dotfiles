@@ -8,14 +8,13 @@
 // @match        https://*/*
 // @icon         https://img.icons8.com/?size=64&id=82753&format=png
 // @grant        none
-// @updateURL https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js
-// @downloadURL https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js
+// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js
+// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js
 // ==/UserScript==
 
 (function () {
     'use strict';
 
-    // Pre-compile detection patterns for better performance
     const detectWords = ["password", "token", "secret"];
     const doubtfulWords = [
         // private key
@@ -27,8 +26,6 @@
         "api_key", "secret_key",
         "connection_string",
     ];
-
-    // Combine and pre-process all detection patterns
     const allPatterns = detectWords.concat(doubtfulWords);
 
     // Create reusable alert element
@@ -56,7 +53,6 @@
         };
     }
 
-    // Optimized detection function
     function detectCredentials(text) {
         if (!text || typeof text !== 'string') {
             return false;
@@ -64,7 +60,6 @@
 
         const lowerText = text.toLowerCase();
 
-        // Early return optimization - check most common patterns first
         for (let i = 0; i < allPatterns.length; i++) {
             if (lowerText.includes(allPatterns[i])) {
                 return true;

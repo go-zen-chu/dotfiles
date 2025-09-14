@@ -1,0 +1,26 @@
+{
+    "name": "hide-amazon-ads",
+    "version": "1.0.0",
+    "description": "Tampermonkey script to hide sponsored ads from Amazon search results",
+    "main": "HideAmazonAds.user.js",
+    "scripts": {
+        "test": "node test/run-tests.js",
+        "install-deps": "npm install jsdom"
+    },
+    "keywords": [
+        "tampermonkey",
+        "userscript",
+        "amazon",
+        "ads",
+        "sponsored"
+    ],
+    "author": "go-zen-chu",
+    "license": "MIT",
+    "devDependencies": {
+        "jsdom": "^23.2.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/go-zen-chu/dotfiles.git"
+    }
+}
