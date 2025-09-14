@@ -75,7 +75,6 @@
     const observer = new MutationObserver((mutations) => {
         let shouldRun = false;
 
-
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === 1 && node.matches && (
