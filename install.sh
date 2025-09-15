@@ -123,9 +123,6 @@ setup_basic_tools() {
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
-        brew_install gibo
-        brew_install ghq
-
         # terminal tools
         brew_install openssl
         brew_install wget
@@ -136,9 +133,15 @@ setup_basic_tools() {
         brew_install bat   # cat, less alternatives
         brew_install doggo # dig alternatives
         brew_install tree
-        brew_install jsonnet
-        brew_install shellcheck
         brew_install gitleaks
+
+        # development tools   
+        brew_install gibo
+        brew_install ghq
+        brew_install gemini-cli
+        brew_install shellcheck
+        brew_install jsonnet
+
         # cloud tools
         brew_install terraform
         brew_install ansible
