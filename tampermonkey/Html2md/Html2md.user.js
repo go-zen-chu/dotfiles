@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Html2md
-// @namespace    github.com/go-zen-chu
+// @namespace    https://github.com/go-zen-chu
 // @version      0.2
 // @description  Convert html page to markdown and store to clipboard
 // @author       go-zen-chu
