@@ -1,0 +1,15 @@
+{
+    "name": "html2md-test",
+    "version": "0.0.1",
+    "description": "Test suite for html2md Tampermonkey script",
+    "main": "Html2md.user.js",
+    "scripts": {
+        "test": "node test/run-tests.js"
+    },
+    "devDependencies": {
+        "jsdom": "^22.1.0",
+        "turndown": "^7.1.2"
+    },
+    "author": "go-zen-chu",
+    "license": "MIT"
+}

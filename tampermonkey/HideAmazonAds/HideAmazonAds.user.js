@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Hide Amazon sponser link
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @name         HideAmazonAds
+// @namespace    https://github.com/go-zen-chu
+// @version      0.2
 // @description  Hide sponser ads from amazon list
 // @author       go-zen-chu
 // @match        https://www.amazon.co.jp/*

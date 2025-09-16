@@ -4,12 +4,17 @@ This directory contains UserScripts for Tampermonkey.
 
 ## Scripts
 
-### [ContainsCredentialsAlert](./CredentialsAlert/CredentialsAlert.user.js)
+### [CredentialsAlert](./CredentialsAlert/CredentialsAlert.user.js)
 
 - **Description:** Watch out! You might input credentials!
-- **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js)
+- **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js)
 
-### [Hide Amazon sponser link](./HideAmazonAds/HideAmazonAds.user.js)
+### [HideAmazonAds](./HideAmazonAds/HideAmazonAds.user.js)
 
 - **Description:** Hide sponser ads from amazon list
-- **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/HideAmazonAds/HideAmazonAds.user.js)
+- **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/master/tampermonkey/HideAmazonAds/HideAmazonAds.user.js)
+
+### [Html2md](./Html2md/Html2md.user.js)
+
+- **Description:** Convert html page to markdown and store to clipboard
+- **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/master/tampermonkey/Html2md/Html2md.user.js)
