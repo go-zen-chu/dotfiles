@@ -119,6 +119,7 @@ setup_basic_tools() {
     setup_anyenv
     setup_node
     setup_atuin
+    setup_gitleaks
     setup_claude_code
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
@@ -133,7 +134,6 @@ setup_basic_tools() {
         brew_install bat   # cat, less alternatives
         brew_install doggo # dig alternatives
         brew_install tree
-        brew_install gitleaks
 
         # development tools   
         brew_install gibo
@@ -368,6 +368,19 @@ setup_atuin() {
     set +e # ignore error when login failed
     atuin login
     set -e
+}
+
+setup_gitleaks() {
+    echo_blue "Setup gitleaks..."
+
+    brew_install gitleaks
+
+    global_hook_dir="${config_dir}/gitleaks-global-hooks"
+    mkdir -p "${global_hook_dir}"
+    cp ./gitleaks/global-pre-commit.sh "${global_hook_dir}/pre-commit"
+    git config --global core.hooksPath "${global_hook_dir}"
+
+    log "$LOG_LEVEL_INFO" "[✓] gitleaks install finished"
 }
 
 setup_claude_code() {
