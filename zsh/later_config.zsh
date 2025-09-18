@@ -30,4 +30,11 @@ if type "anyenv" >/dev/null; then
         source <(goenv init -)
         $0 "$@"
     }
+    rbenv() {
+        unfunction "$0"
+        # init anyenv to load xxenv paths
+        anyenv -v
+        source <(rbenv init -)
+        $0 "$@"
+    }
 fi
