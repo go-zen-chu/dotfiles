@@ -12,8 +12,7 @@ $packages = @(
     # development tools
     "Microsoft.VisualStudioCode",
     "tailscale.tailscale",
-    "Unity.UnityHub",
-    "PostgreSQL.pgAdmin"
+    "Unity.UnityHub"
 )
 foreach ($package in $packages) {
     winget install $package -e
