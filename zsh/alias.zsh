@@ -60,6 +60,11 @@ if hash gh 2>/dev/null; then
 	alias ghprcrw='gh pr create | open'
 fi
 
+# open command in wsl2
+if hash powershell.exe 2>/dev/null; then
+	alias open='powershell.exe -c start'
+fi
+
 # kubectl
 if hash kubectl 2>/dev/null; then
 	if hash kubecolor 2>/dev/null; then
