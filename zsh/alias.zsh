@@ -60,9 +60,11 @@ if hash gh 2>/dev/null; then
 	alias ghprcrw='gh pr create | open'
 fi
 
-# open command in wsl2
+# open command in wsl2 (alternatively use can install wslview from wslu)
 if hash powershell.exe 2>/dev/null; then
 	alias open='powershell.exe -c start'
+	# gh command uses BROWSER env var to open url
+	export BROWSER='powershell.exe -NoProfile -Command Start-Process'
 fi
 
 # kubectl
