@@ -1,21 +1,21 @@
 # Make sure to load after path configuration
 
 if type "direnv" >/dev/null; then
-    source <(direnv hook zsh)
+    eval "$(direnv hook zsh)"
 fi
 
 if type "anyenv" >/dev/null; then
     # For lazy loading Xenv & languages
     anyenv() {
         unfunction "$0"
-        source <(anyenv init -)
+        eval "$(anyenv init -)"
         $0 "$@"
     }
     pyenv() {
         unfunction "$0"
         # init anyenv to load xxenv paths
         anyenv -v
-        source <(pyenv init -)
+        eval "$(pyenv init -)"
         $0 "$@"
     }
     python() {
@@ -27,14 +27,18 @@ if type "anyenv" >/dev/null; then
         unfunction "$0"
         # init anyenv to load xxenv paths
         anyenv -v
-        source <(goenv init -)
+        eval "$(goenv init -)"
         $0 "$@"
     }
     rbenv() {
         unfunction "$0"
         # init anyenv to load xxenv paths
         anyenv -v
-        source <(rbenv init -)
+        eval "$(rbenv init -)"
         $0 "$@"
     }
+fi
+
+if type "wtp" >/dev/null; then
+    eval "$(wtp hook zsh)"
 fi
