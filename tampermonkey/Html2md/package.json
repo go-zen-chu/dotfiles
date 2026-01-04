@@ -4,7 +4,7 @@
     "description": "Test suite for html2md Tampermonkey script",
     "main": "Html2md.user.js",
     "scripts": {
-        "test": "node test/run-tests.js"
+        "test": "node ../test-suite/bin/run.js"
     },
     "devDependencies": {
         "jsdom": "^22.1.0",

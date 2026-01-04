@@ -4,7 +4,7 @@
     "description": "Test suite for CredentialsAlert Tampermonkey script",
     "main": "CredentialsAlert.user.js",
     "scripts": {
-        "test": "node test/run-tests.js"
+        "test": "node ../test-suite/bin/run.js"
     },
     "devDependencies": {
         "jsdom": "^22.1.0"

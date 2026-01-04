@@ -3,19 +3,14 @@
  * Tests sponsored ad removal functionality in various scenarios
  */
 
-const fs = require('fs');
 const path = require('path');
+const { installDomGlobals } = require('../../test-suite/runner/dom-globals');
+const { loadUserscriptBody, evalUserscript } = require('../../test-suite/runner/userscript-loader');
 
 /**
  * Loads and prepares the HideAmazonAds script for testing
  */
-function loadHideAmazonAdsScript() {
-    const scriptPath = path.join(__dirname, '..', 'HideAmazonAds.user.js');
-    const scriptContent = fs.readFileSync(scriptPath, 'utf8');
-    return scriptContent.replace(/\/\/ ==UserScript==[\s\S]*?\/\/ ==\/UserScript==\s*/, '');
-}
-
-const scriptBody = loadHideAmazonAdsScript();
+const scriptBody = loadUserscriptBody(path.join(__dirname, '..', 'HideAmazonAds.user.js'));
 
 describe('HideAmazonAds Script Tests', () => {
     let document, window, body;
@@ -27,11 +22,7 @@ describe('HideAmazonAds Script Tests', () => {
         const { JSDOM } = require('jsdom');
         const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 
-        global.window = dom.window;
-        global.document = dom.window.document;
-        global.Event = dom.window.Event;
-        global.CustomEvent = dom.window.CustomEvent;
-        global.MutationObserver = dom.window.MutationObserver;
+        installDomGlobals(dom.window);
 
         document = global.document;
         window = global.window;
@@ -44,7 +35,7 @@ describe('HideAmazonAds Script Tests', () => {
      * Executes the HideAmazonAds script in the test environment
      */
     function executeHideAmazonAdsScript() {
-        eval(scriptBody);
+        evalUserscript(scriptBody);
     }
 
     /**

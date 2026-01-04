@@ -3,16 +3,11 @@
  * Emphasizes tab title with a prefix on /edit pages
  */
 
-const fs = require('fs');
 const path = require('path');
+const { installDomGlobals } = require('../../test-suite/runner/dom-globals');
+const { loadUserscriptBody, evalUserscript } = require('../../test-suite/runner/userscript-loader');
 
-function loadEmphasizeTabScript() {
-    const scriptPath = path.join(__dirname, '..', 'EmphasizeTab.user.js');
-    const scriptContent = fs.readFileSync(scriptPath, 'utf8');
-    return scriptContent.replace(/\/\/ ==UserScript==[\s\S]*?\/\/ ==\/UserScript==\s*/, '');
-}
-
-const scriptBody = loadEmphasizeTabScript();
+const scriptBody = loadUserscriptBody(path.join(__dirname, '..', 'EmphasizeTab.user.js'));
 
 describe('EmphasizeTab Script Tests', () => {
     const PREFIX = '✏️ ';
@@ -21,11 +16,7 @@ describe('EmphasizeTab Script Tests', () => {
         const { JSDOM } = require('jsdom');
         const dom = new JSDOM('<!DOCTYPE html><html><head><title></title></head><body></body></html>', { url });
 
-        global.window = dom.window;
-        global.document = dom.window.document;
-        global.Event = dom.window.Event;
-        global.CustomEvent = dom.window.CustomEvent;
-        global.MutationObserver = dom.window.MutationObserver;
+        installDomGlobals(dom.window);
 
         document.title = title;
 
@@ -33,7 +24,7 @@ describe('EmphasizeTab Script Tests', () => {
     }
 
     function executeScript() {
-        eval(scriptBody);
+        evalUserscript(scriptBody);
     }
 
     it('Non-edit path should not decorate title', () => {
