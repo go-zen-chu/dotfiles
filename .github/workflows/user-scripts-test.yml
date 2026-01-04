@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x]
-        script: [CredentialsAlert, HideAmazonAds, EmphasizeTab]
+        script: [CredentialsAlert, HideAmazonAds, EmphasizeTab, Html2md]
 
     steps:
       - name: Checkout repository
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-          cache-dependency-path: tampermonkey/${{ matrix.script }}/package.json
+          cache-dependency-path: tampermonkey/${{ matrix.script }}/package-lock.json
 
       - name: Install dependencies
         working-directory: tampermonkey/${{ matrix.script }}
@@ -44,4 +44,5 @@ jobs:
         with:
           name: test-results-${{ matrix.script }}-node-${{ matrix.node-version }}
           path: tampermonkey/${{ matrix.script }}/test-results.xml
+          if-no-files-found: warn
           retention-days: 30

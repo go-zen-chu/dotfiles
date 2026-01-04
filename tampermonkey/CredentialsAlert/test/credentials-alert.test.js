@@ -3,19 +3,14 @@
  * Tests credential detection functionality in various scenarios
  */
 
-const fs = require('fs');
 const path = require('path');
+const { installDomGlobals } = require('../../test-suite/runner/dom-globals');
+const { loadUserscriptBody, evalUserscript } = require('../../test-suite/runner/userscript-loader');
 
 /**
  * Loads and prepares the CredentialsAlert script for testing
  */
-function loadCredentialsAlertScript() {
-    const scriptPath = path.join(__dirname, '..', 'CredentialsAlert.user.js');
-    const scriptContent = fs.readFileSync(scriptPath, 'utf8');
-    return scriptContent.replace(/\/\/ ==UserScript==[\s\S]*?\/\/ ==\/UserScript==\s*/, '');
-}
-
-const scriptBody = loadCredentialsAlertScript();
+const scriptBody = loadUserscriptBody(path.join(__dirname, '..', 'CredentialsAlert.user.js'));
 
 describe('CredentialsAlert Script Tests', () => {
     let document, window, body;
@@ -27,10 +22,7 @@ describe('CredentialsAlert Script Tests', () => {
         const { JSDOM } = require('jsdom');
         const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 
-        global.window = dom.window;
-        global.document = dom.window.document;
-        global.Event = dom.window.Event;
-        global.CustomEvent = dom.window.CustomEvent;
+        installDomGlobals(dom.window);
 
         document = global.document;
         window = global.window;
@@ -43,7 +35,7 @@ describe('CredentialsAlert Script Tests', () => {
      * Executes the CredentialsAlert script in the test environment
      */
     function executeCredentialsAlertScript() {
-        eval(scriptBody);
+        evalUserscript(scriptBody);
     }
 
     /**

@@ -4,7 +4,7 @@
     "description": "Tampermonkey script to hide sponsored ads from Amazon search results",
     "main": "HideAmazonAds.user.js",
     "scripts": {
-        "test": "node test/run-tests.js",
+        "test": "node ../test-suite/bin/run.js",
         "install-deps": "npm install jsdom"
     },
     "keywords": [

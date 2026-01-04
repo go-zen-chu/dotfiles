@@ -17,6 +17,9 @@
 # Test binary, built with `go test -c`
 *.test
 
+# Tampermonkey test artifacts
+tampermonkey/**/test-results.xml
+
 # Code coverage profiles and other test artifacts
 *.out
 coverage.*
