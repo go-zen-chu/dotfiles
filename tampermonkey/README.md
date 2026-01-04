@@ -9,6 +9,11 @@ This directory contains UserScripts for Tampermonkey.
 - **Description:** Watch out! You might input credentials!
 - **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js)
 
+### [EmphasizeTab](./EmphasizeTab/EmphasizeTab.user.js)
+
+- **Description:** Emphasize the tab title with custom prefix and/or suffix
+- **Install:** [Click here to install](https://github.com/go-zen-chu/dotfiles/raw/master/tampermonkey/EmphasizeTab/EmphasizeTab.user.js)
+
 ### [HideAmazonAds](./HideAmazonAds/HideAmazonAds.user.js)
 
 - **Description:** Hide sponser ads from amazon list
