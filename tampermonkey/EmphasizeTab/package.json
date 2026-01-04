@@ -1,0 +1,14 @@
+{
+    "name": "emphasize-tab",
+    "version": "0.0.1",
+    "description": "Test suite for EmphasizeTab Tampermonkey script",
+    "main": "EmphasizeTab.user.js",
+    "scripts": {
+        "test": "node test/run-tests.js"
+    },
+    "devDependencies": {
+        "jsdom": "^23.2.0"
+    },
+    "author": "go-zen-chu",
+    "license": "MIT"
+}
