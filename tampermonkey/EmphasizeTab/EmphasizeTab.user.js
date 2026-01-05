@@ -13,7 +13,7 @@
 (function () {
     'use strict';
 
-    const PREFIX = '✏️ ';
+    const PREFIX = '🟥 ';
 
     let rawTitle = document.title || '';
     let isDecoratedByUs = false;
