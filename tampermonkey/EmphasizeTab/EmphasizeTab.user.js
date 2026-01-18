@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         EmphasizeTab
 // @namespace    https://github.com/go-zen-chu
-// @version      0.3
+// @version      0.4
 // @description  Blink tab title on edit pages to avoid accidental close
 // @author       go-zen-chu
 // @match        https://*/*
@@ -13,11 +13,9 @@
 (function () {
     'use strict';
 
-    const TITLE_BLINK_TEXT = '🖊️ Editing';
+    const TITLE_BLINK_TEXT = '✍️ Editing';
     const TITLE_BLINK_INTERVAL_MS = 1000;
 
-    let isApplyingEmphasis = false;
-    let pendingApplyTimeout = null;
     let originalTitle = null;
     let titleBlinkTimer = null;
     let titleBlinkVisible = false;
@@ -60,35 +58,11 @@
     }
 
     function applyEmphasis() {
-        if (isApplyingEmphasis) {
-            return;
-        }
-        isApplyingEmphasis = true;
-        if (titleObserver) {
-            titleObserver.disconnect();
-        }
         if (isEditPath()) {
             startTitleBlink();
         } else {
             stopTitleBlink();
         }
-        if (titleObserver) {
-            const titleElement = document.querySelector('title');
-            if (titleElement) {
-                titleObserver.observe(titleElement, { childList: true });
-            }
-        }
-        isApplyingEmphasis = false;
-    }
-
-    function scheduleApplyEmphasis() {
-        if (pendingApplyTimeout) {
-            return;
-        }
-        pendingApplyTimeout = window.setTimeout(() => {
-            pendingApplyTimeout = null;
-            applyEmphasis();
-        }, 50);
     }
 
     function observeTitleChanges() {
@@ -96,19 +70,12 @@
         if (!titleElement || typeof MutationObserver === 'undefined') {
             return;
         }
-
-        const observer = new MutationObserver(() => {
-            if (isApplyingEmphasis || !isEditPath()) {
-                return;
-            }
-            if (originalTitle === null) {
+        titleObserver = new MutationObserver(() => {
+            if (isEditPath() && originalTitle !== null) {
                 originalTitle = document.title;
             }
-            scheduleApplyEmphasis();
         });
-
-        titleObserver = observer;
-        observer.observe(titleElement, { childList: true });
+        titleObserver.observe(titleElement, { childList: true });
     }
 
     function patchHistoryMethod(methodName) {
@@ -116,7 +83,6 @@
         if (typeof original !== 'function') {
             return;
         }
-
         window.history[methodName] = function (...args) {
             const result = original.apply(this, args);
             applyEmphasis();
