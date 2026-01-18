@@ -19,9 +19,9 @@ config_dir="${home_dir}/.config"
 is_ci="false"
 homebrew_bin_path="/undefined"
 
-nodejs_version="22"
+nodejs_version="24"
 pyenv_python_version="3.13"
-goenv_go_version="1.24"
+goenv_go_version="1.25"
 
 ### setup methods
 
