@@ -2,6 +2,11 @@
 
 This directory contains UserScripts for Tampermonkey.
 
+## Installation
+
+1. Install [Tampermonkey](https://www.tampermonkey.net/) extension for your browser
+2. Click the "Install" link for each script below to add it to Tampermonkey
+
 ## Scripts
 
 ### [CredentialsAlert](./CredentialsAlert/CredentialsAlert.user.js)
