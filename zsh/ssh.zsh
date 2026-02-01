@@ -3,7 +3,7 @@ if [ -z "${SSH_AUTH_SOCK}" ]; then
     echo "Starting ssh-agent and ssh-add..."
     os=$(uname -s)
 
-    if [[ "${os}" == "Linux" && type keychain >/dev/null 2>&1 ]]; then
+    if [[ "${os}" == "Linux" ]] && type "keychain" >/dev/null 2>&1 ; then
         # Use keychain to manage SSH keys
         keys=()
         [ -f "${HOME}/.ssh/id_rsa" ] && keys+="${HOME}/.ssh/id_rsa"

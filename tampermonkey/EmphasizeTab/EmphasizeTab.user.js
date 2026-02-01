@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         EmphasizeTab
 // @namespace    https://github.com/go-zen-chu
-// @version      0.4
+// @version      0.5
 // @description  Blink tab title on edit pages to avoid accidental close
 // @author       go-zen-chu
 // @match        https://*/*
@@ -13,7 +13,7 @@
 (function () {
     'use strict';
 
-    const TITLE_BLINK_TEXT = '✍️ Editing';
+    const TITLE_BLINK_TEXT = '️🟥 Editing';
     const TITLE_BLINK_INTERVAL_MS = 1000;
 
     let originalTitle = null;
@@ -39,6 +39,7 @@
         if (originalTitle === null) {
             originalTitle = document.title;
         }
+
         titleBlinkTimer = window.setInterval(() => {
             titleBlinkVisible = !titleBlinkVisible;
             document.title = titleBlinkVisible ? TITLE_BLINK_TEXT : originalTitle;
@@ -65,19 +66,6 @@
         }
     }
 
-    function observeTitleChanges() {
-        const titleElement = document.querySelector('title');
-        if (!titleElement || typeof MutationObserver === 'undefined') {
-            return;
-        }
-        titleObserver = new MutationObserver(() => {
-            if (isEditPath() && originalTitle !== null) {
-                originalTitle = document.title;
-            }
-        });
-        titleObserver.observe(titleElement, { childList: true });
-    }
-
     function patchHistoryMethod(methodName) {
         const original = window.history[methodName];
         if (typeof original !== 'function') {
@@ -93,11 +81,12 @@
     // For Single Page Applications like React, we need to monitor history changes
     patchHistoryMethod('pushState');
     patchHistoryMethod('replaceState');
+
     // For back/forward navigation
     window.addEventListener('popstate', applyEmphasis);
     // For hash change type navigation
     window.addEventListener('hashchange', applyEmphasis);
-    observeTitleChanges();
+
     // Re-apply after full load since some sites set title late.
     window.addEventListener('load', applyEmphasis, { once: true });
     applyEmphasis();
