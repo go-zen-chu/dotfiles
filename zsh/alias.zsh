@@ -1,5 +1,4 @@
 # OS independent setting
-declare os
 os=$(uname -s)
 if [[ ${os} == 'Darwin' ]]; then
 	export LSCOLORS=bxfxcxdxgxegedabagacad
