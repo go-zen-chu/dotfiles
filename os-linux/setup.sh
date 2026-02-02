@@ -6,6 +6,7 @@ linux_setup_basic_tools() {
     echo_blue "Setup basic tools for linux..."
 
     brew_install xclip
+    brew_install keychain
 }
 
 linux_setup_personal_machine_tools() {
