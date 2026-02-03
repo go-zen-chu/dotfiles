@@ -12,6 +12,11 @@ if type "anyenv" >/dev/null; then
         $0 "$@"
     }
     pyenv() {
+        # Check if already initialized (prevent VSCode from re-initializing)
+        if [[ -n "${PYENV_SHELL}" ]]; then
+            command pyenv "$@"
+            return
+        fi
         unfunction "$0"
         # init anyenv to load xxenv paths
         anyenv -v
