@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
-source ./make/util.sh
+source ./scripts/log.sh
 
 echo_green "[INFO] setup vim"
 os=$(check_os)
@@ -25,20 +25,20 @@ vim --version
 
 # copy all things inside .vim
 if [[ ! -d "${HOME}/.vim" ]]; then
-	cp -r ./vim/.vim "${HOME}"
+	cp -r ./terminal-tools/vim/.vim "${HOME}"
 	chown -R "${USER}" "${HOME}/.vim"
 fi
 
 # setup .vimrc
 if [[ -f "${HOME}/.vimrc" ]]; then
-	if diff "${HOME}/.vimrc" ./vim/.vimrc >/dev/null; then
+	if diff "${HOME}/.vimrc" ./terminal-tools/vim/.vimrc >/dev/null; then
 		echo_green ".vimrc is same as dotfiles"
 	else
 		# backup
 		cp "${HOME}/.vimrc" "${HOME}/.vimrc.$(date '+%Y%m%d-%H%M%S').bk"
 	fi
 fi
-cp -f ./vim/.vimrc "${HOME}"
+cp -f ./terminal-tools/vim/.vimrc "${HOME}"
 
 # in CI environment, command below does not work (requires UI)
 set +u

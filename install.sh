@@ -179,7 +179,7 @@ setup_git() {
     if [ -z "${git_config_global_result}" ]; then
         git config --global user.name "${git_user_name}"
         git config --global user.email "${arg_git_email}"
-        git config --global core.excludesfile "${home_dir}/dotfiles/git/global-ignore"
+        git config --global core.excludesfile "${home_dir}/dotfiles/terminal-tools/git/global-ignore"
         git config --global push.default current
         git config --global pull.rebase false
     fi
@@ -377,7 +377,7 @@ setup_gitleaks() {
 
     global_hook_dir="${config_dir}/gitleaks-global-hooks"
     mkdir -p "${global_hook_dir}"
-    cp ./gitleaks/global-pre-commit.sh "${global_hook_dir}/pre-commit"
+    cp ./terminal-tools/gitleaks/global-pre-commit.sh "${global_hook_dir}/pre-commit"
     git config --global core.hooksPath "${global_hook_dir}"
 
     log "$LOG_LEVEL_INFO" "[✓] gitleaks install finished"
@@ -433,13 +433,13 @@ setup_zsh() {
 
     # configure
     if [ ! -f "${home_dir}/local.zsh" ]; then
-        cp ./zsh/local.zsh "${home_dir}"
+        cp ./terminal-tools/zsh/local.zsh "${home_dir}"
     fi
     local local_zshrc_path="${home_dir}/.zshrc"
-    if [ -f "${local_zshrc_path}" ] && ! diff "${local_zshrc_path}" ./zsh/local.zsh >/dev/null 2>&1; then
+    if [ -f "${local_zshrc_path}" ] && ! diff "${local_zshrc_path}" ./terminal-tools/zsh/local.zsh >/dev/null 2>&1; then
         cp "${local_zshrc_path}" "${local_zshrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
     fi
-    cp -f ./zsh/.zshrc "${home_dir}"
+    cp -f ./terminal-tools/zsh/.zshrc "${home_dir}"
 }
 
 setup_vim() {
@@ -451,12 +451,12 @@ setup_vim() {
     # configure
     if [ ! -d "${home_dir}/.vim" ]; then
         # make and copy all things inside .vim
-        cp -r ./vim/.vim "${home_dir}"
+        cp -r ./terminal-tools/vim/.vim "${home_dir}"
     fi
-    if [ -f "${vimrc_path}" ] && ! diff "${vimrc_path}" ./vim/.vimrc >/dev/null 2>&1; then
+    if [ -f "${vimrc_path}" ] && ! diff "${vimrc_path}" ./terminal-tools/vim/.vimrc >/dev/null 2>&1; then
         cp "${vimrc_path}" "${vimrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
     fi
-    cp -f ./vim/.vimrc "${home_dir}"
+    cp -f ./terminal-tools/vim/.vimrc "${home_dir}"
 }
 
 setup_tmux() {

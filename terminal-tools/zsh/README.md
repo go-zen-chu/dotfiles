@@ -8,7 +8,7 @@ Currently, I manually manage zsh plugins by using git submodules.
 
 ```shell
 # adding submodules
-git submodule add https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/dotfiles/zsh/plugins/
+git submodule add https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/dotfiles/terminal-tools/zsh/plugins/
 
 # update installed submodules
 df-zsh-plugin-update
