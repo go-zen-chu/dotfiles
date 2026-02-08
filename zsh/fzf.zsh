@@ -1,5 +1,6 @@
 # migrate from https://github.com/junegunn/fzf/blob/fc7630a66d8b07ec90603f7919f8aadf891783ac/shell/key-bindings.zsh#L106
 export FZF_DEFAULT_OPTS='--height 60% --reverse --border'
+
 fzf-history-widget() {
   local selected num
   setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2> /dev/null
@@ -15,5 +16,6 @@ fzf-history-widget() {
   zle reset-prompt
   return $ret
 }
+# register new widget
 zle     -N   fzf-history-widget
 bindkey '^r' fzf-history-widget
