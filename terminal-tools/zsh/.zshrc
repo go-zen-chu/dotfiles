@@ -12,7 +12,7 @@ source $HOME/dotfiles/terminal-tools/zsh/zsh_config.zsh
 source $HOME/dotfiles/terminal-tools/zsh/ssh.zsh
 source $HOME/dotfiles/terminal-tools/zsh/alias.zsh
 source $HOME/dotfiles/terminal-tools/zsh/key.zsh
-source $HOME/dotfiles/terminal-tools/zsh/atuin.zsh
+source $HOME/dotfiles/terminal-tools/zsh/tools.zsh
 source $HOME/dotfiles/terminal-tools/zsh/later_config.zsh
 # import env independent settings. Should be located in $HOME and be customized
 if [ -f $HOME/local.zsh ]; then

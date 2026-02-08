@@ -364,14 +364,6 @@ setup_atuin() {
 
     brew_install atuin
 
-    local atuin_config_dir="${config_dir}/atuin"
-    mkdir -p "${atuin_config_dir}"
-    local atuin_config_path="${atuin_config_dir}/config.toml"
-    if [ -f "${atuin_config_path}" ] && ! diff "${atuin_config_path}" ./terminal-tools/atuin/config.toml >/dev/null 2>&1; then
-        cp "${atuin_config_path}" "${atuin_config_path}.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./terminal-tools/atuin/config.toml "${atuin_config_dir}"
-
     if [ "${flg_personal_mode}" = "false" ] || [ "${is_ci}" = "true" ]; then
         return
     fi
