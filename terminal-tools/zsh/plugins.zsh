@@ -50,8 +50,6 @@ fi
 
 # inputs
 source ${DOTFILES_ZSH_PLUGINS_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh
-# prompt
-source ${DOTFILES_ZSH_PLUGINS_PATH}/kube-ps1/kube-ps1.sh
 # should load after compinit. https://github.com/zsh-users/zsh-syntax-highlighting#faq
 source ${DOTFILES_ZSH_PLUGINS_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

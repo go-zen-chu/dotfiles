@@ -1,5 +1,5 @@
-source $HOME/dotfiles/vim/plugins.vim
-source $HOME/dotfiles/vim/settings.vim
-source $HOME/dotfiles/vim/keybindings.vim
-source $HOME/dotfiles/vim/visual.vim
+source $HOME/dotfiles/terminal-tools/vim/plugins.vim
+source $HOME/dotfiles/terminal-tools/vim/settings.vim
+source $HOME/dotfiles/terminal-tools/vim/keybindings.vim
+source $HOME/dotfiles/terminal-tools/vim/visual.vim
 
