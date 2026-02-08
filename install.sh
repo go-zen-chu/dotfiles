@@ -118,9 +118,12 @@ setup_basic_tools() {
     setup_direnv
     setup_anyenv
     setup_node
+    # terminal tools
     setup_atuin
     setup_gitleaks
     setup_claude_code
+    setup_zellij
+    setup_starship
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
@@ -292,6 +295,7 @@ setup_gotools() {
     go_install "gotests" "github.com/cweill/gotests/gotests@latest"
     # colorize test output
     go_install "gotest" "github.com/rakyll/gotest@latest"
+    # mock generator
     go_install "gomock" "go.uber.org/mock/mockgen@latest"
 
     go_install "gopls" "golang.org/x/tools/gopls@latest"
@@ -394,6 +398,36 @@ setup_claude_code() {
     log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
 }
 
+setup_zellij() {
+    echo_blue "Setup zellij..."
+
+    brew_install zellij
+
+    local zellij_config_dir="${config_dir}/zellij"
+    mkdir -p "${zellij_config_dir}"
+    if [ -f "${zellij_config_dir}/config.kdl" ] && ! diff "${zellij_config_dir}/config.kdl" ./terminal-tools/zellij/config.kdl >/dev/null 2>&1; then
+        cp "${zellij_config_dir}/config.kdl" "${zellij_config_dir}/config.kdl.$(date '+%Y%m%d-%H%M%S').bk"
+    fi
+    cp -f ./terminal-tools/zellij/config.kdl "${zellij_config_dir}"
+
+    log "$LOG_LEVEL_INFO" "[✓] zellij install finished"
+}
+
+setup_starship() {
+    echo_blue "Setup starship..."
+
+    brew_install starship
+
+    mkdir -p "${config_dir}"
+    local starship_config_path="${config_dir}/starship.toml"
+    if [ -f "${starship_config_path}" ] && ! diff "${starship_config_path}" ./terminal-tools/starship/starship.toml >/dev/null 2>&1; then
+        cp "${starship_config_path}" "${starship_config_path}.$(date '+%Y%m%d-%H%M%S').bk"
+    fi
+    cp -f ./terminal-tools/starship/starship.toml "${config_dir}"
+
+    log "$LOG_LEVEL_INFO" "[✓] starship install finished"
+}
+
 setup_personal_machine_tools() {
     if [ "$flg_personal_mode" = "false" ]; then
         echo_blue "Skip setup personal machine tools"
@@ -436,7 +470,7 @@ setup_zsh() {
         cp ./terminal-tools/zsh/local.zsh "${home_dir}"
     fi
     local local_zshrc_path="${home_dir}/.zshrc"
-    if [ -f "${local_zshrc_path}" ] && ! diff "${local_zshrc_path}" ./terminal-tools/zsh/local.zsh >/dev/null 2>&1; then
+    if [ -f "${local_zshrc_path}" ] && ! diff "${local_zshrc_path}" ./terminal-tools/zsh/.zshrc >/dev/null 2>&1; then
         cp "${local_zshrc_path}" "${local_zshrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
     fi
     cp -f ./terminal-tools/zsh/.zshrc "${home_dir}"
@@ -459,32 +493,6 @@ setup_vim() {
     cp -f ./terminal-tools/vim/.vimrc "${home_dir}"
 }
 
-setup_tmux() {
-    echo_blue "Setup tmux..."
-
-    brew_install tmux
-
-    # configure
-    local tmux_conf_path="${home_dir}/.tmux.conf"
-    if [ -f "${tmux_conf_path}" ] && ! diff "${tmux_conf_path}" ./tmux/.tmux.conf >/dev/null 2>&1; then
-        cp "${tmux_conf_path}" "${tmux_conf_path}.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./tmux/.tmux.conf "${home_dir}"
-
-    if [ ! -d "${home_dir}/.tmux/plugins/tpm" ]; then
-        git clone https://github.com/tmux-plugins/tpm "${home_dir}/.tmux/plugins/tpm"
-    fi
-
-    if [ -f "${home_dir}/.tmux/plugins/tpm/bin/install_plugins" ]; then
-        log "$LOG_LEVEL_INFO" "run tpm tmux plugin install"
-        # initialize tpm to set TMUX_PLUGIN_MANAGER_PATH
-        export TMUX_PLUGIN_MANAGER_PATH="${home_dir}/.tmux/plugins/"
-        "${home_dir}/.tmux/plugins/tpm/bin/install_plugins"
-    else
-        log "$LOG_LEVEL_ERROR" "cannot find tpm binary"
-    fi
-}
-
 ### install
 
 startup "$@" # parse arguments given to this script
@@ -500,7 +508,6 @@ case "${os}" in
     setup_personal_machine_tools macos_setup_personal_machine_tools
     setup_zsh
     setup_vim
-    setup_tmux
     ;;
 "ubuntu")
     homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin"
@@ -509,7 +516,6 @@ case "${os}" in
     setup_personal_machine_tools linux_setup_personal_machine_tools
     setup_zsh
     setup_vim
-    setup_tmux
     ;;
 esac
 
