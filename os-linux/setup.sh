@@ -22,15 +22,6 @@ linux_setup_personal_machine_tools() {
         echo_green "run 'sudo tailscale up' for joining to tailscale network"
     fi
 
-    # xdg-open requred for tmux-plugin tmux-open
-    if hash xdg-open 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] xdg-utils is already installed"
-    else
-        log "$LOG_LEVEL_INFO" "[ ] xdg-utils not installed. Installing..."
-        linux_package_install "xdg-utils"
-        log "$LOG_LEVEL_INFO" "[✓] xdg-utils install finished"
-    fi
-
     # google-cloud-sdk
     if hash gcloud 2>/dev/null; then
         log "$LOG_LEVEL_INFO" "[✓] google-cloud-sdk is already installed"
