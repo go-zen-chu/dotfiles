@@ -1,16 +1,13 @@
-[submodule "zsh/plugins/zsh-autosuggestions"]
-	path = zsh/plugins/zsh-autosuggestions
+[submodule "terminal-tools/zsh/plugins/zsh-autosuggestions"]
+	path = terminal-tools/zsh/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule "zsh/plugins/kube-ps1"]
-	path = zsh/plugins/kube-ps1
-	url = https://github.com/jonmosco/kube-ps1.git
-[submodule "zsh/plugins/zsh-completions"]
-	path = zsh/plugins/zsh-completions
+[submodule "terminal-tools/zsh/plugins/zsh-completions"]
+	path = terminal-tools/zsh/plugins/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
 	ignore = dirty
-[submodule "zsh/plugins/ohmyzsh"]
-	path = zsh/plugins/ohmyzsh
+[submodule "terminal-tools/zsh/plugins/ohmyzsh"]
+	path = terminal-tools/zsh/plugins/ohmyzsh
 	url = https://github.com/ohmyzsh/ohmyzsh.git
-[submodule "zsh/plugins/zsh-syntax-highlighting"]
-	path = zsh/plugins/zsh-syntax-highlighting
+[submodule "terminal-tools/zsh/plugins/zsh-syntax-highlighting"]
+	path = terminal-tools/zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

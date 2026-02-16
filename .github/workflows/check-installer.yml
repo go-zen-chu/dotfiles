@@ -32,6 +32,8 @@ jobs:
         env:
           # for tput coloring
           TERM: xterm-color
+          # somehow ubuntu runner preinstalls /usr/bin/go (old) which makes go tool installation by goenv fail
+          GOENV_PATH_ORDER: front
   slack-notification:
     needs: [setup-mac, setup-ubuntu]
     runs-on: ubuntu-latest
