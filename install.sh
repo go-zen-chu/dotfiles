@@ -187,6 +187,10 @@ setup_git() {
         git config --global core.excludesfile "${home_dir}/dotfiles/terminal-tools/git/global-ignore"
         git config --global push.default current
         git config --global pull.rebase false
+        # make verified commit
+        git config --global gpg.format ssh
+        git config --global user.signingkey "${home_dir}/.ssh/id_ed25519.pub"
+        git config --global commit.gpgsign true
     fi
 }
 
