@@ -6,3 +6,4 @@ disabled = true
 
 [direnv]
 disabled = false
+detect_files = ['.env','.envrc]
