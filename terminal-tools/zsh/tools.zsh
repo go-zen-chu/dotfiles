@@ -32,4 +32,5 @@ fi
 #===== starship =====
 if hash starship 2>/dev/null; then
     eval "$(starship init zsh)"
+    export STARSHIP_CONFIG="${HOME}/dotfiles/terminal-tools/starship/starship.toml"
 fi

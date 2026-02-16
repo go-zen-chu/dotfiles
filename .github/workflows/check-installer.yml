@@ -38,7 +38,56 @@ jobs:
     needs: [setup-mac, setup-ubuntu]
     runs-on: ubuntu-latest
     if: always()
+    permissions:
+      actions: read
     steps:
+      - name: Report job durations
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const run_id = context.runId;
+
+            const targets = ["setup-mac", "setup-ubuntu"];
+
+            const { data } = await github.rest.actions.listJobsForWorkflowRun({
+              owner,
+              repo,
+              run_id,
+              per_page: 100,
+            });
+
+            function formatDuration(ms) {
+              if (ms == null || Number.isNaN(ms) || ms < 0) return "N/A";
+              const totalSeconds = Math.floor(ms / 1000);
+              const seconds = totalSeconds % 60;
+              const totalMinutes = Math.floor(totalSeconds / 60);
+              const minutes = totalMinutes % 60;
+              const hours = Math.floor(totalMinutes / 60);
+              const pad2 = (n) => String(n).padStart(2, "0");
+              return hours > 0
+                ? `${hours}:${pad2(minutes)}:${pad2(seconds)}`
+                : `${minutes}:${pad2(seconds)}`;
+            }
+
+            const rows = targets.map((jobName) => {
+              const job = data.jobs.find((j) => j.name === jobName);
+              if (!job) return [jobName, "N/A"];
+
+              const startedAt = job.started_at ? new Date(job.started_at) : null;
+              const completedAt = job.completed_at ? new Date(job.completed_at) : null;
+              const durationMs = startedAt && completedAt ? completedAt - startedAt : null;
+              return [jobName, formatDuration(durationMs)];
+            });
+
+            await core.summary
+              .addHeading("Job durations")
+              .addTable([
+                [{ data: "Job", header: true }, { data: "Duration", header: true }],
+                ...rows,
+              ])
+              .write();
       - name: Send data to Slack webhook (on failure)
         uses: slackapi/slack-github-action@v1.23.0
         with:

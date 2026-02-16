@@ -123,44 +123,46 @@ setup_basic_tools() {
     setup_gitleaks
     setup_claude_code
     setup_zellij
-    setup_starship
 
+    # terminal tools
+    brew_install wget
+    brew_install rsync
+    brew_install fzf
+    brew_install jq
+    brew_install yq
+    brew_install bat   # cat, less alternatives
+    brew_install doggo # dig alternatives
+    brew_install tree
+    brew_install starship
+
+    # development tools   
+    brew_install gibo
+    brew_install ghq
+    brew_install gemini-cli
+    brew_install shellcheck
+    brew_install jsonnet
+
+    # golang related tools
+    brew_install mage
+    brew_install golangci-lint
+
+    # kubernetes tools
+    brew_install kubectl
+    brew_install kustomize
+    brew_install kubecolor
+    brew_install k9s
+    brew_install kind
+    setup_krew
+    
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
         # terminal tools
         brew_install openssl
-        brew_install wget
-        brew_install rsync
-        brew_install fzf
-        brew_install jq
-        brew_install yq
-        brew_install bat   # cat, less alternatives
-        brew_install doggo # dig alternatives
-        brew_install tree
-
-        # development tools   
-        brew_install gibo
-        brew_install ghq
-        brew_install gemini-cli
-        brew_install shellcheck
-        brew_install jsonnet
 
         # cloud tools
         brew_install terraform
         brew_install ansible
         brew_install ansible-lint # used in vscode ansible
-
-        # golang related tools
-        brew_install mage
-        brew_install golangci-lint
-
-        # kubernetes tools
-        brew_install kubectl
-        brew_install kustomize
-        brew_install kubecolor
-        brew_install k9s
-        brew_install kind
-        setup_krew
     fi
 
     if [ $# -eq 1 ]; then
@@ -411,21 +413,6 @@ setup_zellij() {
     cp -f ./terminal-tools/zellij/config.kdl "${zellij_config_dir}"
 
     log "$LOG_LEVEL_INFO" "[✓] zellij install finished"
-}
-
-setup_starship() {
-    echo_blue "Setup starship..."
-
-    brew_install starship
-
-    mkdir -p "${config_dir}"
-    local starship_config_path="${config_dir}/starship.toml"
-    if [ -f "${starship_config_path}" ] && ! diff "${starship_config_path}" ./terminal-tools/starship/starship.toml >/dev/null 2>&1; then
-        cp "${starship_config_path}" "${starship_config_path}.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./terminal-tools/starship/starship.toml "${config_dir}"
-
-    log "$LOG_LEVEL_INFO" "[✓] starship install finished"
 }
 
 setup_personal_machine_tools() {
