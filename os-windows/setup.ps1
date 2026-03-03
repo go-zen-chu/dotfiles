@@ -4,7 +4,6 @@ $packages = @(
     "Google.Drive",
     "Amazon.Kindle",
     "Synology.DriveClient",
-    "Adobe.Acrobat.Reader.64-bit",
     # communication tools
     "Zoom.Zoom",
     "LINE.LINE",
@@ -12,6 +11,7 @@ $packages = @(
     # development tools
     "Microsoft.VisualStudioCode",
     "tailscale.tailscale",
+    "Git.Git",
     "Unity.UnityHub"
 )
 foreach ($package in $packages) {
