@@ -1,0 +1,11 @@
+[core]
+    excludesfile = /home/am/dotfiles/terminal-tools/git/global-ignore
+[push]
+    default = current
+    autoSetupRemote = true
+[pull]
+    rebase = false
+[gpg]
+    format = ssh
+[commit]
+    gpgsign = true
