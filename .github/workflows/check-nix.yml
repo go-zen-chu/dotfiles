@@ -1,0 +1,66 @@
+name: Check Nix install
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "nix/**"
+      - "os-macos/karabiner/**"
+      - "terminal-tools/atuin/**"
+      - "terminal-tools/git/global-ignore"
+      - "terminal-tools/starship/**"
+      - "terminal-tools/zellij/**"
+      - "terminal-tools/zsh/**"
+      - ".github/workflows/check-nix.yml"
+
+jobs:
+  home-manager-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check flake outputs
+        run: |
+          nix flake show
+      - name: Build Linux Home Manager activation package
+        run: |
+          nix build .#homeConfigurations.am-linux.activationPackage
+      - name: Run Linux Home Manager switch
+        run: |
+          export HOME="$RUNNER_TEMP/home-linux"
+          mkdir -p "$HOME"
+          nix run github:nix-community/home-manager -- switch --flake "$GITHUB_WORKSPACE#am-linux" -b ci-backup
+
+  home-manager-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build macOS Home Manager activation package
+        run: |
+          nix build .#homeConfigurations.am-darwin.activationPackage
+      - name: Run macOS Home Manager switch
+        run: |
+          export HOME="$RUNNER_TEMP/home-darwin"
+          mkdir -p "$HOME"
+          nix run github:nix-community/home-manager -- switch --flake "$GITHUB_WORKSPACE#am-darwin" -b ci-backup
+
+  nix-darwin-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate nix-darwin configurations
+        run: |
+          nix build --dry-run .#darwinConfigurations.am-darwin.system
+          nix build --dry-run .#darwinConfigurations.am-darwin-intel.system
