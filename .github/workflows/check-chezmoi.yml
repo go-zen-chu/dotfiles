@@ -1,0 +1,91 @@
+name: Check chezmoi
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "home/**"
+      - ".chezmoiroot"
+      - ".github/workflows/check-chezmoi.yml"
+
+jobs:
+  check-chezmoi-ubuntu:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)"
+      - name: Test chezmoi init
+        run: |
+          ~/bin/chezmoi init --source "$(pwd)" --apply --force
+      - name: Verify applied dotfiles
+        run: |
+          test -f ~/.zshrc
+          test -f ~/.vimrc
+          test -f ~/local.zsh
+          test -f ~/.config/zellij/config.kdl
+          test -f ~/.config/starship.toml
+          test -f ~/.config/atuin/config.toml
+          test -f ~/.config/direnv/direnv.toml
+          test -f ~/.claude/CLAUDE.md
+          echo "All managed dotfiles are applied successfully"
+      - name: Test chezmoi update (re-apply)
+        run: |
+          ~/bin/chezmoi apply --force
+          echo "chezmoi re-apply (update) succeeded"
+  check-chezmoi-macos:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)"
+      - name: Test chezmoi init
+        run: |
+          ~/bin/chezmoi init --source "$(pwd)" --apply --force
+      - name: Verify applied dotfiles
+        run: |
+          test -f ~/.zshrc
+          test -f ~/.vimrc
+          test -f ~/local.zsh
+          test -f ~/.config/zellij/config.kdl
+          test -f ~/.config/starship.toml
+          test -f ~/.config/atuin/config.toml
+          test -f ~/.config/direnv/direnv.toml
+          test -f ~/.claude/CLAUDE.md
+          echo "All managed dotfiles are applied successfully"
+      - name: Test chezmoi update (re-apply)
+        run: |
+          ~/bin/chezmoi apply --force
+          echo "chezmoi re-apply (update) succeeded"
+  slack-notification:
+    needs: [check-chezmoi-ubuntu, check-chezmoi-macos]
+    runs-on: ubuntu-latest
+    if: always()
+    permissions: {}
+    steps:
+      - name: Send data to Slack webhook (on failure)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

@@ -123,6 +123,7 @@ setup_basic_tools() {
     setup_gitleaks
     setup_claude_code
     setup_zellij
+    setup_chezmoi
 
     # terminal tools
     brew_install wget
@@ -417,6 +418,19 @@ setup_zellij() {
     cp -f ./terminal-tools/zellij/config.kdl "${zellij_config_dir}"
 
     log "$LOG_LEVEL_INFO" "[✓] zellij install finished"
+}
+
+setup_chezmoi() {
+    echo_blue "Setup chezmoi..."
+
+    brew_install chezmoi
+
+    local dotfiles_dir
+    dotfiles_dir="${home_dir}/dotfiles"
+    log "$LOG_LEVEL_INFO" "Running chezmoi init with local dotfiles (${dotfiles_dir})..."
+    chezmoi init --source "${dotfiles_dir}" --apply --force
+
+    log "$LOG_LEVEL_INFO" "[✓] chezmoi install finished"
 }
 
 setup_personal_machine_tools() {

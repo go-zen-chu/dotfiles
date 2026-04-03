@@ -1,0 +1,12 @@
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[direnv]
+disabled = false
+detect_files = ['.env','.envrc']
+
+[kubernetes]
+disabled = false
