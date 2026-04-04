@@ -18,10 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install chezmoi
-        run: sh -c "$(curl -fsLS get.chezmoi.io)"
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/bin"
       - name: Test chezmoi init
         run: |
-          ~/bin/chezmoi init --source "$(pwd)" --apply --force
+          "$HOME/bin/chezmoi" init --source "$(pwd)" --apply --force
       - name: Verify applied dotfiles
         run: |
           test -f ~/.zshrc
@@ -35,7 +35,7 @@ jobs:
           echo "All managed dotfiles are applied successfully"
       - name: Test chezmoi update (re-apply)
         run: |
-          ~/bin/chezmoi apply --force
+          "$HOME/bin/chezmoi" apply --force
           echo "chezmoi re-apply (update) succeeded"
   check-chezmoi-macos:
     runs-on: macos-latest
@@ -44,10 +44,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install chezmoi
-        run: sh -c "$(curl -fsLS get.chezmoi.io)"
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/bin"
       - name: Test chezmoi init
         run: |
-          ~/bin/chezmoi init --source "$(pwd)" --apply --force
+          "$HOME/bin/chezmoi" init --source "$(pwd)" --apply --force
       - name: Verify applied dotfiles
         run: |
           test -f ~/.zshrc
@@ -61,7 +61,7 @@ jobs:
           echo "All managed dotfiles are applied successfully"
       - name: Test chezmoi update (re-apply)
         run: |
-          ~/bin/chezmoi apply --force
+          "$HOME/bin/chezmoi" apply --force
           echo "chezmoi re-apply (update) succeeded"
   slack-notification:
     needs: [check-chezmoi-ubuntu, check-chezmoi-macos]
