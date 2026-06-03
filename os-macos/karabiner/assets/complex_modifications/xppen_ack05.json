@@ -138,10 +138,9 @@
                     },
                     "to": [
                         {
-                            "key_code": "4",
+                            "key_code": "e",
                             "modifiers": [
-                                "left_control",
-                                "left_shift"
+                                "left_command"
                             ]
                         }
                     ]
@@ -236,10 +235,9 @@
                     },
                     "to": [
                         {
-                            "key_code": "7",
+                            "key_code": "d",
                             "modifiers": [
-                                "left_control",
-                                "left_shift"
+                                "left_command"
                             ]
                         }
                     ]
