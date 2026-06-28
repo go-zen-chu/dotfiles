@@ -23,7 +23,6 @@ macos_setup_basic_tools() {
         brew install --cask appcleaner
         brew install --cask alacritty
         brew install --cask microsoft-edge
-        brew install --cask hiddenbar
         brew install --cask licecap
         brew install --cask raycast
         # development tools
