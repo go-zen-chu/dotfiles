@@ -1,0 +1,9 @@
+name: dotfiles
+version: 0.1.0
+description: Personal agent instructions and skills (software design principles, code review)
+author: Akira Masuda
+dependencies:
+  apm: []
+  mcp: []
+includes: auto
+scripts: {}

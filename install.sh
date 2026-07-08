@@ -398,8 +398,16 @@ setup_claude_code() {
 
     brew_install claude-code
 
+    if ! command -v apm >/dev/null 2>&1; then
+        brew install microsoft/apm/apm
+    fi
+
     mkdir -p "${home_dir}/.claude"
-    cp ./genai/codedev_principle.md "${home_dir}/.claude/CLAUDE.md"
+
+    # apm rejects relative paths at user scope, so resolve an absolute path.
+    local apm_pkg_dir="$(pwd)/apm"
+    apm install "${apm_pkg_dir}" --global --target claude
+    apm compile --global
 
     log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
 }
