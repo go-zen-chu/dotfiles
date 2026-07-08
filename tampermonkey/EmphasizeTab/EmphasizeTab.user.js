@@ -33,7 +33,7 @@
     }
 
     function startTitleBlink() {
-        if (titleBlinkTimer) {
+        if (titleBlinkTimer !== null) {
             return;
         }
         if (originalTitle === null) {
@@ -47,7 +47,7 @@
     }
 
     function stopTitleBlink() {
-        if (titleBlinkTimer) {
+        if (titleBlinkTimer !== null) {
             window.clearInterval(titleBlinkTimer);
             titleBlinkTimer = null;
         }

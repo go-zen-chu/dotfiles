@@ -10,7 +10,7 @@ const { loadUserscriptBody, evalUserscript } = require('../../test-suite/runner/
 const scriptBody = loadUserscriptBody(path.join(__dirname, '..', 'EmphasizeTab.user.js'));
 
 describe('EmphasizeTab Script Tests', () => {
-    const TITLE_BLINK_TEXT = '● 編集中';
+    const TITLE_BLINK_TEXT = '️🟥 Editing';
 
     function setupTestEnvironment({ url }) {
         const { JSDOM } = require('jsdom');
