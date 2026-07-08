@@ -17,7 +17,9 @@ apm/
     │   ├── go.instructions.md
     │   └── answer-accurately.instructions.md
     └── skills/
-        └── code-review/    # detailed coding conventions, loaded on demand
+        ├── code-review/    # detailed coding conventions, loaded on demand
+        │   └── SKILL.md
+        └── create-pr/      # create a PR with git and gh
             └── SKILL.md
 ```
 
