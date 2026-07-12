@@ -23,7 +23,7 @@ if [ -d "${nodejs_install_path}" ]; then
 fi
 if hash pnpm 2>/dev/null; then
   export PNPM_HOME="${HOME}/.local/share/pnpm"
-  path=($PNPM_HOME $path)
+  path=($PNPM_HOME ${PNPM_HOME}/bin(N-/) $path)
 fi
 
 # kubectl krew

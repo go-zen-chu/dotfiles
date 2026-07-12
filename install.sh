@@ -288,10 +288,15 @@ setup_node() {
     else
         log "$LOG_LEVEL_INFO" "[ ] pnpm not installed. Installing..."
         npm install -g pnpm
-        export PNPM_HOME="${home_dir}/.local/share/pnpm"
-        export PATH="${PNPM_HOME}:$PATH"
         log "$LOG_LEVEL_INFO" "[✓] pnpm install finished"
     fi
+
+    # pnpm aborts `pnpm install -g` when its global bin dir is not on PATH.
+    # Run unconditionally (idempotent) and include both PNPM_HOME and its bin
+    # subdir to cover pnpm's version-dependent global bin location.
+    export PNPM_HOME="${home_dir}/.local/share/pnpm"
+    mkdir -p "${PNPM_HOME}"
+    export PATH="${PNPM_HOME}:${PNPM_HOME}/bin:$PATH"
 
     if ! hash tsc 2>/dev/null; then
         log "$LOG_LEVEL_INFO" "[ ] typescript not installed. Installing..."
