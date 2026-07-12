@@ -409,7 +409,54 @@ setup_claude_code() {
     apm install "${apm_pkg_dir}" --global --target claude
     apm compile --global
 
+    # apm has no primitive for tool permissions, so manage the `permissions`
+    # block of ~/.claude/settings.json here instead.
+    setup_claude_permissions
+
     log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
+}
+
+# Deploy the read-only command allowlist into ~/.claude/settings.json.
+# If the file exists, back it up (datetime suffix) and merge only the
+# `permissions` block in; otherwise write the permissions file as-is.
+setup_claude_permissions() {
+    brew_install jq
+
+    local perm_src="$(pwd)/claude/settings.permissions.json"
+    local settings="${home_dir}/.claude/settings.json"
+
+    if [ ! -f "${perm_src}" ]; then
+        log "$LOG_LEVEL_WARN" "[ ] ${perm_src} not found, skip claude permissions"
+        return
+    fi
+
+    if [ ! -f "${settings}" ]; then
+        cp "${perm_src}" "${settings}"
+        log "$LOG_LEVEL_INFO" "[✓] wrote claude permissions to ${settings}"
+        return
+    fi
+
+    cp "${settings}" "${settings}.$(date '+%Y%m%d-%H%M%S').bk"
+
+    # Deep-merge the permissions block: preserve every existing top-level key
+    # and take the union of the allow/deny/ask lists (empty lists are dropped).
+    local tmp
+    tmp="$(mktemp)"
+    jq -n --slurpfile cur "${settings}" --slurpfile new "${perm_src}" '
+        ($cur[0] // {}) as $c
+        | ($new[0] // {}) as $n
+        | ($c.permissions // {}) as $cp
+        | ($n.permissions // {}) as $np
+        | ($cp * $np
+            | .allow = (($cp.allow // []) + ($np.allow // []) | unique)
+            | .deny  = (($cp.deny  // []) + ($np.deny  // []) | unique)
+            | .ask   = (($cp.ask   // []) + ($np.ask   // []) | unique)
+            | with_entries(select(.value | (type != "array") or (length > 0)))
+          ) as $mp
+        | $c * { permissions: $mp }
+    ' >"${tmp}" && mv "${tmp}" "${settings}"
+
+    log "$LOG_LEVEL_INFO" "[✓] patched claude permissions in ${settings}"
 }
 
 setup_zellij() {
