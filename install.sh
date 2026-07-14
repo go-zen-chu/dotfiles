@@ -405,7 +405,8 @@ setup_claude_code() {
     mkdir -p "${home_dir}/.claude"
 
     # apm rejects relative paths at user scope, so resolve an absolute path.
-    local apm_pkg_dir="$(pwd)/apm"
+    local apm_pkg_dir
+    apm_pkg_dir="$(pwd)/apm"
     apm install "${apm_pkg_dir}" --global --target claude
     apm compile --global
 
@@ -422,8 +423,9 @@ setup_claude_code() {
 setup_claude_permissions() {
     brew_install jq
 
-    local perm_src="$(pwd)/claude/settings.permissions.json"
-    local settings="${home_dir}/.claude/settings.json"
+    local perm_src settings
+    perm_src="$(pwd)/claude/settings.permissions.json"
+    settings="${home_dir}/.claude/settings.json"
 
     if [ ! -f "${perm_src}" ]; then
         log "$LOG_LEVEL_WARN" "[ ] ${perm_src} not found, skip claude permissions"

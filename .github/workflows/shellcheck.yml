@@ -1,0 +1,35 @@
+name: ShellCheck
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "**/*.sh"
+      - ".github/workflows/shellcheck.yml"
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "**/*.sh"
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Run shellcheck
+        run: |
+          # Own scripts only; skip vendored plugins under terminal-tools/.
+          # -x follows `source` so sourced globals resolve and SC1091 is quiet.
+          mapfile -t files < <(git ls-files '*.sh' | grep -v '^terminal-tools/')
+          echo "Checking: ${files[*]}"
+          rc=0
+          for f in "${files[@]}"; do
+            shellcheck -x "$f" || rc=1
+          done
+          exit "$rc"

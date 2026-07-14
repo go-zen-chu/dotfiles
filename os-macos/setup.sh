@@ -18,6 +18,7 @@ macos_setup_basic_tools() {
 
     setup_karabiner
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
+    # shellcheck disable=SC2154 # is_ci is provided by install.sh, which sources this file
     if [ "${is_ci}" = "false" ]; then
         brew_install watch
         brew install --cask appcleaner
@@ -80,7 +81,7 @@ macos_setup_defaults() {
     # change caps lock to control
     # get string like : 1452-630-0 for keyboard_id (ref: http://freewing.starfree.jp/software/macos_keyboard_setting_terminal_commandline)
     keyboard_id="$(ioreg -c AppleEmbeddedKeyboard -r | grep -Eiw "VendorID|ProductID" | awk '{ print $4 }' | paste -s -d'-\n' -)-0"
-    defaults -currentHost write -g com.apple.keyboard.modifiermapping.${keyboard_id} -array-add "
+    defaults -currentHost write -g "com.apple.keyboard.modifiermapping.${keyboard_id}" -array-add "
 <dict>
   <key>HIDKeyboardModifierMappingDst</key>\
   <integer>30064771300</integer>\

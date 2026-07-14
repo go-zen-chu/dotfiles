@@ -27,6 +27,7 @@ linux_setup_personal_machine_tools() {
         log "$LOG_LEVEL_INFO" "[✓] google-cloud-sdk is already installed"
     else
         log "$LOG_LEVEL_INFO" "[ ] google-cloud-sdk not installed. Installing..."
+        # shellcheck disable=SC2154 # os is provided by install.sh, which sources this file
         case "${os}" in
         "ubuntu")
             sudo snap install google-cloud-cli --classic
