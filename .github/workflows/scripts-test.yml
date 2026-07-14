@@ -1,0 +1,35 @@
+name: Scripts Tests
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "scripts/**"
+      - "install.sh"
+      - "claude/**"
+      - ".github/workflows/scripts-test.yml"
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "scripts/**"
+      - "install.sh"
+      - "claude/**"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # jq is preinstalled on GitHub-hosted ubuntu runners; the tests need
+      # nothing else (no bats or other test framework).
+      - name: Run script tests
+        run: |
+          for t in scripts/test/*_test.sh; do
+            echo "== ${t} =="
+            bash "${t}"
+          done

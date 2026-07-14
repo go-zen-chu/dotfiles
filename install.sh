@@ -440,23 +440,11 @@ setup_claude_permissions() {
 
     cp "${settings}" "${settings}.$(date '+%Y%m%d-%H%M%S').bk"
 
-    # Deep-merge the permissions block: preserve every existing top-level key
-    # and take the union of the allow/deny/ask lists (empty lists are dropped).
+    # Deep-merge the permissions block (logic lives in a testable helper).
     local tmp
     tmp="$(mktemp)"
-    jq -n --slurpfile cur "${settings}" --slurpfile new "${perm_src}" '
-        ($cur[0] // {}) as $c
-        | ($new[0] // {}) as $n
-        | ($c.permissions // {}) as $cp
-        | ($n.permissions // {}) as $np
-        | ($cp * $np
-            | .allow = (($cp.allow // []) + ($np.allow // []) | unique)
-            | .deny  = (($cp.deny  // []) + ($np.deny  // []) | unique)
-            | .ask   = (($cp.ask   // []) + ($np.ask   // []) | unique)
-            | with_entries(select(.value | (type != "array") or (length > 0)))
-          ) as $mp
-        | $c * { permissions: $mp }
-    ' >"${tmp}" && mv "${tmp}" "${settings}"
+    ./scripts/merge-claude-permissions.sh "${settings}" "${perm_src}" >"${tmp}" \
+        && mv "${tmp}" "${settings}"
 
     log "$LOG_LEVEL_INFO" "[✓] patched claude permissions in ${settings}"
 }
