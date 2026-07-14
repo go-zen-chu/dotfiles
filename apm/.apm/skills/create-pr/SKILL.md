@@ -9,11 +9,13 @@ description: Create a pull request on GitHub.
 
 ## ゴール
 
-デフォルトブランチとの差分がなければ何もしない。差分があれば新しいブランチ用の独立した worktree を作成し、差分から生成したデフォルトテンプレートで PR を作成する。
+デフォルトブランチとの差分がなければ何もしない。差分があれば新しいブランチを作成してチェックアウトし、差分から生成したデフォルトテンプレートで PR を作成する。
+
+作業を始める時点でのタスクの隔離（並行実行やメイン作業ツリーとの衝突を避けること）はこのスキルの責務ではない。必要な場合は呼び出し側（`Agent(isolation: "worktree")`、`EnterWorktree`、`worktree.bgIsolation` 設定など）が担う。このスキルは、既にある差分を PR にすることだけに専念する。
 
 ## 必要なツール
 
-- `git`（`git worktree` をサポートするバージョン）
+- `git`
 - `gh`
 
 ## 前提条件
@@ -21,24 +23,22 @@ description: Create a pull request on GitHub.
 - カレントディレクトリが git リポジトリの中であること。
 - `gh auth status` が成功すること。
 - `origin` が存在し、デフォルトブランチを fetch できること。
-- worktree 用の一時ディレクトリを `mktemp -d` で作成できること。
+- 作業ツリーを新しいブランチへ切り替えられること。
 
 ## 安全のためのルール
 
 - デフォルトブランチとの差分がなければ処理を中断する。
-- 新しいブランチは必ず独立した worktree 上で作成する。ユーザーの現在の作業ツリーのブランチやファイルには一切触れない。
+- PR を作成する前に必ず新しいブランチを作成する。
 - ユーザーが明示的に依頼しない限り force-push しない。
 - このスキルの中で PR をマージしない。
 - 未コミットの変更が PR の内容に影響する場合は、進める前に確認する。
 - 変更内容のスコープに合ったブランチ名を付ける。
-- worktree は PR 作成の成否にかかわらず必ず `git worktree remove` で削除する。`rm -rf` で直接消さない（`.git/worktrees/` にメタデータが残る）。
 
 ## 手順
 
 1. リポジトリの状態を確認する。
 
 ```bash
-main_repo_dir="$(pwd)"
 git status --short --branch
 git remote -v
 gh auth status
@@ -71,22 +71,16 @@ git diff --stat "origin/$default_branch...HEAD"
 git diff "origin/$default_branch...HEAD"
 ```
 
-5. 新しいブランチ用の worktree を作成する。
+5. 新しいブランチを作成してチェックアウトする。
 
-- 差分のスコープから短いブランチ名を決める。`feat/<topic>`、`fix/<topic>`、`chore/<topic>` を優先する。
-- worktree のディレクトリ名は `org-repo-branch-datetime` の形式にし、一意でありながら何のための worktree か一目で分かるようにする。
-- `HEAD`（現在のコミット、= 確認済みの差分）を起点にブランチを作る。`origin/$default_branch` を起点にしない（差分が失われるため）。
+- 差分のスコープから短いブランチ名を決める。
+- `feat/<topic>`、`fix/<topic>`、`chore/<topic>` を優先する。
 
 ```bash
-new_branch="<new-branch-name>"
-org_repo="$(gh repo view --json owner,name --jq '(.owner.login)+"-"+(.name)')"
-branch_slug="$(echo "$new_branch" | tr '/' '-')"
-worktree_dir="$(mktemp -d -t "${org_repo}-${branch_slug}-$(date +%Y%m%d%H%M%S).XXXXXX")"
-git worktree add -b "$new_branch" "$worktree_dir" HEAD
-cd "$worktree_dir"
+git switch -c "<new-branch-name>"
 ```
 
-6. 新しいブランチを push する（worktree 内で実行する）。
+6. 新しいブランチを push する。
 
 ```bash
 git push -u origin HEAD
@@ -129,7 +123,7 @@ git push -u origin HEAD
 - 実際に実行したテストを記載する。何も実行していない場合は `Not run` と書く。
 - 差分が小さい場合は、各セクションを短くする。
 
-8. `gh` で PR を作成する（worktree 内で実行する）。
+8. `gh` で PR を作成する。
 
 ```bash
 gh pr create \
@@ -149,17 +143,7 @@ gh pr edit --add-reviewer reviewer1,reviewer2
 gh pr edit --add-label chore
 ```
 
-10. worktree を削除する。
-
-- 手順 5〜9 のいずれかが失敗した場合でも、必ずこの手順を実行して worktree を片付ける。
-- ブランチ自体は削除しない。レビュー対応で追加コミットする際に、同じブランチで worktree を作り直せるようにするため。
-
-```bash
-cd "$main_repo_dir"
-git worktree remove "$worktree_dir"
-```
-
-11. 結果を報告する。
+10. 結果を報告する。
 
 ## 出力形式
 
@@ -181,8 +165,6 @@ git worktree remove "$worktree_dir"
 
 - `gh` が未認証の場合は中断し、ユーザーに `gh auth login` の実行を依頼する。
 - デフォルトブランチとの差分がない場合は、PR を作成しなかった旨を報告する。
-- `git worktree add` が失敗した場合（パスの衝突、ブランチ名の重複など）は、エラーを報告して中断する。
 - リモートが存在しない、またはアクセス権がなく push が失敗した場合は、正確な失敗内容を報告して中断する。
 - `gh pr create` が既存の PR ありと報告した場合は、新規作成せず既存の PR の URL を返す。
 - ブランチ保護やリポジトリポリシーで手順がブロックされた場合は、ブロックされた手順と実際のコマンド出力を報告する。
-- いずれの失敗でも、`git worktree remove` による後片付けを試みる。それも失敗する場合は `git worktree list` の結果を報告し、手動でのクリーンアップをユーザーに依頼する。
