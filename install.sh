@@ -20,8 +20,7 @@ is_ci="false"
 homebrew_bin_path="/undefined"
 
 nodejs_version="24"
-pyenv_python_version="3.13"
-goenv_go_version="1.25"
+python_version="3.13"
 
 ### setup methods
 
@@ -116,7 +115,8 @@ setup_basic_tools() {
     setup_git
     setup_gh
     setup_direnv
-    setup_anyenv
+    setup_python
+    setup_go
     setup_node
     # terminal tools
     setup_atuin
@@ -178,19 +178,21 @@ setup_git() {
     # in first install global config is not created
     touch "${home_dir}/.gitconfig"
 
-    local git_config_global_result
-    git_config_global_result="$(git config --global --list)"
+    # Include repo-managed static config so updates always take effect
+    # (the old "only when global config is empty" approach never re-applied changes).
+    local repo_gitconfig="${home_dir}/dotfiles/terminal-tools/git/.gitconfig"
+    if ! git config --global --get-all include.path 2>/dev/null | grep -qxF "${repo_gitconfig}"; then
+        git config --global --add include.path "${repo_gitconfig}"
+    fi
 
-    if [ -z "${git_config_global_result}" ]; then
+    # Machine/user specific settings (absolute paths can't live in the shared file)
+    git config --global core.excludesfile "${home_dir}/dotfiles/terminal-tools/git/global-ignore"
+    git config --global user.signingkey "${home_dir}/.ssh/id_ed25519.pub"
+    if [ -z "$(git config --global user.name)" ]; then
         git config --global user.name "${git_user_name}"
+    fi
+    if [ -z "$(git config --global user.email)" ]; then
         git config --global user.email "${arg_git_email}"
-        git config --global core.excludesfile "${home_dir}/dotfiles/terminal-tools/git/global-ignore"
-        git config --global push.default current
-        git config --global pull.rebase false
-        # make verified commit
-        git config --global gpg.format ssh
-        git config --global user.signingkey "${home_dir}/.ssh/id_ed25519.pub"
-        git config --global commit.gpgsign true
     fi
 }
 
@@ -217,64 +219,30 @@ EOF
     fi
 }
 
-setup_anyenv() {
-    echo_blue "Setup anyenv..."
+setup_python() {
+    echo_blue "Setup python..."
 
-    brew_install anyenv
+    # uv manages Python versions and virtualenvs (replaces pyenv/anyenv).
+    brew_install uv
 
-    if [ ! -d "${home_dir}/.config/anyenv/anyenv-install" ]; then
-        log "$LOG_LEVEL_INFO" "anyenv initializing..."
-        set +e # anyenv init finishes exit 1 somehow
-        anyenv init
-        # TIPS: anyenv install --init will fail due to ~/.config/anyenv not exists
-        anyenv install --force-init
-        set -e
-    else
-        log "$LOG_LEVEL_INFO" "anyenv already initialized"
-    fi
-
-    if [ ! -f "${home_dir}/.anyenv/envs/pyenv/bin/pyenv" ]; then
-        log "$LOG_LEVEL_INFO" "pyenv initializing..."
-        anyenv install pyenv
-    else
-        log "$LOG_LEVEL_INFO" "pyenv already initialized"
-    fi
-
-    if [ ! -f "${home_dir}/.anyenv/envs/goenv/bin/goenv" ]; then
-        log "$LOG_LEVEL_INFO" "goenv initializing..."
-        anyenv install goenv
-    else
-        log "$LOG_LEVEL_INFO" "goenv already initialized"
-    fi
-
-    # TIPS: we may not need this
-    # for loading xenv things with new child process. `exec $SHELL -l` will replace current shell process
-    # exec $SHELL -l
-
-    log "$LOG_LEVEL_INFO" "eval anyenv init..."
-    eval "$(anyenv init -)"
-
-    cd "${home_dir}/.anyenv/envs/pyenv/plugins/python-build/../.." && git pull && cd -
-    cd "${home_dir}/.anyenv/envs/goenv/plugins/go-build/../.." && git pull && cd -
-
+    # TIPS: installing a Python toolchain takes time in CI so skip there
     if [ "${is_ci}" = "false" ]; then
-        log "$LOG_LEVEL_INFO" "install pyenv..."
-        set +e # when skipping pyenv install, it got exit 1
-        pyenv install "${pyenv_python_version}"
-        set -e
-        pyenv global "${pyenv_python_version}"
-        pyenv rehash
+        log "$LOG_LEVEL_INFO" "install python ${python_version} via uv..."
+        uv python install "${python_version}"
     fi
 
-    log "$LOG_LEVEL_INFO" "install go..."
-    set +e # when skipping goenv install, it got exit 1
-    goenv install "${goenv_go_version}"
-    set -e
-    goenv global "${goenv_go_version}"
-    goenv rehash
+    log "$LOG_LEVEL_INFO" "[✓] python setup finished"
+}
 
-    log "$LOG_LEVEL_INFO" "eval goenv init..."
-    eval "$(goenv init -)"
+setup_go() {
+    echo_blue "Setup go..."
+
+    # Install Go via Homebrew and rely on Go's built-in toolchain management
+    # (GOTOOLCHAIN=auto) so each project auto-fetches the version pinned in its
+    # go.mod. This replaces goenv/anyenv.
+    brew_install go
+    export GOTOOLCHAIN=auto
+    export PATH="$(go env GOPATH)/bin:$PATH"
 
     setup_gotools
 }
@@ -320,10 +288,15 @@ setup_node() {
     else
         log "$LOG_LEVEL_INFO" "[ ] pnpm not installed. Installing..."
         npm install -g pnpm
-        export PNPM_HOME="${home_dir}/.local/share/pnpm"
-        export PATH="${PNPM_HOME}:$PATH"
         log "$LOG_LEVEL_INFO" "[✓] pnpm install finished"
     fi
+
+    # pnpm aborts `pnpm install -g` when its global bin dir is not on PATH.
+    # Run unconditionally (idempotent) and include both PNPM_HOME and its bin
+    # subdir to cover pnpm's version-dependent global bin location.
+    export PNPM_HOME="${home_dir}/.local/share/pnpm"
+    mkdir -p "${PNPM_HOME}"
+    export PATH="${PNPM_HOME}:${PNPM_HOME}/bin:$PATH"
 
     if ! hash tsc 2>/dev/null; then
         log "$LOG_LEVEL_INFO" "[ ] typescript not installed. Installing..."

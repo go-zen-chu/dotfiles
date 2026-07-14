@@ -1,5 +1,6 @@
-[core]
-    excludesfile = /home/am/dotfiles/terminal-tools/git/global-ignore
+; Machine/user specific settings (user.name/email, core.excludesfile,
+; user.signingkey) are written to ~/.gitconfig by install.sh because they
+; contain absolute paths. Keep only portable settings here.
 [push]
     default = current
     autoSetupRemote = true

@@ -43,10 +43,12 @@ if hash ghq 2>/dev/null; then
 fi
 gq() {
 	# git add, commit, push in 1 command
-	comment=$1
-	git add --all
-	git commit -a -m "${comment}"
-	git push
+	local comment="$1"
+	if [ -z "${comment}" ]; then
+		echo "usage: gq <commit message>" >&2
+		return 1
+	fi
+	git add --all && git commit -m "${comment}" && git push
 }
 gprnb() {
 	# clean up merged branches
