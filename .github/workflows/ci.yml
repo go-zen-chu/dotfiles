@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  bash-syntax-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check bash syntax
+        run: |
+          set -euo pipefail
+          # Syntax-check this repo's own shell scripts (skip third-party submodules under
+          # terminal-tools/zsh/plugins) using `bash -n`, which parses without executing.
+          status=0
+          while IFS= read -r script; do
+            if bash -n "$script"; then
+              echo "OK   $script"
+            else
+              echo "FAIL $script"
+              status=1
+            fi
+          done < <(
+            find . \
+              -path ./.git -prune -o \
+              -path ./terminal-tools/zsh/plugins -prune -o \
+              -name '*.sh' -print | sort
+          )
+          exit "$status"
+  slack-notification:
+    needs: [bash-syntax-check]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send data to Slack webhook (on failure)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
