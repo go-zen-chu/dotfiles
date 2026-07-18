@@ -8,24 +8,14 @@ agent runtime. `install.sh` deploys it to Claude Code at user scope
 
 ## Layout
 
-```
-apm/
-├── apm.yml                 # producer manifest (includes: auto)
-└── .apm/
-    ├── instructions/       # concise, always-on rules (no applyTo)
-    │   ├── software-design.instructions.md
-    │   ├── go.instructions.md
-    │   └── answer-accurately.instructions.md
-    └── skills/
-        ├── code-review/    # detailed coding conventions, loaded on demand
-        │   └── SKILL.md
-        └── create-pr/      # create a PR with git and gh
-            └── SKILL.md
-```
+`.apm/instructions/` holds concise, always-on MUST rules (no `applyTo`
+frontmatter). `.apm/skills/` holds the full checklists, rationale, and
+per-topic `references/`, loaded on demand instead of always-on.
 
-Instructions stay concise so they remain cheap to keep in context. The concrete,
-detailed coding conventions live in the `code-review` skill and are loaded only
-when a review is needed.
+Instructions stay concise (MUST-level rules only) so they remain cheap to keep
+in context. The full checklist, SHOULD-level items, and the rationale behind
+each rule live in the relevant skill's `references/` and are loaded only when
+needed.
 
 Instructions have no `applyTo` frontmatter, so APM treats them as always-on and
 `apm compile --global` writes them into `~/.claude/CLAUDE.md`.

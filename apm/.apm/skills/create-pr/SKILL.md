@@ -3,38 +3,40 @@ name: create-pr
 description: Create a pull request on GitHub.
 ---
 
-# Create PR with git and gh
+# git と gh で PR を作成する
 
-Create a PR from the current repo state with `git` and `gh`.
+現在のリポジトリの状態から `git` と `gh` を使って PR を作成する。
 
-## Goal
+## ゴール
 
-If there is no diff from the default branch, do nothing. If there is a diff, create a new branch, check it out, and create a PR using a default template generated from the diff.
+デフォルトブランチとの差分がなければ何もしない。差分があれば新しいブランチを作成してチェックアウトし、差分から生成したデフォルトテンプレートで PR を作成する。
 
-## Required tools
+作業を始める時点でのタスクの隔離（並行実行やメイン作業ツリーとの衝突を避けること）はこのスキルの責務ではない。必要な場合は呼び出し側（`Agent(isolation: "worktree")`、`EnterWorktree`、`worktree.bgIsolation` 設定など）が担う。このスキルは、既にある差分を PR にすることだけに専念する。
+
+## 必要なツール
 
 - `git`
 - `gh`
 
-## Preconditions
+## 前提条件
 
-- The current directory is inside a git repository.
-- `gh auth status` succeeds.
-- `origin` exists and the default branch can be fetched.
-- The working tree can be moved to a new branch.
+- カレントディレクトリが git リポジトリの中であること。
+- `gh auth status` が成功すること。
+- `origin` が存在し、デフォルトブランチを fetch できること。
+- 作業ツリーを新しいブランチへ切り替えられること。
 
-## Safety rules
+## 安全のためのルール
 
-- If there is no diff from the default branch, stop.
-- Always create a new branch before creating the PR.
-- Never force-push unless the user explicitly asks for it.
-- Never merge the PR as part of this skill.
-- If uncommitted changes affect the PR content, ask before proceeding.
-- Create a branch name that matches the change scope.
+- デフォルトブランチとの差分がなければ処理を中断する。
+- PR を作成する前に必ず新しいブランチを作成する。
+- ユーザーが明示的に依頼しない限り force-push しない。
+- このスキルの中で PR をマージしない。
+- 未コミットの変更が PR の内容に影響する場合は、進める前に確認する。
+- 変更内容のスコープに合ったブランチ名を付ける。
 
-## Workflow
+## 手順
 
-1. Check repository state.
+1. リポジトリの状態を確認する。
 
 ```bash
 git status --short --branch
@@ -42,14 +44,14 @@ git remote -v
 gh auth status
 ```
 
-2. Read the current and default branch.
+2. 現在のブランチとデフォルトブランチを取得する。
 
 ```bash
 git branch --show-current
 gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 ```
 
-3. Fetch the default branch and check for diff.
+3. デフォルトブランチを fetch し、差分の有無を確認する。
 
 ```bash
 default_branch="$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)"
@@ -57,11 +59,11 @@ git fetch origin "$default_branch"
 git diff --quiet "origin/$default_branch...HEAD"
 ```
 
-- If `git diff --quiet` exits with status `0`, stop.
-- If it exits with status `1`, continue.
-- If it exits with any other status, report the error and stop.
+- `git diff --quiet` の終了ステータスが `0` なら中断する。
+- `1` なら続行する。
+- それ以外なら、エラーを報告して中断する。
 
-4. Review the diff.
+4. 差分を確認する。
 
 ```bash
 git log --oneline "origin/$default_branch..HEAD"
@@ -69,26 +71,26 @@ git diff --stat "origin/$default_branch...HEAD"
 git diff "origin/$default_branch...HEAD"
 ```
 
-5. Create and check out a new branch.
+5. 新しいブランチを作成してチェックアウトする。
 
-- Derive a short branch name from the diff scope.
-- Prefer `feat/<topic>`, `fix/<topic>`, or `chore/<topic>`.
+- 差分のスコープから短いブランチ名を決める。
+- `feat/<topic>`、`fix/<topic>`、`chore/<topic>` を優先する。
 
 ```bash
 git switch -c "<new-branch-name>"
 ```
 
-6. Push the new branch.
+6. 新しいブランチを push する。
 
 ```bash
 git push -u origin HEAD
 ```
 
-7. Draft the PR title and body from the diff.
+7. 差分から PR のタイトルと本文を作成する。
 
-- Title should be short and action-oriented.
+- タイトルは短く、変更内容が行動として伝わるものにする。
 
-Default template:
+デフォルトテンプレート:
 
 ```md
 ## Why / Background of this PR
@@ -109,19 +111,19 @@ Default template:
 - <risk or follow-up, or "None">
 ```
 
-Rules for filling the template:
+テンプレートを埋める際のルール:
 
-- Base the content on `git diff origin/$default_branch...HEAD`.
-- `Why` is the most important section.
-- In `Why`, infer the author's intent from the diff as deeply as possible.
-- In `Why`, explain the likely background, problem being addressed, desired outcome, and what risk or friction this change is trying to reduce.
-- Do not just restate code changes in `Why`.
-- If intent is uncertain, state the most plausible interpretation and keep it grounded in the diff.
-- Keep `What` factual and concise.
-- Mention tests actually run. If none were run, say `Not run`.
-- If the diff is small, keep each section short.
+- `git diff origin/$default_branch...HEAD` の内容を根拠にする。
+- `Why` が最も重要なセクションである。
+- `Why` では、差分から作者の意図をできる限り深く推測する。
+- `Why` では、想定される背景・解決しようとしている問題・目指すゴール・軽減したいリスクや摩擦を説明する。
+- `Why` にコードの変更内容をそのまま書き写さない。
+- 意図が不確かな場合は、最も妥当な解釈を、差分の根拠に基づいた範囲で述べる。
+- `What` は事実ベースで簡潔に保つ。
+- 実際に実行したテストを記載する。何も実行していない場合は `Not run` と書く。
+- 差分が小さい場合は、各セクションを短くする。
 
-8. Create the pull request with `gh`.
+8. `gh` で PR を作成する。
 
 ```bash
 gh pr create \
@@ -131,9 +133,9 @@ gh pr create \
 	--body "<PR body>"
 ```
 
-9. Add reviewers, labels, or draft status if requested.
+9. 依頼があれば、レビュアー・ラベル・draft 状態を追加する。
 
-Examples:
+例:
 
 ```bash
 gh pr create --draft --title "<PR title>" --body "<PR body>"
@@ -141,24 +143,28 @@ gh pr edit --add-reviewer reviewer1,reviewer2
 gh pr edit --add-label chore
 ```
 
-10. Return the result.
+10. 結果を報告する。
 
-## Output format
+## 出力形式
 
-Return:
+結果を次の表で報告する。
 
-- no-op result when there is no diff
-- PR URL
-- base branch
-- head branch
-- PR title
-- concise summary
+| 項目 | 値 |
+|---|---|
+| Result | `Created` / `No-op` / `Failed` |
+| PR URL | `<url>` または `-` |
+| Base branch | `<default_branch>` |
+| Head branch | `<new-branch-name>` |
+| PR title | `<title>` |
+| Summary | PR の内容を一言で説明 |
 
-## Failure handling
+- `Result` が `No-op` の場合は、理由（例: "デフォルトブランチとの差分がない"）を `Summary` に書き、他の行は `-` にする。
+- `Result` が `Failed` の場合は、失敗した手順と実際のコマンド出力を `Summary` に書く。
 
-- If `gh` is not authenticated, stop and ask the user to run `gh auth login`.
-- If there is no diff against the default branch, return that no PR was created.
-- If push fails because the remote does not exist or access is denied, report the exact failure and stop.
-- If `gh pr create` reports that a PR already exists, return the existing PR URL instead of creating another one.
-- If branch protection or repository policy blocks the workflow, report the blocking step and the exact command output.
+## 失敗時の対応
 
+- `gh` が未認証の場合は中断し、ユーザーに `gh auth login` の実行を依頼する。
+- デフォルトブランチとの差分がない場合は、PR を作成しなかった旨を報告する。
+- リモートが存在しない、またはアクセス権がなく push が失敗した場合は、正確な失敗内容を報告して中断する。
+- `gh pr create` が既存の PR ありと報告した場合は、新規作成せず既存の PR の URL を返す。
+- ブランチ保護やリポジトリポリシーで手順がブロックされた場合は、ブロックされた手順と実際のコマンド出力を報告する。
