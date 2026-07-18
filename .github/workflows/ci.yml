@@ -35,28 +35,25 @@ jobs:
               -name '*.sh' -print | sort
           )
           exit "$status"
-  slack-notification:
-    needs: [bash-syntax-check]
+  shellcheck:
     runs-on: ubuntu-latest
-    if: always()
     steps:
-      - name: Send data to Slack webhook (on failure)
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          # For posting a rich message using Block Kit
-          payload: |
-            {
-              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      - uses: actions/checkout@v7
+      - name: Run ShellCheck
+        run: |
+          set -euo pipefail
+          status=0
+          while IFS= read -r script; do
+            if shellcheck "$script"; then
+              echo "OK   $script"
+            else
+              echo "FAIL $script"
+              status=1
+            fi
+          done < <(
+            find . \
+              -path ./.git -prune -o \
+              -path ./terminal-tools/zsh/plugins -prune -o \
+              -name '*.sh' -print | sort
+          )
+          exit "$status"
