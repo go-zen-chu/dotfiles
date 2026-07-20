@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# shellcheck disable=SC2154 # os is set by install.sh, which sources this file
 set -eu
 
 linux_setup_basic_tools() {

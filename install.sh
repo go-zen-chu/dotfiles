@@ -2,9 +2,13 @@
 
 set -eu
 
+# shellcheck source=scripts/log.sh
 source ./scripts/log.sh
+# shellcheck source=scripts/env.sh
 source ./scripts/env.sh
+# shellcheck source=os-macos/setup.sh
 source ./os-macos/setup.sh
+# shellcheck source=os-linux/setup.sh
 source ./os-linux/setup.sh
 
 flg_verbose="false"
@@ -242,7 +246,9 @@ setup_go() {
     # go.mod. This replaces goenv/anyenv.
     brew_install go
     export GOTOOLCHAIN=auto
-    export PATH="$(go env GOPATH)/bin:$PATH"
+    local gopath
+    gopath="$(go env GOPATH)"
+    export PATH="${gopath}/bin:$PATH"
 
     setup_gotools
 }
@@ -378,7 +384,8 @@ setup_claude_code() {
     mkdir -p "${home_dir}/.claude"
 
     # apm rejects relative paths at user scope, so resolve an absolute path.
-    local apm_pkg_dir="$(pwd)/apm"
+    local apm_pkg_dir
+    apm_pkg_dir="$(pwd)/apm"
     apm install "${apm_pkg_dir}" --global --target claude
     apm compile --global
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck source=scripts/log.sh
 source "./scripts/log.sh"
 
 set -eu

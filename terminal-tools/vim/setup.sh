@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
+# shellcheck source=scripts/log.sh
 source ./scripts/log.sh
 
 echo_green "[INFO] setup vim"
