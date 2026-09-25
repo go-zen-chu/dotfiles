@@ -21,6 +21,7 @@ os=""
 home_dir="${HOME}"
 config_dir="${home_dir}/.config"
 is_ci="false"
+is_devcontainer="false"
 homebrew_bin_path="/undefined"
 
 nodejs_version="24"
@@ -69,6 +70,7 @@ check_env() {
 
     os=$(check_os)
     is_ci=$(check_ci)
+    is_devcontainer=$(check_devcontainer)
     echo "OS            : ${os}"
     echo "CPU           : $(check_cpu_arch)"
     echo "Bash Version  : ${BASH_VERSION}"
@@ -76,6 +78,7 @@ check_env() {
     echo "HOME          : ${home_dir}"
     echo "Config Dir    : ${config_dir}"
     echo "Is CI         : ${is_ci}"
+    echo "Devcontainer  : ${is_devcontainer}"
     echo "Log level     : $(get_log_level "$log_level")"
 }
 
@@ -436,7 +439,11 @@ setup_zsh() {
     # change default shell
     if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
         echo "${zsh_path}" | sudo tee -a /etc/shells
-        if [ "${is_ci}" = "false" ]; then
+        if [ "${is_devcontainer}" = "true" ]; then
+            # no password is set for the container user, but sudo is passwordless
+            log "$LOG_LEVEL_INFO" "running chsh with sudo for devcontainer..."
+            sudo chsh -s "${zsh_path}" "$(whoami)"
+        elif [ "${is_ci}" = "false" ]; then
             log "$LOG_LEVEL_INFO" "running chsh..."
             chsh -s "${zsh_path}"
         else

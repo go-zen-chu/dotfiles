@@ -1,0 +1,38 @@
+{
+  "name": "dotfiles (Ubuntu)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "vscode",
+  // install.sh / .zshrc assume the repository lives at ~/dotfiles
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/dotfiles,type=bind",
+  "workspaceFolder": "/home/vscode/dotfiles",
+  "mounts": [
+    // keep Homebrew packages across container rebuilds (first run of install.sh is slow)
+    "source=dotfiles-linuxbrew,target=/home/linuxbrew,type=volume"
+  ],
+  "containerEnv": {
+    // e-mail passed to `install.sh -e`. Falls back to the git config copied from the host.
+    "GIT_EMAIL": "${localEnv:GIT_EMAIL}"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/home/linuxbrew/.linuxbrew/bin/zsh"
+          }
+        }
+      },
+      "extensions": [
+        "timonwong.shellcheck",
+        "mads-hartmann.bash-ide-vscode",
+        "golang.go",
+        "ms-python.python",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+}
