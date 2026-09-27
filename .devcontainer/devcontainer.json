@@ -27,11 +27,8 @@
         }
       },
       "extensions": [
-        "timonwong.shellcheck",
-        "mads-hartmann.bash-ide-vscode",
         "golang.go",
-        "ms-python.python",
-        "redhat.vscode-yaml"
+        "ms-python.python"
       ]
     }
   }
