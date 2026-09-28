@@ -129,7 +129,6 @@ setup_basic_tools() {
     setup_atuin
     setup_gitleaks
     setup_claude_code
-    setup_zellij
 
     # terminal tools
     brew_install wget
@@ -145,9 +144,7 @@ setup_basic_tools() {
     # development tools   
     brew_install gibo
     brew_install ghq
-    brew_install gemini-cli
     brew_install shellcheck
-    brew_install jsonnet
 
     # golang related tools
     brew_install mage
@@ -157,7 +154,6 @@ setup_basic_tools() {
     brew_install kubectl
     brew_install kustomize
     brew_install kubecolor
-    brew_install k9s
     brew_install kind
     setup_krew
     
@@ -168,8 +164,6 @@ setup_basic_tools() {
 
         # cloud tools
         brew_install terraform
-        brew_install ansible
-        brew_install ansible-lint # used in vscode ansible
     fi
 
     if [ $# -eq 1 ]; then
@@ -278,8 +272,6 @@ setup_gotools() {
     go_install "gotests" "github.com/cweill/gotests/gotests@latest"
     # colorize test output
     go_install "gotest" "github.com/rakyll/gotest@latest"
-    # mock generator
-    go_install "gomock" "go.uber.org/mock/mockgen@latest"
 
     go_install "gopls" "golang.org/x/tools/gopls@latest"
 }
@@ -298,31 +290,6 @@ setup_node() {
         log "$LOG_LEVEL_INFO" "[ ] pnpm not installed. Installing..."
         npm install -g pnpm
         log "$LOG_LEVEL_INFO" "[✓] pnpm install finished"
-    fi
-
-    # pnpm aborts `pnpm install -g` when its global bin dir is not on PATH.
-    # Run unconditionally (idempotent) and include both PNPM_HOME and its bin
-    # subdir to cover pnpm's version-dependent global bin location.
-    export PNPM_HOME="${home_dir}/.local/share/pnpm"
-    mkdir -p "${PNPM_HOME}"
-    export PATH="${PNPM_HOME}:${PNPM_HOME}/bin:$PATH"
-
-    if ! hash tsc 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] typescript not installed. Installing..."
-        pnpm install -g typescript
-        log "$LOG_LEVEL_INFO" "[✓] typescript install finished"
-    fi
-
-    if ! hash bash-language-server 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] bash-language-server not installed. Installing..."
-        pnpm install -g bash-language-server
-        log "$LOG_LEVEL_INFO" "[✓] bash-language-server install finished"
-    fi
-
-    if ! hash textlint 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] textlint not installed. Installing..."
-        pnpm install -g textlint
-        log "$LOG_LEVEL_INFO" "[✓] textlint install finished"
     fi
 }
 
@@ -393,21 +360,6 @@ setup_claude_code() {
     apm compile --global
 
     log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
-}
-
-setup_zellij() {
-    echo_blue "Setup zellij..."
-
-    brew_install zellij
-
-    local zellij_config_dir="${config_dir}/zellij"
-    mkdir -p "${zellij_config_dir}"
-    if [ -f "${zellij_config_dir}/config.kdl" ] && ! diff "${zellij_config_dir}/config.kdl" ./terminal-tools/zellij/config.kdl >/dev/null 2>&1; then
-        cp "${zellij_config_dir}/config.kdl" "${zellij_config_dir}/config.kdl.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./terminal-tools/zellij/config.kdl "${zellij_config_dir}"
-
-    log "$LOG_LEVEL_INFO" "[✓] zellij install finished"
 }
 
 setup_personal_machine_tools() {

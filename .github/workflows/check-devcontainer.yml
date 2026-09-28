@@ -30,7 +30,7 @@ jobs:
         run: |
           npx -y @devcontainers/cli exec --workspace-folder . zsh -ic '
             set -e
-            for cmd in git gh direnv uv go node pnpm atuin gitleaks claude zellij fzf jq starship kubectl vim zsh; do
+            for cmd in git gh direnv uv go node pnpm atuin gitleaks claude fzf jq starship kubectl vim zsh; do
               command -v "$cmd"
             done
             getent passwd "$(whoami)" | cut -d: -f7
