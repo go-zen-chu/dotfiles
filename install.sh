@@ -163,7 +163,8 @@ setup_basic_tools() {
         brew_install openssl
 
         # cloud tools
-        brew_install terraform
+        # terraform was removed from homebrew-core after the license change
+        brew_install hashicorp/tap/terraform
     fi
 
     if [ $# -eq 1 ]; then
@@ -303,15 +304,13 @@ setup_krew() {
     # export PATH="${home_dir}/.krew/bin:${krew_path}:$PATH"
     export PATH="${home_dir}/.krew/bin:$PATH"
     kubectl krew update
-    kubectl krew install ctx \
-        ns \
-        access-matrix \
-        tree \
-        neat \
-        resource-capacity \
-        view-allocations \
-        iexec \
-        stern
+    local plugin
+    for plugin in ctx ns access-matrix tree neat resource-capacity view-allocations iexec stern; do
+        # some plugins are not provided for every platform (e.g. access-matrix on linux/arm64)
+        if ! kubectl krew install "${plugin}"; then
+            log "$LOG_LEVEL_WARN" "failed to install krew plugin: ${plugin}"
+        fi
+    done
 }
 
 setup_atuin() {
