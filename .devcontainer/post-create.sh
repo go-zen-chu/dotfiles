@@ -1,19 +1,18 @@
 #!/bin/bash
-# Runs install.sh inside the devcontainer (postCreateCommand).
+# Per-user setup that cannot be baked into the image. Run as postCreateCommand
+# from the workspace folder: bash ~/dotfiles/.devcontainer/post-create.sh
 set -eu
 
-cd "$(dirname "$0")/.."
-
 # Bind-mounted workspace may be owned by a different uid than the container user.
-git config --global --add safe.directory "$(pwd)"
-
-git_email="${GIT_EMAIL:-$(git config --global user.email || true)}"
-if [ -z "${git_email}" ]; then
-    echo "[post-create] git email not found. Set GIT_EMAIL on the host or user.email in your host ~/.gitconfig" >&2
-    exit 1
+if git -C "$(pwd)" rev-parse --git-dir >/dev/null 2>&1; then
+    git config --global --add safe.directory "$(pwd)"
 fi
 
-./install.sh -e "${git_email}"
+if [ -n "${GIT_EMAIL:-}" ]; then
+    git config --global user.email "${GIT_EMAIL}"
+elif [ -z "$(git config --global user.email || true)" ]; then
+    echo "[post-create] WARN: git user.email is not set. Set GIT_EMAIL on the host or run 'git config --global user.email ...'" >&2
+fi
 
 # install.sh points user.signingkey at ~/.ssh/id_ed25519.pub, which does not exist
 # in the container. Use the key from the forwarded ssh-agent instead so that

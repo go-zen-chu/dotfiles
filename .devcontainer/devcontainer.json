@@ -1,18 +1,18 @@
 {
+  // Devcontainer for developing this repository: builds the image from the local Dockerfile
+  // so that changes to install.sh can be tested. Other repositories should use the published
+  // image instead (see devcontainer-template/).
   "name": "dotfiles (Ubuntu)",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "context": ".."
   },
   "remoteUser": "vscode",
-  // install.sh / .zshrc assume the repository lives at ~/dotfiles
+  // .zshrc and other configs refer to ~/dotfiles
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/dotfiles,type=bind",
   "workspaceFolder": "/home/vscode/dotfiles",
-  "mounts": [
-    // keep Homebrew packages across container rebuilds (first run of install.sh is slow)
-    "source=dotfiles-linuxbrew,target=/home/linuxbrew,type=volume"
-  ],
   "containerEnv": {
-    // e-mail passed to `install.sh -e`. Falls back to the git config copied from the host.
+    // falls back to the git config copied from the host
     "GIT_EMAIL": "${localEnv:GIT_EMAIL}"
   },
   "postCreateCommand": "bash .devcontainer/post-create.sh",

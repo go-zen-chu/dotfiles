@@ -1,8 +1,9 @@
 # Devcontainer image that reproduces the Ubuntu environment built by install.sh.
-# Only the prerequisites that install.sh cannot do non-interactively live here
-# (non-root user with passwordless sudo, Homebrew); all tools and configs are
-# installed by install.sh itself via .devcontainer/post-create.sh.
+# install.sh runs at build time, so containers created from this image start
+# with every tool installed. Build context is the repository root.
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+
+LABEL org.opencontainers.image.source=https://github.com/go-zen-chu/dotfiles
 
 ARG USERNAME=vscode
 
@@ -24,3 +25,13 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH} 
     HOMEBREW_NO_AUTO_UPDATE=1 \
     LANG=en_US.UTF-8 \
     DEVCONTAINER=true
+
+# install.sh and .zshrc expect the repository at ~/dotfiles
+COPY --chown=${USERNAME}:${USERNAME} . /home/${USERNAME}/dotfiles
+WORKDIR /home/${USERNAME}/dotfiles
+RUN TERM=xterm-256color ./install.sh \
+    && brew cleanup --prune=all \
+    && go clean -cache -modcache \
+    && rm -rf "${HOME}/.cache/Homebrew" "${HOME}/.npm"
+
+WORKDIR /home/${USERNAME}

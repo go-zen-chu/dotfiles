@@ -53,11 +53,12 @@ startup() {
     fi
     init_log "$log_level"
 
-    if [ -z "$arg_git_email" ]; then
+    check_env
+
+    # devcontainer image is built without a user, so git email is set at container creation
+    if [ -z "$arg_git_email" ] && [ "${is_devcontainer}" = "false" ]; then
         log "$LOG_LEVEL_ERROR" "-e option (git email) is required"
     fi
-
-    check_env
 
     if [[ "${os}" == unsupported* ]]; then
         log "$LOG_LEVEL_ERROR" "Unsupported OS: ${os}"
@@ -192,7 +193,7 @@ setup_git() {
     if [ -z "$(git config --global user.name)" ]; then
         git config --global user.name "${git_user_name}"
     fi
-    if [ -z "$(git config --global user.email)" ]; then
+    if [ -z "$(git config --global user.email)" ] && [ -n "${arg_git_email}" ]; then
         git config --global user.email "${arg_git_email}"
     fi
 }
@@ -384,7 +385,10 @@ setup_zsh() {
     echo_blue "Setup zsh..."
 
     # make sure install zsh plugins
-    git submodule update --init --recursive
+    # (devcontainer image build copies the repo without .git, submodules are already checked out)
+    if git rev-parse --git-dir >/dev/null 2>&1; then
+        git submodule update --init --recursive
+    fi
     brew_install zsh
     local zsh_path="${homebrew_bin_path}/zsh"
 

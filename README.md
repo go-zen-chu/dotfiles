@@ -25,22 +25,20 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 
 ### Devcontainer
 
-`.devcontainer/` reproduces the Ubuntu environment in a container.
-The image only prepares a non-root user and Homebrew; `install.sh` is run by `postCreateCommand`
-(`.devcontainer/post-create.sh`), so the container gets the same tools and configs as a real machine.
-
-- The repository is mounted at `~/dotfiles` because configs (e.g. `.zshrc`) refer to that path.
-- Git email is taken from `GIT_EMAIL` on the host, or from the host `~/.gitconfig` that the devcontainer copies in.
-- Commit signing uses the key from the forwarded ssh-agent when `~/.ssh/id_ed25519.pub` is not in the container.
-- Homebrew packages are kept in the `dotfiles-linuxbrew` volume, so rebuilding the container is fast after the first run.
-- Personal mode (`-p`) is not supported because it needs interactive login / snap.
+`ghcr.io/go-zen-chu/dotfiles-devcontainer` is an Ubuntu image with `install.sh` already applied
+(built by `.github/workflows/devcontainer-image.yml` for amd64 / arm64).
+Containers start without running the installer, so it can be used in any repository.
 
 ```bash
-# VS Code: "Dev Containers: Reopen in Container"
-# CLI:
-GIT_EMAIL="your git email here" devcontainer up --workspace-folder .
-devcontainer exec --workspace-folder . zsh
+# use the environment in another repository
+cp -r ~/dotfiles/devcontainer-template/.devcontainer path/to/repo/
 ```
+
+- `postCreateCommand` only does per-user setup (`.devcontainer/post-create.sh`):
+  git email from `GIT_EMAIL` on the host, and commit signing with the key from the forwarded ssh-agent.
+- The dotfiles are at `~/dotfiles` in the image. To pick up dotfiles changes, pull the new image and rebuild the container.
+- `.devcontainer/` in this repository builds the image locally, for testing changes to `install.sh`.
+- Personal mode (`-p`) is not supported because it needs interactive login / snap.
 
 ### Backup config & secrets
 
