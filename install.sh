@@ -21,6 +21,7 @@ os=""
 home_dir="${HOME}"
 config_dir="${home_dir}/.config"
 is_ci="false"
+is_devcontainer="false"
 homebrew_bin_path="/undefined"
 
 nodejs_version="24"
@@ -52,11 +53,12 @@ startup() {
     fi
     init_log "$log_level"
 
-    if [ -z "$arg_git_email" ]; then
+    check_env
+
+    # devcontainer image is built without a user, so git email is set at container creation
+    if [ -z "$arg_git_email" ] && [ "${is_devcontainer}" = "false" ]; then
         log "$LOG_LEVEL_ERROR" "-e option (git email) is required"
     fi
-
-    check_env
 
     if [[ "${os}" == unsupported* ]]; then
         log "$LOG_LEVEL_ERROR" "Unsupported OS: ${os}"
@@ -69,6 +71,7 @@ check_env() {
 
     os=$(check_os)
     is_ci=$(check_ci)
+    is_devcontainer=$(check_devcontainer)
     echo "OS            : ${os}"
     echo "CPU           : $(check_cpu_arch)"
     echo "Bash Version  : ${BASH_VERSION}"
@@ -76,6 +79,7 @@ check_env() {
     echo "HOME          : ${home_dir}"
     echo "Config Dir    : ${config_dir}"
     echo "Is CI         : ${is_ci}"
+    echo "Devcontainer  : ${is_devcontainer}"
     echo "Log level     : $(get_log_level "$log_level")"
 }
 
@@ -126,7 +130,6 @@ setup_basic_tools() {
     setup_atuin
     setup_gitleaks
     setup_claude_code
-    setup_zellij
 
     # terminal tools
     brew_install wget
@@ -142,19 +145,15 @@ setup_basic_tools() {
     # development tools   
     brew_install gibo
     brew_install ghq
-    brew_install gemini-cli
     brew_install shellcheck
-    brew_install jsonnet
 
     # golang related tools
-    brew_install mage
     brew_install golangci-lint
 
     # kubernetes tools
     brew_install kubectl
     brew_install kustomize
     brew_install kubecolor
-    brew_install k9s
     brew_install kind
     setup_krew
     
@@ -164,9 +163,7 @@ setup_basic_tools() {
         brew_install openssl
 
         # cloud tools
-        brew_install terraform
-        brew_install ansible
-        brew_install ansible-lint # used in vscode ansible
+        brew_install opentofu # terraform alternative (command: tofu)
     fi
 
     if [ $# -eq 1 ]; then
@@ -195,7 +192,7 @@ setup_git() {
     if [ -z "$(git config --global user.name)" ]; then
         git config --global user.name "${git_user_name}"
     fi
-    if [ -z "$(git config --global user.email)" ]; then
+    if [ -z "$(git config --global user.email)" ] && [ -n "${arg_git_email}" ]; then
         git config --global user.email "${arg_git_email}"
     fi
 }
@@ -275,8 +272,6 @@ setup_gotools() {
     go_install "gotests" "github.com/cweill/gotests/gotests@latest"
     # colorize test output
     go_install "gotest" "github.com/rakyll/gotest@latest"
-    # mock generator
-    go_install "gomock" "go.uber.org/mock/mockgen@latest"
 
     go_install "gopls" "golang.org/x/tools/gopls@latest"
 }
@@ -296,31 +291,6 @@ setup_node() {
         npm install -g pnpm
         log "$LOG_LEVEL_INFO" "[✓] pnpm install finished"
     fi
-
-    # pnpm aborts `pnpm install -g` when its global bin dir is not on PATH.
-    # Run unconditionally (idempotent) and include both PNPM_HOME and its bin
-    # subdir to cover pnpm's version-dependent global bin location.
-    export PNPM_HOME="${home_dir}/.local/share/pnpm"
-    mkdir -p "${PNPM_HOME}"
-    export PATH="${PNPM_HOME}:${PNPM_HOME}/bin:$PATH"
-
-    if ! hash tsc 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] typescript not installed. Installing..."
-        pnpm install -g typescript
-        log "$LOG_LEVEL_INFO" "[✓] typescript install finished"
-    fi
-
-    if ! hash bash-language-server 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] bash-language-server not installed. Installing..."
-        pnpm install -g bash-language-server
-        log "$LOG_LEVEL_INFO" "[✓] bash-language-server install finished"
-    fi
-
-    if ! hash textlint 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[ ] textlint not installed. Installing..."
-        pnpm install -g textlint
-        log "$LOG_LEVEL_INFO" "[✓] textlint install finished"
-    fi
 }
 
 setup_krew() {
@@ -333,15 +303,13 @@ setup_krew() {
     # export PATH="${home_dir}/.krew/bin:${krew_path}:$PATH"
     export PATH="${home_dir}/.krew/bin:$PATH"
     kubectl krew update
-    kubectl krew install ctx \
-        ns \
-        access-matrix \
-        tree \
-        neat \
-        resource-capacity \
-        view-allocations \
-        iexec \
-        stern
+    local plugin
+    for plugin in ctx ns access-matrix tree neat resource-capacity view-allocations iexec stern; do
+        # some plugins are not provided for every platform (e.g. access-matrix on linux/arm64)
+        if ! kubectl krew install "${plugin}"; then
+            log "$LOG_LEVEL_WARN" "failed to install krew plugin: ${plugin}"
+        fi
+    done
 }
 
 setup_atuin() {
@@ -392,21 +360,6 @@ setup_claude_code() {
     log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
 }
 
-setup_zellij() {
-    echo_blue "Setup zellij..."
-
-    brew_install zellij
-
-    local zellij_config_dir="${config_dir}/zellij"
-    mkdir -p "${zellij_config_dir}"
-    if [ -f "${zellij_config_dir}/config.kdl" ] && ! diff "${zellij_config_dir}/config.kdl" ./terminal-tools/zellij/config.kdl >/dev/null 2>&1; then
-        cp "${zellij_config_dir}/config.kdl" "${zellij_config_dir}/config.kdl.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./terminal-tools/zellij/config.kdl "${zellij_config_dir}"
-
-    log "$LOG_LEVEL_INFO" "[✓] zellij install finished"
-}
-
 setup_personal_machine_tools() {
     if [ "$flg_personal_mode" = "false" ]; then
         echo_blue "Skip setup personal machine tools"
@@ -429,14 +382,21 @@ setup_zsh() {
     echo_blue "Setup zsh..."
 
     # make sure install zsh plugins
-    git submodule update --init --recursive
+    # (devcontainer image build copies the repo without .git, submodules are already checked out)
+    if git rev-parse --git-dir >/dev/null 2>&1; then
+        git submodule update --init --recursive
+    fi
     brew_install zsh
     local zsh_path="${homebrew_bin_path}/zsh"
 
     # change default shell
     if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
         echo "${zsh_path}" | sudo tee -a /etc/shells
-        if [ "${is_ci}" = "false" ]; then
+        if [ "${is_devcontainer}" = "true" ]; then
+            # no password is set for the container user, but sudo is passwordless
+            log "$LOG_LEVEL_INFO" "running chsh with sudo for devcontainer..."
+            sudo chsh -s "${zsh_path}" "$(whoami)"
+        elif [ "${is_ci}" = "false" ]; then
             log "$LOG_LEVEL_INFO" "running chsh..."
             chsh -s "${zsh_path}"
         else

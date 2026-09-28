@@ -1,0 +1,5 @@
+# Build context is the repository root (see devcontainer.json / workflow)
+**/.git
+**/node_modules
+tampermonkey
+os-windows

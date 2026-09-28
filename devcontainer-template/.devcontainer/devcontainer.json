@@ -1,0 +1,23 @@
+{
+  // Copy this .devcontainer directory into any repository to use the dotfiles environment.
+  "name": "dotfiles env",
+  "image": "ghcr.io/go-zen-chu/dotfiles-devcontainer:latest",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    // falls back to the git config copied from the host
+    "GIT_EMAIL": "${localEnv:GIT_EMAIL}"
+  },
+  "postCreateCommand": "bash /home/vscode/dotfiles/.devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/home/linuxbrew/.linuxbrew/bin/zsh"
+          }
+        }
+      }
+    }
+  }
+}

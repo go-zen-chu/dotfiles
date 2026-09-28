@@ -41,3 +41,12 @@ check_ci() {
         echo "false"
     fi
 }
+
+# DEVCONTAINER is set in .devcontainer/Dockerfile
+check_devcontainer() {
+    if [[ "${DEVCONTAINER-}" == "true" ]]; then
+        echo "true"
+    else
+        echo "false"
+    fi
+}
