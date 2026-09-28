@@ -68,7 +68,7 @@ jobs:
           docker run --rm "${IMAGE}:latest-${{ matrix.arch }}" zsh -ic '
             set -e
             for cmd in git gh direnv uv go node pnpm atuin gitleaks claude apm fzf jq yq bat starship \
-                       kubectl kustomize terraform shellcheck golangci-lint gopls vim zsh; do
+                       kubectl kustomize tofu shellcheck golangci-lint gopls vim zsh; do
               command -v "$cmd"
             done
             echo "login shell: $(getent passwd "$(whoami)" | cut -d: -f7)"

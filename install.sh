@@ -163,8 +163,7 @@ setup_basic_tools() {
         brew_install openssl
 
         # cloud tools
-        # terraform was removed from homebrew-core after the license change
-        brew_install hashicorp/tap/terraform
+        brew_install opentofu # terraform alternative (command: tofu)
     fi
 
     if [ $# -eq 1 ]; then
