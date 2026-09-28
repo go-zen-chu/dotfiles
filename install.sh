@@ -148,7 +148,6 @@ setup_basic_tools() {
     brew_install shellcheck
 
     # golang related tools
-    brew_install mage
     brew_install golangci-lint
 
     # kubernetes tools
