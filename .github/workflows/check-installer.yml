@@ -6,36 +6,175 @@ on:
       - master
       - main
     paths:
-      - "**/*.sh"
-      # negative pattern
-      - "!downloader.sh"
-      - "!backup.sh"
+      - "install.sh"
+      - "Brewfile"
+      - "scripts/**"
+      - "os-macos/**"
+      - "os-linux/**"
+      - "os-windows/**"
+      - "terminal-tools/**"
+      - "apm/**"
+      - ".github/workflows/check-installer.yml"
+  # keep the Homebrew download cache warm for PRs (PR caches are not shared between PRs)
+  # and catch breakages from upstream tool updates
+  push:
+    branches:
+      - master
+    paths:
+      - "install.sh"
+      - "Brewfile"
+      - "scripts/**"
+      - "os-macos/**"
+      - "os-linux/**"
+      - "os-windows/**"
+      - "terminal-tools/**"
+      - "apm/**"
+      - ".github/workflows/check-installer.yml"
+  schedule:
+    - cron: "41 2 * * 1"
+  workflow_dispatch:
+
+# cancel the previous run when a new commit is pushed to the PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # for tput coloring
+  TERM: xterm-color
+  # the runner images come with a recent Homebrew, skip the update and the extra work after install
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+  HOMEBREW_NO_ENV_HINTS: 1
 
 jobs:
+  # run only the jobs of the OS affected by the changed files
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      macos: ${{ github.event_name != 'pull_request' || steps.filter.outputs.macos == 'true' }}
+      ubuntu: ${{ github.event_name != 'pull_request' || steps.filter.outputs.ubuntu == 'true' }}
+      windows: ${{ github.event_name != 'pull_request' || steps.filter.outputs.windows == 'true' }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name == 'pull_request'
+        with:
+          filters: |
+            common: &common
+              - "install.sh"
+              - "Brewfile"
+              - "scripts/**"
+              - "terminal-tools/**"
+              - "apm/**"
+              - ".github/workflows/check-installer.yml"
+            macos:
+              - *common
+              - "os-macos/**"
+            ubuntu:
+              - *common
+              - "os-linux/**"
+            windows:
+              - "os-windows/**"
+              - ".github/workflows/check-installer.yml"
+
   setup-mac:
+    needs: changes
+    if: needs.changes.outputs.macos == 'true'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get cache week
+        id: week
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+      # bottles are refreshed weekly; older downloads are still restored by restore-keys
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Brewfile') }}-${{ steps.week.outputs.week }}
+          restore-keys: |
+            brew-${{ runner.os }}-${{ runner.arch }}-
       - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
-        env:
-          # for tput coloring
-          TERM: xterm-color
+
   setup-ubuntu:
+    needs: changes
+    if: needs.changes.outputs.ubuntu == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Homebrew is preinstalled on the runner image but not in PATH. Use it instead of
+      # installing it again (installing Homebrew itself is covered by the devcontainer image build).
+      - name: Add preinstalled Homebrew to PATH
+        run: |
+          test -x /home/linuxbrew/.linuxbrew/bin/brew
+          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+          echo "/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
+      - name: Get cache week
+        id: week
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Homebrew
+          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Brewfile') }}-${{ steps.week.outputs.week }}
+          restore-keys: |
+            brew-${{ runner.os }}-${{ runner.arch }}-
       - name: Run Ubuntu personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
+
+  setup-windows:
+    needs: changes
+    if: needs.changes.outputs.windows == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint PowerShell scripts
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path os-windows -Recurse
+          $results | Format-Table -AutoSize -Wrap
+          if ($results | Where-Object Severity -in @("Error", "ParseError")) { exit 1 }
+      # winget is not available on GitHub-hosted runners, so check that every package ID exists
+      # in the winget community repository instead of installing them
+      - name: Check winget package IDs
+        shell: pwsh
         env:
-          # for tput coloring
-          TERM: xterm-color
-          # somehow ubuntu runner preinstalls /usr/bin/go (old) which makes go tool installation by goenv fail
-          GOENV_PATH_ORDER: front
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN" }
+          $missing = @()
+          $packages = Get-Content os-windows/winget-packages.txt |
+            ForEach-Object { $_.Trim() } |
+            Where-Object { $_ -and -not $_.StartsWith("#") }
+          foreach ($package in $packages) {
+            # manifests/<first letter>/<publisher>/<name>, e.g. manifests/g/Google/Chrome
+            $path = "manifests/$($package.Substring(0, 1).ToLower())/$($package.Replace('.', '/'))"
+            try {
+              Invoke-RestMethod -Headers $headers "https://api.github.com/repos/microsoft/winget-pkgs/contents/$path" | Out-Null
+              Write-Host "OK   $package"
+            } catch {
+              Write-Host "FAIL $package ($path)"
+              $missing += $package
+            }
+          }
+          if ($missing) { exit 1 }
+      - name: Run Windows setup
+        shell: powershell
+        run: |
+          .\os-windows\setup.ps1 -SkipPackages
+          if (!(Test-Path -Path $PROFILE.CurrentUserAllHosts)) { throw "profile is not installed" }
+          # load the installed profile to check it has no errors
+          . $PROFILE.CurrentUserAllHosts
+
   report-durations:
-    needs: [setup-mac, setup-ubuntu]
+    needs: [setup-mac, setup-ubuntu, setup-windows]
     runs-on: ubuntu-latest
     if: always()
     permissions:
@@ -49,7 +188,7 @@ jobs:
             const repo = context.repo.repo;
             const run_id = context.runId;
 
-            const targets = ["setup-mac", "setup-ubuntu"];
+            const targets = ["setup-mac", "setup-ubuntu", "setup-windows"];
 
             const { data } = await github.rest.actions.listJobsForWorkflowRun({
               owner,
@@ -74,6 +213,8 @@ jobs:
             const rows = targets.map((jobName) => {
               const job = data.jobs.find((j) => j.name === jobName);
               if (!job) return [jobName, "N/A"];
+              // jobs of OS not affected by the change are skipped
+              if (job.conclusion === "skipped") return [jobName, "skipped"];
 
               const startedAt = job.started_at ? new Date(job.started_at) : null;
               const completedAt = job.completed_at ? new Date(job.completed_at) : null;

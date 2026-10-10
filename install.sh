@@ -24,7 +24,7 @@ is_ci="false"
 is_devcontainer="false"
 homebrew_bin_path="/undefined"
 
-nodejs_version="24"
+nodejs_version="24" # keep in sync with node@ in Brewfile
 python_version="3.13"
 
 ### setup methods
@@ -102,19 +102,16 @@ setup_package_manager() {
     fi
 }
 
-brew_install() {
-    local tool_name
-    tool_name=$1
-    if [ -f "${homebrew_bin_path}/${tool_name}" ]; then
-        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: ${homebrew_bin_path}/${tool_name})"
-        return
-    elif [ -d "$(brew --prefix "${tool_name}")" ] 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: $(brew --prefix "${tool_name}"))"
-        return
-    fi
-    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed (homebrew). Installing..."
-    brew install "${tool_name}"
-    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
+install_brew_packages() {
+    echo_blue "Install Homebrew packages (Brewfile)..."
+
+    # Install every package at once so Homebrew downloads them in parallel.
+    # --no-upgrade keeps already installed packages as they are (run `brew upgrade` for that).
+    # Homebrew only passes HOMEBREW_* variables through, so the flags are renamed for Brewfile.
+    HOMEBREW_DOTFILES_CI="${is_ci}" \
+        HOMEBREW_DOTFILES_PERSONAL="${flg_personal_mode}" \
+        brew bundle install --file=./Brewfile --no-upgrade
+    log "$LOG_LEVEL_INFO" "[✓] Homebrew packages install finished"
 }
 
 setup_basic_tools() {
@@ -130,41 +127,7 @@ setup_basic_tools() {
     setup_atuin
     setup_gitleaks
     setup_claude_code
-
-    # terminal tools
-    brew_install wget
-    brew_install rsync
-    brew_install fzf
-    brew_install jq
-    brew_install yq
-    brew_install bat   # cat, less alternatives
-    brew_install doggo # dig alternatives
-    brew_install tree
-    brew_install starship
-
-    # development tools   
-    brew_install gibo
-    brew_install ghq
-    brew_install shellcheck
-
-    # golang related tools
-    brew_install golangci-lint
-
-    # kubernetes tools
-    brew_install kubectl
-    brew_install kustomize
-    brew_install kubecolor
-    brew_install kind
     setup_krew
-    
-    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
-    if [ "${is_ci}" = "false" ]; then
-        # terminal tools
-        brew_install openssl
-
-        # cloud tools
-        brew_install opentofu # terraform alternative (command: tofu)
-    fi
 
     if [ $# -eq 1 ]; then
         local setup_os_specific_func=$1
@@ -175,7 +138,6 @@ setup_basic_tools() {
 setup_git() {
     echo_blue "Setup git..."
 
-    brew_install git
     # in first install global config is not created
     touch "${home_dir}/.gitconfig"
 
@@ -200,14 +162,11 @@ setup_git() {
 setup_gh() {
     echo_blue "Setup gh..."
 
-    brew_install gh
     gh config set editor vim
 }
 
 setup_direnv() {
     echo_blue "Setup direnv..."
-
-    brew_install direnv
 
     local direnv_config_path
     direnv_config_path="${config_dir}/direnv"
@@ -223,9 +182,7 @@ EOF
 setup_python() {
     echo_blue "Setup python..."
 
-    # uv manages Python versions and virtualenvs (replaces pyenv/anyenv).
-    brew_install uv
-
+    # uv (installed by Brewfile) manages Python versions and virtualenvs (replaces pyenv/anyenv).
     # TIPS: installing a Python toolchain takes time in CI so skip there
     if [ "${is_ci}" = "false" ]; then
         log "$LOG_LEVEL_INFO" "install python ${python_version} via uv..."
@@ -238,10 +195,9 @@ setup_python() {
 setup_go() {
     echo_blue "Setup go..."
 
-    # Install Go via Homebrew and rely on Go's built-in toolchain management
-    # (GOTOOLCHAIN=auto) so each project auto-fetches the version pinned in its
-    # go.mod. This replaces goenv/anyenv.
-    brew_install go
+    # Go is installed via Homebrew (Brewfile) and relies on Go's built-in toolchain
+    # management (GOTOOLCHAIN=auto) so each project auto-fetches the version pinned
+    # in its go.mod. This replaces goenv/anyenv.
     export GOTOOLCHAIN=auto
     local gopath
     gopath="$(go env GOPATH)"
@@ -268,18 +224,14 @@ go_install() {
 setup_gotools() {
     echo_blue "Setup go tools..."
 
-    # generate test code
-    go_install "gotests" "github.com/cweill/gotests/gotests@latest"
+    # gopls and gotests come from Homebrew bottles (Brewfile); gotest has no formula
     # colorize test output
     go_install "gotest" "github.com/rakyll/gotest@latest"
-
-    go_install "gopls" "golang.org/x/tools/gopls@latest"
 }
 
 setup_node() {
     echo_blue "Setup node..."
 
-    brew_install "node@${nodejs_version}"
     local node_path
     node_path="$(brew --prefix node@${nodejs_version})/bin"
     export PATH="${node_path}:$PATH"
@@ -295,8 +247,6 @@ setup_node() {
 
 setup_krew() {
     echo_blue "Setup krew..."
-
-    brew_install krew
 
     # local krew_path
     # krew_path="$(brew --prefix krew)/bin"
@@ -315,8 +265,6 @@ setup_krew() {
 setup_atuin() {
     echo_blue "Setup atuin..."
 
-    brew_install atuin
-
     if [ "${flg_personal_mode}" = "false" ] || [ "${is_ci}" = "true" ]; then
         return
     fi
@@ -330,8 +278,6 @@ setup_atuin() {
 setup_gitleaks() {
     echo_blue "Setup gitleaks..."
 
-    brew_install gitleaks
-
     global_hook_dir="${config_dir}/gitleaks-global-hooks"
     mkdir -p "${global_hook_dir}"
     cp ./terminal-tools/gitleaks/global-pre-commit.sh "${global_hook_dir}/pre-commit"
@@ -342,12 +288,6 @@ setup_gitleaks() {
 
 setup_claude_code() {
     echo_blue "Setup claude code..."
-
-    brew_install claude-code
-
-    if ! command -v apm >/dev/null 2>&1; then
-        brew install microsoft/apm/apm
-    fi
 
     mkdir -p "${home_dir}/.claude"
 
@@ -367,11 +307,6 @@ setup_personal_machine_tools() {
     fi
     echo_blue "Setup personal machine tools..."
 
-    if [ "${is_ci}" = "false" ]; then
-        brew_install hugo
-        brew_install sass/sass/sass
-    fi
-
     if [ $# -eq 1 ]; then
         local setup_os_specific_func=$1
         $setup_os_specific_func
@@ -386,7 +321,6 @@ setup_zsh() {
     if git rev-parse --git-dir >/dev/null 2>&1; then
         git submodule update --init --recursive
     fi
-    brew_install zsh
     local zsh_path="${homebrew_bin_path}/zsh"
 
     # change default shell
@@ -418,7 +352,6 @@ setup_zsh() {
 setup_vim() {
     echo_blue "Setup vim..."
 
-    brew_install vim
     local vimrc_path="${home_dir}/.vimrc"
 
     # configure
@@ -462,6 +395,7 @@ case "${os}" in
 
     homebrew_bin_path="/opt/homebrew/bin"
     setup_package_manager
+    install_brew_packages
     setup_basic_tools macos_setup_basic_tools
     setup_personal_machine_tools macos_setup_personal_machine_tools
     setup_zsh
@@ -470,6 +404,7 @@ case "${os}" in
 "ubuntu")
     homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin"
     setup_package_manager
+    install_brew_packages
     setup_basic_tools linux_setup_basic_tools
     setup_personal_machine_tools linux_setup_personal_machine_tools
     setup_zsh

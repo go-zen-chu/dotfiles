@@ -1,0 +1,15 @@
+# winget package IDs installed by setup.ps1 (one per line, `#` for comments)
+Microsoft.PowerToys
+Google.Chrome
+Google.Drive
+Amazon.Kindle
+Synology.DriveClient
+# communication tools
+Zoom.Zoom
+LINE.LINE
+SlackTechnologies.Slack
+# development tools
+Microsoft.VisualStudioCode
+tailscale.tailscale
+Git.Git
+Unity.UnityHub

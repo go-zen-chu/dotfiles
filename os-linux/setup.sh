@@ -6,8 +6,7 @@ set -eu
 linux_setup_basic_tools() {
     echo_blue "Setup basic tools for linux..."
 
-    brew_install xclip
-    brew_install keychain
+    # xclip and keychain are installed by Brewfile
     linux_setup_google_chrome
 }
 
