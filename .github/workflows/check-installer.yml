@@ -172,8 +172,10 @@ jobs:
     if: always()
     permissions:
       actions: read
+      # post the summary as a PR comment
+      pull-requests: write
     steps:
-      - name: Report job durations
+      - name: Report job results and durations
         uses: actions/github-script@v7
         with:
           script: |
@@ -203,22 +205,63 @@ jobs:
                 : `${minutes}:${pad2(seconds)}`;
             }
 
+            const icons = { success: "✅", failure: "❌", cancelled: "🚫", skipped: "⏭️" };
+
             const rows = targets.map((jobName) => {
               const job = data.jobs.find((j) => j.name === jobName);
-              if (!job) return [jobName, "N/A"];
+              if (!job) return [jobName, "N/A", "N/A"];
+              const conclusion = job.conclusion ?? job.status;
+              const result = `${icons[conclusion] ?? "❔"} ${conclusion}`;
               // jobs of OS not affected by the change are skipped
-              if (job.conclusion === "skipped") return [jobName, "skipped"];
+              if (conclusion === "skipped") return [jobName, result, "-"];
 
               const startedAt = job.started_at ? new Date(job.started_at) : null;
               const completedAt = job.completed_at ? new Date(job.completed_at) : null;
               const durationMs = startedAt && completedAt ? completedAt - startedAt : null;
-              return [jobName, formatDuration(durationMs)];
+              return [jobName, result, formatDuration(durationMs)];
             });
 
             await core.summary
-              .addHeading("Job durations")
+              .addHeading("Job results")
               .addTable([
-                [{ data: "Job", header: true }, { data: "Duration", header: true }],
+                [
+                  { data: "Job", header: true },
+                  { data: "Result", header: true },
+                  { data: "Duration", header: true },
+                ],
                 ...rows,
               ])
               .write();
+
+            if (context.eventName !== "pull_request") return;
+
+            // keep one comment per PR and update it on every run
+            const marker = "<!-- check-installer-report -->";
+            const sha = context.payload.pull_request.head.sha;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${run_id}`;
+            const body = [
+              marker,
+              "### Check installer.sh",
+              "",
+              "| Job | Result | Duration |",
+              "| --- | --- | --- |",
+              ...rows.map((row) => `| ${row.join(" | ")} |`),
+              "",
+              `Commit ${sha.slice(0, 7)} · [workflow run](${runUrl})`,
+            ].join("\n");
+
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user?.type === "Bot" && c.body?.includes(marker),
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
