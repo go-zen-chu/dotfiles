@@ -8,7 +8,6 @@ on:
     paths:
       - ".devcontainer/**"
       - "install.sh"
-      - "Brewfile"
       - "scripts/**"
       - "os-linux/**"
       - "terminal-tools/**"
@@ -20,7 +19,6 @@ on:
     paths:
       - ".devcontainer/**"
       - "install.sh"
-      - "Brewfile"
       - "scripts/**"
       - "os-linux/**"
       - "terminal-tools/**"
@@ -44,9 +42,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # PRs only check amd64 to save time; both arches are built for publishing
-        arch: ${{ github.event_name == 'pull_request' && fromJSON('["amd64"]') || fromJSON('["amd64", "arm64"]') }}
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 300
     permissions:
       contents: read
@@ -65,8 +66,6 @@ jobs:
           file: .devcontainer/Dockerfile
           load: true
           tags: ${{ env.IMAGE }}:latest-${{ matrix.arch }}
-          # the weekly build ignores the cache to pick up the latest tools
-          no-cache: ${{ github.event_name == 'schedule' }}
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
       - name: Check installed tools

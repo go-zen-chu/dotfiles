@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# shellcheck disable=SC2154 # config_dir is set by install.sh, which sources this file
+# shellcheck disable=SC2154 # is_ci is set by install.sh, which sources this file
 set -eu
 
 macos_check_developer_tool() {
@@ -17,11 +17,23 @@ macos_check_developer_tool() {
 macos_setup_basic_tools() {
     echo_blue "Setup macos specific tools..."
 
-    # apps are installed by Brewfile
     setup_karabiner
+    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
+    if [ "${is_ci}" = "false" ]; then
+        brew_install watch
+        brew install --cask appcleaner
+        brew install --cask alacritty
+        brew install --cask google-chrome
+        brew install --cask licecap
+        brew install --cask raycast
+        # development tools
+        brew install --cask visual-studio-code
+        brew install --cask wireshark
+    fi
 }
 
 setup_karabiner() {
+    brew install --cask karabiner-elements
     if [[ -n ${config_dir} && ! -d "${config_dir}/karabiner" ]]; then
         mkdir -p "${config_dir}"
         cp -R ./os-macos/karabiner "${config_dir}"
@@ -31,7 +43,14 @@ setup_karabiner() {
 macos_setup_personal_machine_tools() {
     echo_blue "Setup macos personal machine tools..."
 
-    # apps are installed by Brewfile
+    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
+    if [ "${is_ci}" = "false" ]; then
+        brew install --cask slack
+        brew install --cask zoom
+        # development tools
+        brew install --cask tailscale
+        brew install --cask google-cloud-sdk
+    fi
 }
 
 macos_setup_defaults() {

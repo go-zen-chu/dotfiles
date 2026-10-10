@@ -24,9 +24,6 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 ./install.sh -e "your git email here"
 ```
 
-Homebrew packages are listed in [`Brewfile`](./Brewfile) and installed at once by `install.sh` (`brew bundle`).
-Add a tool there, and its configuration (if any) to `install.sh`.
-
 ### Devcontainer
 
 `ghcr.io/go-zen-chu/dotfiles-devcontainer` is an Ubuntu image with `install.sh` already applied

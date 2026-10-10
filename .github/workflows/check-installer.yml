@@ -7,7 +7,6 @@ on:
       - main
     paths:
       - "install.sh"
-      - "Brewfile"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -22,7 +21,6 @@ on:
       - master
     paths:
       - "install.sh"
-      - "Brewfile"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -42,7 +40,7 @@ concurrency:
 env:
   # for tput coloring
   TERM: xterm-color
-  # the runner images come with a recent Homebrew, skip the update and the extra work after install
+  # skip Homebrew's auto update and the extra work after install
   HOMEBREW_NO_AUTO_UPDATE: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   HOMEBREW_NO_ENV_HINTS: 1
@@ -66,7 +64,6 @@ jobs:
           filters: |
             common: &common
               - "install.sh"
-              - "Brewfile"
               - "scripts/**"
               - "terminal-tools/**"
               - "apm/**"
@@ -90,12 +87,12 @@ jobs:
       - name: Get cache week
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
-      # bottles are refreshed weekly; older downloads are still restored by restore-keys
+      # bottles are refreshed weekly; the previous week's downloads are still restored by restore-keys
       - name: Cache Homebrew downloads
         uses: actions/cache@v4
         with:
           path: ~/Library/Caches/Homebrew
-          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Brewfile') }}-${{ steps.week.outputs.week }}
+          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
       - name: Run MacOS personal machine setup
@@ -108,13 +105,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Homebrew is preinstalled on the runner image but not in PATH. Use it instead of
-      # installing it again (installing Homebrew itself is covered by the devcontainer image build).
-      - name: Add preinstalled Homebrew to PATH
-        run: |
-          test -x /home/linuxbrew/.linuxbrew/bin/brew
-          echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
-          echo "/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
       - name: Get cache week
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
@@ -122,12 +112,15 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/Homebrew
-          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Brewfile') }}-${{ steps.week.outputs.week }}
+          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
       - name: Run Ubuntu personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
+        env:
+          # somehow ubuntu runner preinstalls /usr/bin/go (old) which makes go tool installation by goenv fail
+          GOENV_PATH_ORDER: front
 
   setup-windows:
     needs: changes
