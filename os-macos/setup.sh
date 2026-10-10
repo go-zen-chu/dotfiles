@@ -27,7 +27,6 @@ macos_setup_basic_tools() {
         brew install --cask licecap
         brew install --cask raycast
         # development tools
-        brew install --cask google-cloud-sdk
         brew install --cask visual-studio-code
         brew install --cask wireshark
     fi
