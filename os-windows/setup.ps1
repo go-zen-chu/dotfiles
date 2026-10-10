@@ -1,6 +1,7 @@
 Write-Host "Setup for Windows..." -ForegroundColor Cyan 
 $packages = @(  
     "Microsoft.PowerToys",
+    "Google.Chrome",
     "Google.Drive",
     "Amazon.Kindle",
     "Synology.DriveClient",
