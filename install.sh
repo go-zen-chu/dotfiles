@@ -451,7 +451,7 @@ case "${os}" in
 "ubuntu")
     homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin"
     setup_package_manager
-    setup_basic_tools
+    setup_basic_tools linux_setup_basic_tools
     setup_personal_machine_tools linux_setup_personal_machine_tools
     setup_zsh
     setup_vim

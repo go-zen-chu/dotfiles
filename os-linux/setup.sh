@@ -36,7 +36,7 @@ linux_setup_personal_machine_tools() {
             gcloud init --skip-diagnostics
             log "$LOG_LEVEL_INFO" "[✓] google-cloud-sdk install finished"
             ;;
-        "*")
+        *)
             log "$LOG_LEVEL_WARN" "skip google-cloud-sdk install for ${os} because it is not supported"
             ;;
         esac
@@ -99,7 +99,7 @@ linux_package_install() {
         fi
         sudo apt-get install -y "${package_name}"
         ;;
-    "*")
+    *)
         log "$LOG_LEVEL_ERROR" "skip package install for ${os} because it is not supported"
         ;;
     esac
