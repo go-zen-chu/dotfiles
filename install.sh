@@ -430,6 +430,25 @@ setup_vim() {
         cp "${vimrc_path}" "${vimrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
     fi
     cp -f ./terminal-tools/vim/.vimrc "${home_dir}"
+
+    # TIPS: installing vim plugins takes time in CI so skip there
+    if [ "${is_ci}" = "true" ]; then
+        return
+    fi
+    # plugins.vim depends on vim-plug
+    local plug_path="${home_dir}/.vim/autoload/plug.vim"
+    if [ ! -f "${plug_path}" ]; then
+        log "$LOG_LEVEL_INFO" "[ ] vim-plug not installed. Installing..."
+        curl -fLo "${plug_path}" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    fi
+    # TIPS: vim exits non-zero in headless mode because some plugin settings (e.g. coc) error there,
+    # so check the result by the plugin directory instead of the exit code
+    vim -es -u "${home_dir}/.vimrc" -i NONE -c 'PlugInstall --sync' -c 'qa' || true
+    if [ -d "${home_dir}/.vim/plugged" ]; then
+        log "$LOG_LEVEL_INFO" "[✓] vim plugins install finished"
+    else
+        log "$LOG_LEVEL_WARN" "failed to install vim plugins. run ':PlugInstall' in vim"
+    fi
 }
 
 ### install
