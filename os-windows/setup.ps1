@@ -25,10 +25,4 @@ if (!(Test-Path -Path $PROFILE.CurrentUserAllHosts)) {
     Copy-Item "os-windows\profile.ps1" -Force -Destination "$PROFILE.CurrentUserAllHosts\.."
 }
 
-$UserProperty = $(Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders')
-if (Test-Path -Path $UserProperty.Startup) {
-    Write-Host "Installing autohotkey script to startup" -ForegroundColor Cyan 
-    Copy-Item "os-windows\keybind.ahk" -Force -Destination $UserProperty.Startup
-}
-
 Write-Host "Setup completed" -ForegroundColor Cyan 
