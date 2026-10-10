@@ -8,6 +8,7 @@ Supported OS
 
 - MacOS
 - Ubuntu
+- Windows (see [os-windows/README.md](./os-windows/README.md))
 
 My configuration files for DRY. CI is performed on GitHub Actions.
 
