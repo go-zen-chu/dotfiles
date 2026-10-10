@@ -46,18 +46,11 @@ macos_setup_personal_machine_tools() {
 
     # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
     if [ "${is_ci}" = "false" ]; then
-        brew_install mas # tool that install app from app store
-        # you cannot run mas install on CI because you need to be once installed in AppStore
-        # https://github.com/mas-cli/mas?tab=readme-ov-file#mas-install
-        mas install 539883307 # LINE
-
         brew install --cask slack
         brew install --cask zoom
         # development tools
         brew install --cask tailscale
         brew install --cask google-cloud-sdk
-        brew install --cask hex-fiend
-        brew install --cask balenaetcher
     fi
 }
 
