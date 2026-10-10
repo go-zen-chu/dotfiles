@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# shellcheck disable=SC2154 # os and is_ci are set by install.sh, which sources this file
+# shellcheck disable=SC2154 # os, is_ci and is_devcontainer are set by install.sh, which sources this file
 set -eu
 
 linux_setup_basic_tools() {
@@ -8,6 +8,7 @@ linux_setup_basic_tools() {
 
     brew_install xclip
     brew_install keychain
+    linux_setup_google_chrome
 }
 
 linux_setup_personal_machine_tools() {
@@ -22,8 +23,6 @@ linux_setup_personal_machine_tools() {
         log "$LOG_LEVEL_INFO" "[✓] tailscale install finished"
         echo_green "run 'sudo tailscale up' for joining to tailscale network"
     fi
-
-    linux_setup_google_chrome
 
     # google-cloud-sdk
     if hash gcloud 2>/dev/null; then
@@ -48,9 +47,9 @@ linux_setup_google_chrome() {
         log "$LOG_LEVEL_INFO" "[✓] google-chrome is already installed"
         return
     fi
-    # TIPS: installing a GUI browser is not needed in CI
-    if [ "${is_ci}" = "true" ]; then
-        log "$LOG_LEVEL_INFO" "skip google-chrome install for CI"
+    # TIPS: installing a GUI browser is not needed in CI or devcontainer
+    if [ "${is_ci}" = "true" ] || [ "${is_devcontainer}" = "true" ]; then
+        log "$LOG_LEVEL_INFO" "skip google-chrome install for CI / devcontainer"
         return
     fi
     # on WSL, use Chrome installed on the Windows side (os-windows/setup.ps1)
