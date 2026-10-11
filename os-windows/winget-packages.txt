@@ -1,0 +1,16 @@
+# winget package IDs installed by setup.ps1 (one per line, `#` for comments)
+# IDs must match the directory case in microsoft/winget-pkgs (manifests/<letter>/<Publisher>/<Name>), CI checks it
+Microsoft.PowerToys
+Google.Chrome
+Google.GoogleDrive
+Amazon.Kindle
+Synology.DriveClient
+# communication tools
+Zoom.Zoom
+# LINE is not in the winget community repository, install it from Microsoft Store
+SlackTechnologies.Slack
+# development tools
+Microsoft.VisualStudioCode
+Tailscale.Tailscale
+Git.Git
+Unity.UnityHub

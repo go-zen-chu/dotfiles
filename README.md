@@ -41,6 +41,14 @@ cp -r ~/dotfiles/devcontainer-template/.devcontainer path/to/repo/
 - `.devcontainer/` in this repository builds the image locally, for testing changes to `install.sh`.
 - Personal mode (`-p`) is not supported because it needs interactive login / snap.
 
+### CI
+
+`.github/workflows/check-installer.yml` runs the installer on macOS / Ubuntu and checks the Windows setup.
+On PRs only the jobs of the OS affected by the changed files run
+(e.g. `os-windows/**` only runs the Windows job, `install.sh` runs macOS and Ubuntu).
+winget is not available on GitHub-hosted runners, so the Windows job lints the scripts,
+checks the package IDs in `os-windows/winget-packages.txt` exist and installs the profile.
+
 ### Backup config & secrets
 
 ```bash

@@ -6,42 +6,176 @@ on:
       - master
       - main
     paths:
-      - "**/*.sh"
-      # negative pattern
-      - "!downloader.sh"
-      - "!backup.sh"
+      - "install.sh"
+      - "scripts/**"
+      - "os-macos/**"
+      - "os-linux/**"
+      - "os-windows/**"
+      - "terminal-tools/**"
+      - "apm/**"
+      - ".github/workflows/check-installer.yml"
+  # keep the Homebrew download cache warm for PRs (PR caches are not shared between PRs)
+  # and catch breakages from upstream tool updates
+  push:
+    branches:
+      - master
+    paths:
+      - "install.sh"
+      - "scripts/**"
+      - "os-macos/**"
+      - "os-linux/**"
+      - "os-windows/**"
+      - "terminal-tools/**"
+      - "apm/**"
+      - ".github/workflows/check-installer.yml"
+  schedule:
+    - cron: "41 2 * * 1"
+  workflow_dispatch:
+
+# cancel the previous run when a new commit is pushed to the PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # for tput coloring
+  TERM: xterm-color
+  # skip Homebrew's auto update and the extra work after install
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+  HOMEBREW_NO_ENV_HINTS: 1
 
 jobs:
+  # run only the jobs of the OS affected by the changed files
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      macos: ${{ github.event_name != 'pull_request' || steps.filter.outputs.macos == 'true' }}
+      ubuntu: ${{ github.event_name != 'pull_request' || steps.filter.outputs.ubuntu == 'true' }}
+      windows: ${{ github.event_name != 'pull_request' || steps.filter.outputs.windows == 'true' }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name == 'pull_request'
+        with:
+          filters: |
+            common: &common
+              - "install.sh"
+              - "scripts/**"
+              - "terminal-tools/**"
+              - "apm/**"
+              - ".github/workflows/check-installer.yml"
+            macos:
+              - *common
+              - "os-macos/**"
+            ubuntu:
+              - *common
+              - "os-linux/**"
+            windows:
+              - "os-windows/**"
+              - ".github/workflows/check-installer.yml"
+
   setup-mac:
+    needs: changes
+    if: needs.changes.outputs.macos == 'true'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get cache week
+        id: week
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+      # bottles are refreshed weekly; the previous week's downloads are still restored by restore-keys
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
+          restore-keys: |
+            brew-${{ runner.os }}-${{ runner.arch }}-
       - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
-        env:
-          # for tput coloring
-          TERM: xterm-color
+
   setup-ubuntu:
+    needs: changes
+    if: needs.changes.outputs.ubuntu == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get cache week
+        id: week
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Homebrew
+          key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
+          restore-keys: |
+            brew-${{ runner.os }}-${{ runner.arch }}-
       - name: Run Ubuntu personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
         env:
-          # for tput coloring
-          TERM: xterm-color
           # somehow ubuntu runner preinstalls /usr/bin/go (old) which makes go tool installation by goenv fail
           GOENV_PATH_ORDER: front
+
+  setup-windows:
+    needs: changes
+    if: needs.changes.outputs.windows == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint PowerShell scripts
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path os-windows -Recurse
+          $results | Format-Table -AutoSize -Wrap
+          if ($results | Where-Object Severity -in @("Error", "ParseError")) { exit 1 }
+      # winget is not available on GitHub-hosted runners, so check that every package ID exists
+      # in the winget community repository instead of installing them
+      - name: Check winget package IDs
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN" }
+          $missing = @()
+          $packages = Get-Content os-windows/winget-packages.txt |
+            ForEach-Object { $_.Trim() } |
+            Where-Object { $_ -and -not $_.StartsWith("#") }
+          foreach ($package in $packages) {
+            # manifests/<first letter>/<publisher>/<name>, e.g. manifests/g/Google/Chrome
+            $path = "manifests/$($package.Substring(0, 1).ToLower())/$($package.Replace('.', '/'))"
+            try {
+              Invoke-RestMethod -Headers $headers "https://api.github.com/repos/microsoft/winget-pkgs/contents/$path" | Out-Null
+              Write-Host "OK   $package"
+            } catch {
+              Write-Host "FAIL $package ($path)"
+              $missing += $package
+            }
+          }
+          if ($missing) { exit 1 }
+      - name: Run Windows setup
+        shell: powershell
+        run: |
+          .\os-windows\setup.ps1 -SkipPackages
+          if (!(Test-Path -Path $PROFILE.CurrentUserAllHosts)) { throw "profile is not installed" }
+          # load the installed profile to check it has no errors
+          . $PROFILE.CurrentUserAllHosts
+
   report-durations:
-    needs: [setup-mac, setup-ubuntu]
+    needs: [setup-mac, setup-ubuntu, setup-windows]
     runs-on: ubuntu-latest
     if: always()
     permissions:
       actions: read
+      # post the summary as a PR comment
+      pull-requests: write
     steps:
-      - name: Report job durations
+      - name: Report job results and durations
         uses: actions/github-script@v7
         with:
           script: |
@@ -49,7 +183,7 @@ jobs:
             const repo = context.repo.repo;
             const run_id = context.runId;
 
-            const targets = ["setup-mac", "setup-ubuntu"];
+            const targets = ["setup-mac", "setup-ubuntu", "setup-windows"];
 
             const { data } = await github.rest.actions.listJobsForWorkflowRun({
               owner,
@@ -71,20 +205,63 @@ jobs:
                 : `${minutes}:${pad2(seconds)}`;
             }
 
+            const icons = { success: "✅", failure: "❌", cancelled: "🚫", skipped: "⏭️" };
+
             const rows = targets.map((jobName) => {
               const job = data.jobs.find((j) => j.name === jobName);
-              if (!job) return [jobName, "N/A"];
+              if (!job) return [jobName, "N/A", "N/A"];
+              const conclusion = job.conclusion ?? job.status;
+              const result = `${icons[conclusion] ?? "❔"} ${conclusion}`;
+              // jobs of OS not affected by the change are skipped
+              if (conclusion === "skipped") return [jobName, result, "-"];
 
               const startedAt = job.started_at ? new Date(job.started_at) : null;
               const completedAt = job.completed_at ? new Date(job.completed_at) : null;
               const durationMs = startedAt && completedAt ? completedAt - startedAt : null;
-              return [jobName, formatDuration(durationMs)];
+              return [jobName, result, formatDuration(durationMs)];
             });
 
             await core.summary
-              .addHeading("Job durations")
+              .addHeading("Job results")
               .addTable([
-                [{ data: "Job", header: true }, { data: "Duration", header: true }],
+                [
+                  { data: "Job", header: true },
+                  { data: "Result", header: true },
+                  { data: "Duration", header: true },
+                ],
                 ...rows,
               ])
               .write();
+
+            if (context.eventName !== "pull_request") return;
+
+            // keep one comment per PR and update it on every run
+            const marker = "<!-- check-installer-report -->";
+            const sha = context.payload.pull_request.head.sha;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${run_id}`;
+            const body = [
+              marker,
+              "### Check installer.sh",
+              "",
+              "| Job | Result | Duration |",
+              "| --- | --- | --- |",
+              ...rows.map((row) => `| ${row.join(" | ")} |`),
+              "",
+              `Commit ${sha.slice(0, 7)} · [workflow run](${runUrl})`,
+            ].join("\n");
+
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user?.type === "Bot" && c.body?.includes(marker),
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }

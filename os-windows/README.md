@@ -13,3 +13,5 @@ cd <paste path to dotfiles>
 Set-ExecutionPolicy RemoteSigned
 PowerShell -ExecutionPolicy Unrestricted .\os-windows\setup.ps1
 ```
+
+Packages installed by winget are listed in `winget-packages.txt`.
