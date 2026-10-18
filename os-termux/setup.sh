@@ -19,7 +19,6 @@ termux_packages=(
     git
     gh
     openssh
-    gitleaks
     nodejs-lts # for claude code
 )
 
@@ -31,8 +30,7 @@ termux_setup() {
 
     echo_blue "Setup git..."
     configure_git
-    echo_blue "Setup gitleaks..."
-    configure_gitleaks_hook
+    # gitleaks is not provided by termux, so the global pre-commit hook is not set up
 
     echo_blue "Setup claude code..."
     if hash claude 2>/dev/null; then

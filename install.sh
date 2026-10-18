@@ -341,7 +341,6 @@ setup_gitleaks() {
     configure_gitleaks_hook
 }
 
-# shared with os-termux/setup.sh
 configure_gitleaks_hook() {
     global_hook_dir="${config_dir}/gitleaks-global-hooks"
     mkdir -p "${global_hook_dir}"
