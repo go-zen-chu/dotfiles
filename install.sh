@@ -273,6 +273,7 @@ go_install() {
     log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
 }
 
+# shared with os-termux/setup.sh
 setup_gotools() {
     echo_blue "Setup go tools..."
 

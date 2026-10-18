@@ -19,7 +19,7 @@ termux_packages=(
     git
     gh
     openssh
-    golang # for gitleaks
+    golang
     nodejs-lts # for claude code
 )
 
@@ -32,11 +32,14 @@ termux_setup() {
     echo_blue "Setup git..."
     configure_git
 
-    echo_blue "Setup gitleaks..."
-    # gitleaks is not provided by termux, so build it with go
+    echo_blue "Setup go..."
     local gopath
     gopath="$(go env GOPATH)"
     export PATH="${gopath}/bin:$PATH"
+    setup_gotools
+
+    echo_blue "Setup gitleaks..."
+    # gitleaks is not provided by termux, so build it with go
     go_install "gitleaks" "github.com/zricethezav/gitleaks/v8@latest"
     configure_gitleaks_hook
 
