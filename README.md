@@ -33,6 +33,25 @@ pkg install -y git
 cd ~/dotfiles && ./install.sh -e "your git email here"
 ```
 
+### Check drift
+
+Packages installed by `install.sh` are listed in [packages.txt](./packages.txt).
+Tools added by hand or left over from old setups drift the environment from it, which leaves unmanaged (and unpatched) tools behind.
+
+```bash
+# only report the drift (add -p for personal mode)
+./install.sh --check-drift
+```
+
+- Packages: `missing` (in packages.txt but not installed) and `extra` (installed on request but not in packages.txt)
+  for Homebrew formulae / casks, `go install`, `npm -g` and krew plugins.
+- Config: `~/dotfiles` is on an up-to-date master without local changes, `~/.zshrc`, the login shell and the global git config point to the repository.
+- The exit status is a bitmask: `1` missing packages, `2` extra packages, `4` config drift.
+
+`./install.sh` without `--check-drift` also reports the drift first, then installs the missing packages (extra packages are left as they are).
+To add a tool, add it to `packages.txt` instead of `install.sh`.
+Termux is not checked because it installs its own small set of tools with `pkg` (`os-termux/setup.sh`).
+
 ### Devcontainer
 
 `ghcr.io/go-zen-chu/dotfiles-devcontainer` is an Ubuntu image with `install.sh` already applied

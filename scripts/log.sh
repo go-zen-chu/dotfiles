@@ -72,3 +72,7 @@ echo_green() {
 echo_blue() {
     echo "${BLUE}$1${RESET}"
 }
+
+echo_red() {
+    echo "${RED}$1${RESET}"
+}
