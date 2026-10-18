@@ -9,19 +9,31 @@ LOG_LEVEL_DEBUG=3
 # set default log level to info
 current_log_level=$LOG_LEVEL_INFO
 
-BOLD=$(tput bold)
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-BLUE=$(tput setaf 4)
-GREY=$(tput setaf 8)
-RESET=$(tput sgr0)
+# TIPS: tput is not installed by default in some environments (e.g. termux),
+# so fall back to ANSI escape sequences
+if hash tput 2>/dev/null && tput sgr0 >/dev/null 2>&1; then
+    BOLD=$(tput bold)
+    RED=$(tput setaf 1)
+    GREEN=$(tput setaf 2)
+    YELLOW=$(tput setaf 3)
+    BLUE=$(tput setaf 4)
+    GREY=$(tput setaf 8)
+    RESET=$(tput sgr0)
+else
+    BOLD=$'\e[1m'
+    RED=$'\e[31m'
+    GREEN=$'\e[32m'
+    YELLOW=$'\e[33m'
+    BLUE=$'\e[34m'
+    GREY=$'\e[90m'
+    RESET=$'\e[0m'
+fi
 
 init_log() {
     current_log_level=$1
     # in CI environment, TERM env var might not set
-    if [ -z "${TERM}" ]; then
-        echo "[INFO] TERM=${TERM} is empty(CI=${CI}). Setting TERM to xterm-color"
+    if [ -z "${TERM-}" ]; then
+        echo "[INFO] TERM is empty(CI=${CI-}). Setting TERM to xterm-color"
         export TERM="xterm-color"
     fi
 }

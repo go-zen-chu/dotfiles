@@ -5,7 +5,6 @@ call plug#begin('$HOME/.vim/plugged')
 Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-sleuth'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf.vim'
 
 call plug#end()
@@ -13,9 +12,6 @@ call plug#end()
 " lightline setting 
 " not show which mode (substituted by lightline)
 set noshowmode
-
-" coc setting
-call coc#add_extension('coc-json', 'coc-css', 'coc-markdownlint')
 
 " vim-fzf setting
 " set path to fzf from vim

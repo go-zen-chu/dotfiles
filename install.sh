@@ -10,6 +10,8 @@ source ./scripts/env.sh
 source ./os-macos/setup.sh
 # shellcheck source=os-linux/setup.sh
 source ./os-linux/setup.sh
+# shellcheck source=os-termux/setup.sh
+source ./os-termux/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
@@ -176,6 +178,11 @@ setup_git() {
     echo_blue "Setup git..."
 
     brew_install git
+    configure_git
+}
+
+# shared with os-termux/setup.sh
+configure_git() {
     # in first install global config is not created
     touch "${home_dir}/.gitconfig"
 
@@ -331,7 +338,11 @@ setup_gitleaks() {
     echo_blue "Setup gitleaks..."
 
     brew_install gitleaks
+    configure_gitleaks_hook
+}
 
+# shared with os-termux/setup.sh
+configure_gitleaks_hook() {
     global_hook_dir="${config_dir}/gitleaks-global-hooks"
     mkdir -p "${global_hook_dir}"
     cp ./terminal-tools/gitleaks/global-pre-commit.sh "${global_hook_dir}/pre-commit"
@@ -381,11 +392,6 @@ setup_personal_machine_tools() {
 setup_zsh() {
     echo_blue "Setup zsh..."
 
-    # make sure install zsh plugins
-    # (devcontainer image build copies the repo without .git, submodules are already checked out)
-    if git rev-parse --git-dir >/dev/null 2>&1; then
-        git submodule update --init --recursive
-    fi
     brew_install zsh
     local zsh_path="${homebrew_bin_path}/zsh"
 
@@ -404,7 +410,16 @@ setup_zsh() {
         fi
     fi
 
-    # configure
+    deploy_zsh_config
+}
+
+# shared with os-termux/setup.sh
+deploy_zsh_config() {
+    # make sure install zsh plugins
+    # (devcontainer image build copies the repo without .git, submodules are already checked out)
+    if git rev-parse --git-dir >/dev/null 2>&1; then
+        git submodule update --init --recursive
+    fi
     if [ ! -f "${home_dir}/local.zsh" ]; then
         cp ./terminal-tools/zsh/local.zsh "${home_dir}"
     fi
@@ -419,9 +434,13 @@ setup_vim() {
     echo_blue "Setup vim..."
 
     brew_install vim
+    deploy_vim_config
+}
+
+# shared with os-termux/setup.sh
+deploy_vim_config() {
     local vimrc_path="${home_dir}/.vimrc"
 
-    # configure
     if [ ! -d "${home_dir}/.vim" ]; then
         # make and copy all things inside .vim
         cp -r ./terminal-tools/vim/.vim "${home_dir}"
@@ -441,7 +460,7 @@ setup_vim() {
         log "$LOG_LEVEL_INFO" "[ ] vim-plug not installed. Installing..."
         curl -fLo "${plug_path}" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
-    # TIPS: vim exits non-zero in headless mode because some plugin settings (e.g. coc) error there,
+    # TIPS: vim exits non-zero in headless mode because some plugin settings may error there,
     # so check the result by the plugin directory instead of the exit code
     vim -es -u "${home_dir}/.vimrc" -i NONE -c 'PlugInstall --sync' -c 'qa' || true
     if [ -d "${home_dir}/.vim/plugged" ]; then
@@ -474,6 +493,9 @@ case "${os}" in
     setup_personal_machine_tools linux_setup_personal_machine_tools
     setup_zsh
     setup_vim
+    ;;
+"termux")
+    termux_setup
     ;;
 esac
 

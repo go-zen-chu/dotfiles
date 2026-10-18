@@ -8,6 +8,7 @@ Supported OS
 
 - MacOS
 - Ubuntu
+- Termux (installs only a small set of tools with `pkg`, see [os-termux/setup.sh](./os-termux/setup.sh))
 - Windows (see [os-windows/README.md](./os-windows/README.md))
 
 My configuration files for DRY. CI is performed on GitHub Actions.
@@ -22,6 +23,14 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 
 # install dotfiles
 ./install.sh -e "your git email here"
+```
+
+### Termux
+
+```bash
+pkg install -y git
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/master/downloader.sh)"
+cd ~/dotfiles && ./install.sh -e "your git email here"
 ```
 
 ### Devcontainer

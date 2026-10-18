@@ -10,6 +10,7 @@ on:
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
+      - "os-termux/**"
       - "os-windows/**"
       - "terminal-tools/**"
       - "apm/**"
@@ -24,6 +25,7 @@ on:
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
+      - "os-termux/**"
       - "os-windows/**"
       - "terminal-tools/**"
       - "apm/**"
@@ -74,6 +76,8 @@ jobs:
             ubuntu:
               - *common
               - "os-linux/**"
+              # install.sh sources os-termux/setup.sh on every OS
+              - "os-termux/**"
             windows:
               - "os-windows/**"
               - ".github/workflows/check-installer.yml"
