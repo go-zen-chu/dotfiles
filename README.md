@@ -33,8 +33,6 @@ pkg install -y git
 cd ~/dotfiles && ./install.sh -e "your git email here"
 ```
 
-- Install the Termux:API app (from the same source as Termux, e.g. F-Droid) for `termux-clipboard-set`.
-
 ### Devcontainer
 
 `ghcr.io/go-zen-chu/dotfiles-devcontainer` is an Ubuntu image with `install.sh` already applied

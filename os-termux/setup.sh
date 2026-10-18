@@ -15,7 +15,6 @@ termux_packages=(
     jq
     tree
     ncurses-utils # tput
-    termux-api    # termux-clipboard-set etc. (needs the Termux:API app)
     # development tools
     git
     gh

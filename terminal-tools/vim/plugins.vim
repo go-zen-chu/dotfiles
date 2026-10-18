@@ -5,10 +5,6 @@ call plug#begin('$HOME/.vim/plugged')
 Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-sleuth'
-" coc is not used on termux
-if empty($TERMUX_VERSION)
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
 Plug 'junegunn/fzf.vim'
 
 call plug#end()
@@ -16,11 +12,6 @@ call plug#end()
 " lightline setting 
 " not show which mode (substituted by lightline)
 set noshowmode
-
-" coc setting
-if empty($TERMUX_VERSION)
-  call coc#add_extension('coc-json', 'coc-css', 'coc-markdownlint')
-endif
 
 " vim-fzf setting
 " set path to fzf from vim

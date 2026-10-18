@@ -460,7 +460,7 @@ deploy_vim_config() {
         log "$LOG_LEVEL_INFO" "[ ] vim-plug not installed. Installing..."
         curl -fLo "${plug_path}" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
-    # TIPS: vim exits non-zero in headless mode because some plugin settings (e.g. coc) error there,
+    # TIPS: vim exits non-zero in headless mode because some plugin settings may error there,
     # so check the result by the plugin directory instead of the exit code
     vim -es -u "${home_dir}/.vimrc" -i NONE -c 'PlugInstall --sync' -c 'qa' || true
     if [ -d "${home_dir}/.vim/plugged" ]; then

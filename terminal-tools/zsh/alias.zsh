@@ -14,9 +14,6 @@ alias -g G='| grep --color=auto'
 if hash pbcopy 2>/dev/null; then
 	alias -g P='| pbcopy'
 fi
-if hash termux-clipboard-set 2>/dev/null; then
-	alias -g P='| termux-clipboard-set'
-fi
 if hash xclip 2>/dev/null; then
 	alias -g P='| xclip -selection clipboard'
 	alias xclip='xclip -selection clipboard'
