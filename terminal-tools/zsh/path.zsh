@@ -17,9 +17,11 @@ if hash go 2>/dev/null; then
 fi
 
 # nodejs installed by homebrew
-nodejs_install_path=$(brew --prefix node@24)
-if [ -d "${nodejs_install_path}" ]; then
-  path=(${nodejs_install_path}/bin(N-/) $path)
+if hash brew 2>/dev/null; then
+  nodejs_install_path=$(brew --prefix node@24)
+  if [ -d "${nodejs_install_path}" ]; then
+    path=(${nodejs_install_path}/bin(N-/) $path)
+  fi
 fi
 if hash pnpm 2>/dev/null; then
   export PNPM_HOME="${HOME}/.local/share/pnpm"

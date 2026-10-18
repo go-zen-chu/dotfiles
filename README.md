@@ -8,6 +8,7 @@ Supported OS
 
 - MacOS
 - Ubuntu
+- Termux (tools are installed with `pkg`, some tools not provided for termux are skipped)
 - Windows (see [os-windows/README.md](./os-windows/README.md))
 
 My configuration files for DRY. CI is performed on GitHub Actions.

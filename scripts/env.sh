@@ -11,7 +11,10 @@ check_os() {
         os="macos"
         ;;
     "Linux")
-        if [ -f /etc/lsb-release ]; then
+        # termux reports Linux as well, so check it first
+        if [ -n "${TERMUX_VERSION-}" ] || [[ "${PREFIX-}" == *com.termux* ]]; then
+            os="termux"
+        elif [ -f /etc/lsb-release ]; then
             os="ubuntu"
         else
             os="unsupported linux"

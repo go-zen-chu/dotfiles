@@ -10,6 +10,8 @@ source ./scripts/env.sh
 source ./os-macos/setup.sh
 # shellcheck source=os-linux/setup.sh
 source ./os-linux/setup.sh
+# shellcheck source=os-termux/setup.sh
+source ./os-termux/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
@@ -105,6 +107,10 @@ setup_package_manager() {
 brew_install() {
     local tool_name
     tool_name=$1
+    if [ "${os}" = "termux" ]; then
+        termux_pkg_install "${tool_name}"
+        return
+    fi
     if [ -f "${homebrew_bin_path}/${tool_name}" ]; then
         log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: ${homebrew_bin_path}/${tool_name})"
         return
@@ -226,8 +232,11 @@ setup_python() {
     # uv manages Python versions and virtualenvs (replaces pyenv/anyenv).
     brew_install uv
 
+    if [ "${os}" = "termux" ]; then
+        # uv cannot download Python builds for android, so use termux's python
+        brew_install python
     # TIPS: installing a Python toolchain takes time in CI so skip there
-    if [ "${is_ci}" = "false" ]; then
+    elif [ "${is_ci}" = "false" ]; then
         log "$LOG_LEVEL_INFO" "install python ${python_version} via uv..."
         uv python install "${python_version}"
     fi
@@ -280,9 +289,11 @@ setup_node() {
     echo_blue "Setup node..."
 
     brew_install "node@${nodejs_version}"
-    local node_path
-    node_path="$(brew --prefix node@${nodejs_version})/bin"
-    export PATH="${node_path}:$PATH"
+    if [ "${os}" != "termux" ]; then
+        local node_path
+        node_path="$(brew --prefix node@${nodejs_version})/bin"
+        export PATH="${node_path}:$PATH"
+    fi
 
     if hash pnpm 2>/dev/null; then
         log "$LOG_LEVEL_INFO" "[✓] pnpm already installed"
@@ -296,6 +307,10 @@ setup_node() {
 setup_krew() {
     echo_blue "Setup krew..."
 
+    if [ "${os}" = "termux" ]; then
+        log "$LOG_LEVEL_INFO" "skip krew setup because it is not available on termux"
+        return
+    fi
     brew_install krew
 
     # local krew_path
@@ -331,6 +346,11 @@ setup_gitleaks() {
     echo_blue "Setup gitleaks..."
 
     brew_install gitleaks
+    # the global pre-commit hook blocks every commit if gitleaks is missing
+    if ! hash gitleaks 2>/dev/null; then
+        log "$LOG_LEVEL_WARN" "skip gitleaks global hook setup because gitleaks is not installed"
+        return
+    fi
 
     global_hook_dir="${config_dir}/gitleaks-global-hooks"
     mkdir -p "${global_hook_dir}"
@@ -343,10 +363,23 @@ setup_gitleaks() {
 setup_claude_code() {
     echo_blue "Setup claude code..."
 
-    brew_install claude-code
+    if [ "${os}" = "termux" ]; then
+        if hash claude 2>/dev/null; then
+            log "$LOG_LEVEL_INFO" "[✓] claude-code installed"
+        elif ! npm install -g @anthropic-ai/claude-code; then
+            log "$LOG_LEVEL_WARN" "failed to install claude-code with npm"
+        fi
+        # apm is distributed with Homebrew only
+        if ! command -v apm >/dev/null 2>&1; then
+            log "$LOG_LEVEL_WARN" "skip apm setup because apm is not available on termux"
+            return
+        fi
+    else
+        brew_install claude-code
 
-    if ! command -v apm >/dev/null 2>&1; then
-        brew install microsoft/apm/apm
+        if ! command -v apm >/dev/null 2>&1; then
+            brew install microsoft/apm/apm
+        fi
     fi
 
     mkdir -p "${home_dir}/.claude"
@@ -390,7 +423,13 @@ setup_zsh() {
     local zsh_path="${homebrew_bin_path}/zsh"
 
     # change default shell
-    if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
+    if [ "${os}" = "termux" ]; then
+        # termux has no /etc/shells and sudo, its chsh changes the shell of termux sessions
+        if [ "$(basename "${SHELL-}")" != "zsh" ]; then
+            log "$LOG_LEVEL_INFO" "running chsh..."
+            chsh -s zsh
+        fi
+    elif [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
         echo "${zsh_path}" | sudo tee -a /etc/shells
         if [ "${is_devcontainer}" = "true" ]; then
             # no password is set for the container user, but sudo is passwordless
@@ -472,6 +511,14 @@ case "${os}" in
     setup_package_manager
     setup_basic_tools linux_setup_basic_tools
     setup_personal_machine_tools linux_setup_personal_machine_tools
+    setup_zsh
+    setup_vim
+    ;;
+"termux")
+    homebrew_bin_path="${PREFIX}/bin"
+    termux_setup_package_manager
+    setup_basic_tools termux_setup_basic_tools
+    setup_personal_machine_tools termux_setup_personal_machine_tools
     setup_zsh
     setup_vim
     ;;
