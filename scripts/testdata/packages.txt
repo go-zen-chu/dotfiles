@@ -1,9 +1,0 @@
-# test manifest for scripts/packages_test.sh
-brew git
-brew watch os=macos skip-ci
-brew xclip os=ubuntu
-brew sass/sass/sass personal
-cask slack os=macos personal skip-ci  # trailing comment
-go gopls src=golang.org/x/tools/gopls@latest
-
-command tailscale os=ubuntu personal

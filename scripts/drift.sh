@@ -134,7 +134,7 @@ report_package_drift() {
             status=$((status | DRIFT_MISSING))
         fi
         if [ -n "${extra}" ]; then
-            echo "      extra (not in packages.txt)   : ${extra}"
+            echo "      extra (not in packages.yaml)  : ${extra}"
             status=$((status | DRIFT_EXTRA))
         fi
     done

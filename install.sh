@@ -30,13 +30,13 @@ config_dir="${home_dir}/.config"
 # .zshrc and the global git config read the repository from this path
 dotfiles_dir="${home_dir}/dotfiles"
 gitleaks_hook_dir="${config_dir}/gitleaks-global-hooks"
-package_manifest="./packages.txt"
+package_manifest="./packages.yaml"
 selected_packages=""
 is_ci="false"
 is_devcontainer="false"
 homebrew_bin_path="/undefined"
 
-# keep in sync with node@<version> in packages.txt
+# keep in sync with node@<version> in packages.yaml
 nodejs_version="24"
 python_version="3.13"
 
@@ -67,7 +67,7 @@ startup() {
         "p") flg_personal_mode="true" ;;
         "c") flg_check_drift="true" ;;
         *)
-            echo "Usage: $cmdname [-e (git email)] [-v (verbose)] [-p (personal mode)] [-c|--check-drift (only check drift from packages.txt)]" 1>&2
+            echo "Usage: $cmdname [-e (git email)] [-v (verbose)] [-p (personal mode)] [-c|--check-drift (only check drift from packages.yaml)]" 1>&2
             exit 0
             ;;
         esac
@@ -193,7 +193,7 @@ krew_install() {
     fi
 }
 
-# install_packages installs the packages of the given manager selected from packages.txt.
+# install_packages installs the packages of the given manager selected from packages.yaml.
 install_packages() {
     local manager=$1
     local entry_manager name src
@@ -233,7 +233,14 @@ export_tool_paths() {
     export PATH="${home_dir}/.krew/bin:$PATH"
 }
 
-# check_drift reports the drift of the environment from packages.txt and the dotfiles wiring.
+# load_packages selects the packages of packages.yaml for this environment.
+# It needs yq, which is installed with Homebrew before the other packages.
+load_packages() {
+    export_tool_paths
+    selected_packages=$(select_packages "${package_manifest}" "${os}" "$(check_cpu_arch)" "${flg_personal_mode}" "${is_ci}")
+}
+
+# check_drift reports the drift of the environment from packages.yaml and the dotfiles wiring.
 # It returns a bitmask of DRIFT_MISSING, DRIFT_EXTRA and DRIFT_CONFIG (0 when no drift).
 check_drift() {
     local status=0
@@ -505,42 +512,41 @@ case "${os}" in
 "macos") homebrew_bin_path="/opt/homebrew/bin" ;;
 "ubuntu") homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin" ;;
 esac
-if [ "${os}" = "termux" ]; then
-    # termux installs its own small set of tools with pkg (os-termux/setup.sh), which packages.txt does not cover
-    log "$LOG_LEVEL_WARN" "skip drift check because it is not supported on termux"
-    if [ "${flg_check_drift}" = "true" ]; then
+
+if [ "${flg_check_drift}" = "true" ]; then
+    if [ "${os}" = "termux" ]; then
+        # termux installs its own small set of tools with pkg (os-termux/setup.sh), which packages.yaml does not cover
+        log "$LOG_LEVEL_WARN" "skip drift check because it is not supported on termux"
         exit 0
     fi
-else
-    selected_packages=$(select_packages "${package_manifest}" "${os}" "${flg_personal_mode}" "${is_ci}")
-
-    export_tool_paths
+    load_packages
     drift_status=0
     check_drift || drift_status=$?
-    if [ "${flg_check_drift}" = "true" ]; then
-        # exit status is a bitmask: 1 missing packages, 2 extra packages, 4 config drift
-        exit "${drift_status}"
-    fi
-    if [ "${drift_status}" -ne 0 ]; then
-        log "$LOG_LEVEL_WARN" "drift detected (status: ${drift_status}). missing packages are installed below, extra packages are left as they are"
-    fi
+    # exit status is a bitmask: 1 missing packages, 2 extra packages, 4 config drift
+    exit "${drift_status}"
 fi
 
 case "${os}" in
-"macos")
-    macos_check_developer_tool
-    macos_setup_defaults
+"macos" | "ubuntu")
+    if [ "${os}" = "macos" ]; then
+        macos_check_developer_tool
+        macos_setup_defaults
+    fi
+    setup_package_manager
+    # yq reads packages.yaml, so install it before the other packages
+    brew_install yq
+    load_packages
+    if ! check_drift; then
+        log "$LOG_LEVEL_WARN" "drift detected. missing packages are installed below, extra packages are left as they are"
+    fi
 
-    setup_package_manager
-    setup_basic_tools macos_setup_basic_tools
-    setup_personal_machine_tools
-    setup_zsh
-    setup_vim
-    ;;
-"ubuntu")
-    setup_package_manager
-    setup_basic_tools linux_setup_basic_tools
-    setup_personal_machine_tools linux_setup_personal_machine_tools
+    if [ "${os}" = "macos" ]; then
+        setup_basic_tools macos_setup_basic_tools
+        setup_personal_machine_tools
+    else
+        setup_basic_tools linux_setup_basic_tools
+        setup_personal_machine_tools linux_setup_personal_machine_tools
+    fi
     setup_zsh
     setup_vim
     ;;

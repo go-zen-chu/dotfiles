@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - "install.sh"
-      - "packages.txt"
+      - "packages.yaml"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -23,7 +23,7 @@ on:
       - master
     paths:
       - "install.sh"
-      - "packages.txt"
+      - "packages.yaml"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -68,7 +68,7 @@ jobs:
           filters: |
             common: &common
               - "install.sh"
-              - "packages.txt"
+              - "packages.yaml"
               - "scripts/**"
               - "terminal-tools/**"
               - "apm/**"
@@ -107,7 +107,7 @@ jobs:
           ./install.sh -p -e "actions@github.com"
       # exit status of --check-drift is a bitmask: 1 missing packages, 2 extra packages, 4 config drift.
       # runner images preinstall many packages and CI skips chsh, so only missing packages fail the job
-      - name: Check drift from packages.txt
+      - name: Check drift from packages.yaml
         run: |
           status=0
           ./install.sh --check-drift -p || status=$?
@@ -137,7 +137,7 @@ jobs:
           GOENV_PATH_ORDER: front
       # exit status of --check-drift is a bitmask: 1 missing packages, 2 extra packages, 4 config drift.
       # runner images preinstall many packages and CI skips chsh, so only missing packages fail the job
-      - name: Check drift from packages.txt
+      - name: Check drift from packages.yaml
         run: |
           status=0
           ./install.sh --check-drift -p || status=$?

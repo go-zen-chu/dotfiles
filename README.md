@@ -35,7 +35,8 @@ cd ~/dotfiles && ./install.sh -e "your git email here"
 
 ### Check drift
 
-Packages installed by `install.sh` are listed in [packages.txt](./packages.txt).
+Packages installed by `install.sh` are listed in [packages.yaml](./packages.yaml) per package manager,
+with the conditions (`os`, `personal`, `ci`, `exclude`) and the reason (`description`) of each package.
 Tools added by hand or left over from old setups drift the environment from it, which leaves unmanaged (and unpatched) tools behind.
 
 ```bash
@@ -43,13 +44,14 @@ Tools added by hand or left over from old setups drift the environment from it, 
 ./install.sh --check-drift
 ```
 
-- Packages: `missing` (in packages.txt but not installed) and `extra` (installed on request but not in packages.txt)
+- Packages: `missing` (in packages.yaml but not installed) and `extra` (installed on request but not in packages.yaml)
   for Homebrew formulae / casks, `go install`, `npm -g` and krew plugins.
 - Config: `~/dotfiles` is on an up-to-date master without local changes, `~/.zshrc`, the login shell and the global git config point to the repository.
 - The exit status is a bitmask: `1` missing packages, `2` extra packages, `4` config drift.
+- packages.yaml is read with [yq](https://github.com/mikefarah/yq), which `install.sh` installs with Homebrew first.
 
-`./install.sh` without `--check-drift` also reports the drift first, then installs the missing packages (extra packages are left as they are).
-To add a tool, add it to `packages.txt` instead of `install.sh`.
+`./install.sh` without `--check-drift` also reports the drift after installing Homebrew and yq, then installs the missing packages (extra packages are left as they are).
+To add a tool, add it to `packages.yaml` instead of `install.sh`.
 Termux is not checked because it installs its own small set of tools with `pkg` (`os-termux/setup.sh`).
 
 ### Devcontainer
