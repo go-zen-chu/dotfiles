@@ -1,0 +1,29 @@
+# test manifest for scripts/packages_test.sh
+brew:
+  - git
+  - name: watch
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: xclip
+    description: clipboard
+    os: [ubuntu]
+  - name: sass/sass/sass
+    addons: [personal]
+cask:
+  - name: slack
+    os: [macos]
+    addons: [personal]
+    exclude:
+      - {ci: true}
+go:
+  - name: gopls
+    module: golang.org/x/tools/gopls@latest
+krew:
+  - name: access-matrix
+    exclude:
+      - {os: ubuntu, arch: aarch64}
+command:
+  - name: tailscale
+    os: [ubuntu]
+    addons: [personal]

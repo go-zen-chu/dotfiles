@@ -1,0 +1,183 @@
+# Packages installed by install.sh. This file is the source of truth for both
+# the installation and the drift check (./install.sh --check-drift).
+# It is parsed with yq (mikefarah/yq), which install.sh installs with Homebrew first.
+#
+# <manager>:                  brew | cask | go | npm | krew | command
+#   - <name>                  shorthand of `- name: <name>`
+#   - name: <name>            package name as the manager lists it after installation
+#                             (Homebrew renames like kubectl -> kubernetes-cli must use the new name,
+#                              tap-qualified formulae are compared by their last path element)
+#     description: <text>     why the package is installed
+#     os: [macos, ubuntu]     only on the listed OSes (default: every OS)
+#     addons: [personal]      only when every listed addon is enabled (personal: personal mode, -p)
+#     module: <path>          module path for `go install` (required for go)
+#     exclude:                skip on the environments matching any item (unset keys match any)
+#       - {os: ubuntu, arch: aarch64}
+#       - {ci: true}          e.g. skip in CI because the installation takes long
+#
+# `command` entries are installed by OS specific functions in os-*/setup.sh,
+# so they are only checked for their presence.
+# google-chrome on ubuntu is not listed because it is skipped on WSL / devcontainer / non x86_64.
+
+brew:
+  # language runtimes / toolchains
+  - name: uv
+    description: python version / virtualenv manager
+  - go
+  - name: node@24
+    description: keep in sync with nodejs_version in install.sh
+
+  # terminal tools
+  - git
+  - gh
+  - direnv
+  - atuin
+  - gitleaks
+  - zsh
+  - vim
+  - wget
+  - rsync
+  - fzf
+  - jq
+  - name: yq
+    description: also parses this file
+  - name: bat
+    description: cat, less alternatives
+  - name: doggo
+    description: dig alternatives
+  - tree
+  - starship
+  - name: openssl@3
+    exclude:
+      - {ci: true}
+  - name: watch
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: xclip
+    os: [ubuntu]
+  - name: keychain
+    os: [ubuntu]
+
+  # development tools
+  - name: microsoft/apm/apm
+    description: agent package manager for claude code
+  - gibo
+  - ghq
+  - shellcheck
+  - golangci-lint
+
+  # kubernetes tools
+  - kubernetes-cli
+  - kustomize
+  - kubecolor
+  - kind
+  - krew
+
+  # cloud tools
+  - name: opentofu
+    description: terraform alternative (command tofu)
+    exclude:
+      - {ci: true}
+
+  # personal machine tools
+  - name: hugo
+    addons: [personal]
+    exclude:
+      - {ci: true}
+  - name: sass/sass/sass
+    addons: [personal]
+    exclude:
+      - {ci: true}
+
+cask:
+  - claude-code
+  - name: karabiner-elements
+    os: [macos]
+  - name: appcleaner
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: alacritty
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: google-chrome
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: licecap
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: raycast
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: visual-studio-code
+    os: [macos]
+    exclude:
+      - {ci: true}
+  - name: wireshark-app
+    os: [macos]
+    exclude:
+      - {ci: true}
+
+  # personal machine tools
+  - name: slack
+    os: [macos]
+    addons: [personal]
+    exclude:
+      - {ci: true}
+  - name: zoom
+    os: [macos]
+    addons: [personal]
+    exclude:
+      - {ci: true}
+  - name: tailscale-app
+    os: [macos]
+    addons: [personal]
+    exclude:
+      - {ci: true}
+  - name: gcloud-cli
+    os: [macos]
+    addons: [personal]
+    exclude:
+      - {ci: true}
+
+go:
+  - name: gotests
+    description: generate test code
+    module: github.com/cweill/gotests/gotests@latest
+  - name: gotest
+    description: colorize test output
+    module: github.com/rakyll/gotest@latest
+  - name: gopls
+    module: golang.org/x/tools/gopls@latest
+
+npm:
+  - pnpm
+
+krew:
+  - ctx
+  - ns
+  - name: access-matrix
+    description: not provided for linux/arm64
+    exclude:
+      - {os: ubuntu, arch: aarch64}
+  - tree
+  - neat
+  - resource-capacity
+  - view-allocations
+  - iexec
+  - stern
+
+command:
+  - name: tailscale
+    description: installed by os-linux/setup.sh
+    os: [ubuntu]
+    addons: [personal]
+  - name: gcloud
+    description: installed with snap by os-linux/setup.sh
+    os: [ubuntu]
+    addons: [personal]
