@@ -233,11 +233,18 @@ export_tool_paths() {
     export PATH="${home_dir}/.krew/bin:$PATH"
 }
 
+# enabled_package_addons prints the addons of packages.yaml enabled by the options (comma separated).
+enabled_package_addons() {
+    if [ "${flg_personal_mode}" = "true" ]; then
+        echo "personal"
+    fi
+}
+
 # load_packages selects the packages of packages.yaml for this environment.
 # It needs yq, which is installed with Homebrew before the other packages.
 load_packages() {
     export_tool_paths
-    selected_packages=$(select_packages "${package_manifest}" "${os}" "$(check_cpu_arch)" "${flg_personal_mode}" "${is_ci}")
+    selected_packages=$(select_packages "${package_manifest}" "${os}" "$(check_cpu_arch)" "$(enabled_package_addons)" "${is_ci}")
 }
 
 # check_drift reports the drift of the environment from packages.yaml and the dotfiles wiring.

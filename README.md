@@ -36,7 +36,7 @@ cd ~/dotfiles && ./install.sh -e "your git email here"
 ### Check drift
 
 Packages installed by `install.sh` are listed in [packages.yaml](./packages.yaml) per package manager,
-with the conditions (`os`, `personal`, `ci`, `exclude`) and the reason (`description`) of each package.
+with the conditions (`os`, `addons`, `exclude`) and the reason (`description`) of each package.
 Tools added by hand or left over from old setups drift the environment from it, which leaves unmanaged (and unpatched) tools behind.
 
 ```bash

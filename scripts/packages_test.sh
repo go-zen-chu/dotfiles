@@ -42,41 +42,53 @@ manifest_with() {
     echo "${manifest}"
 }
 
-assert_equal "If macos without personal mode given, it should select common and macos packages" \
+assert_equal "If macos without addons given, it should select common and macos packages" \
     "brew:git brew:watch go:gopls krew:access-matrix " \
-    "$(selected_names "${testdata_manifest}" macos arm64 false false)"
+    "$(selected_names "${testdata_manifest}" macos arm64 "" false)"
 
-assert_equal "If macos in personal mode given, it should also select personal packages" \
+assert_equal "If macos with the personal addon given, it should also select personal packages" \
     "brew:git brew:watch brew:sass/sass/sass cask:slack go:gopls krew:access-matrix " \
-    "$(selected_names "${testdata_manifest}" macos arm64 true false)"
+    "$(selected_names "${testdata_manifest}" macos arm64 personal false)"
 
-assert_equal "If CI given, it should skip packages with ci: false" \
+assert_equal "If CI given, it should skip packages excluded with ci: true" \
     "brew:git brew:sass/sass/sass go:gopls krew:access-matrix " \
-    "$(selected_names "${testdata_manifest}" macos arm64 true true)"
+    "$(selected_names "${testdata_manifest}" macos arm64 personal true)"
 
-assert_equal "If ubuntu in personal mode given, it should select ubuntu packages instead of macos ones" \
+assert_equal "If ubuntu with the personal addon given, it should select ubuntu packages instead of macos ones" \
     "brew:git brew:xclip brew:sass/sass/sass go:gopls krew:access-matrix command:tailscale " \
-    "$(selected_names "${testdata_manifest}" ubuntu x86_64 true false)"
+    "$(selected_names "${testdata_manifest}" ubuntu x86_64 personal false)"
 
 assert_equal "If an environment matching an exclude given, it should skip the package" \
     "brew:git brew:xclip brew:sass/sass/sass go:gopls command:tailscale " \
-    "$(selected_names "${testdata_manifest}" ubuntu aarch64 true true)"
+    "$(selected_names "${testdata_manifest}" ubuntu aarch64 personal true)"
 
 assert_equal "If a name only entry and a map entry given, it should treat both as packages" \
     "brew:git brew:xclip " \
-    "$(selected_names "$(manifest_with $'brew:' '  - git' '  - name: xclip')" ubuntu x86_64 false false)"
+    "$(selected_names "$(manifest_with $'brew:' '  - git' '  - name: xclip')" ubuntu x86_64 "" false)"
 
 assert_equal "If an empty manager list given, it should select the packages of the other managers" \
     "cask:slack " \
-    "$(selected_names "$(manifest_with 'brew: []' 'cask:' '  - slack')" macos arm64 false false)"
+    "$(selected_names "$(manifest_with 'brew: []' 'cask:' '  - slack')" macos arm64 "" false)"
 
 assert_equal "If a go package given, it should print its module path" \
     "golang.org/x/tools/gopls@latest" \
-    "$(select_packages "${testdata_manifest}" macos arm64 false false | awk -F'\t' '$1 == "go" { print $3 }')"
+    "$(select_packages "${testdata_manifest}" macos arm64 "" false | awk -F'\t' '$1 == "go" { print $3 }')"
 
 assert_equal "If selected packages and a manager given, it should print the names of the manager" \
     "git watch" \
-    "$(package_names "$(select_packages "${testdata_manifest}" macos arm64 false false)" brew | paste -sd' ' -)"
+    "$(package_names "$(select_packages "${testdata_manifest}" macos arm64 "" false)" brew | paste -sd' ' -)"
+
+assert_equal "If an exclude with os and arch given, it should skip only the environment matching both" \
+    "krew:access-matrix " \
+    "$(selected_names "$(manifest_with $'krew:' '  - name: access-matrix' '    exclude:' '      - {os: ubuntu, arch: aarch64}')" macos aarch64 "" false)"
+
+assert_equal "If an exclude with ci given outside CI, it should select the package" \
+    "brew:opentofu " \
+    "$(selected_names "$(manifest_with $'brew:' '  - name: opentofu' '    exclude:' '      - {ci: true}')" ubuntu x86_64 "" false)"
+
+assert_equal "If an environment matching any of the excludes given, it should skip the package" \
+    "" \
+    "$(selected_names "$(manifest_with $'brew:' '  - name: watch' '    exclude:' '      - {os: ubuntu}' '      - {ci: true}')" macos arm64 "" true)"
 
 # expect_invalid_manifest asserts that select_packages fails for the manifest content.
 expect_invalid_manifest() {
@@ -84,7 +96,7 @@ expect_invalid_manifest() {
     local content=$2
     local manifest status=0
     manifest=$(manifest_with "${content}")
-    select_packages "${manifest}" macos arm64 false false >/dev/null 2>&1 || status=$?
+    select_packages "${manifest}" macos arm64 "" false >/dev/null 2>&1 || status=$?
     assert_equal "${scenario}" "1" "${status}"
     rm -f "${manifest}"
 }
@@ -96,14 +108,19 @@ expect_invalid_manifest "If an entry without name given, it should fail" $'brew:
 expect_invalid_manifest "If an unknown key given, it should fail" $'brew:\n  - name: git\n    oss: [macos]'
 expect_invalid_manifest "If os is not a list, it should fail" $'brew:\n  - name: git\n    os: macos'
 expect_invalid_manifest "If an unknown os given, it should fail" $'brew:\n  - name: git\n    os: [windows]'
-expect_invalid_manifest "If ci is not a boolean, it should fail" $'brew:\n  - name: git\n    ci: no-ci'
+expect_invalid_manifest "If an exclude ci is not a boolean, it should fail" $'brew:\n  - name: git\n    exclude:\n      - {ci: no-ci}'
+expect_invalid_manifest "If an exclude has an unknown key, it should fail" $'brew:\n  - name: git\n    exclude:\n      - {personal: true}'
+expect_invalid_manifest "If an exclude os is unknown, it should fail" $'brew:\n  - name: git\n    exclude:\n      - {os: windows}'
+expect_invalid_manifest "If an unknown addon given, it should fail" $'brew:\n  - name: git\n    addons: [work]'
+expect_invalid_manifest "If addons is not a list, it should fail" $'brew:\n  - name: git\n    addons: personal'
+expect_invalid_manifest "If the removed personal key given, it should fail" $'brew:\n  - name: git\n    personal: true'
 expect_invalid_manifest "If a go package without module given, it should fail" $'go:\n  - gopls'
 expect_invalid_manifest "If module is given to a non go package, it should fail" $'brew:\n  - name: git\n    module: example.com/git'
 expect_invalid_manifest "If exclude is not a list, it should fail" $'krew:\n  - name: ctx\n    exclude: {os: ubuntu}'
 expect_invalid_manifest "If a broken YAML given, it should fail" $'brew: [git'
 
 status=0
-select_packages ./scripts/testdata/not-found.yaml macos arm64 false false >/dev/null 2>&1 || status=$?
+select_packages ./scripts/testdata/not-found.yaml macos arm64 "" false >/dev/null 2>&1 || status=$?
 assert_equal "If a manifest that does not exist given, it should fail" "1" "${status}"
 
 assert_equal "If installed packages match expected ones, it should print nothing" \

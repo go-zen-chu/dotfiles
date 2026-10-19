@@ -3,17 +3,19 @@ brew:
   - git
   - name: watch
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: xclip
     description: clipboard
     os: [ubuntu]
   - name: sass/sass/sass
-    personal: true
+    addons: [personal]
 cask:
   - name: slack
     os: [macos]
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
 go:
   - name: gopls
     module: golang.org/x/tools/gopls@latest
@@ -24,4 +26,4 @@ krew:
 command:
   - name: tailscale
     os: [ubuntu]
-    personal: true
+    addons: [personal]

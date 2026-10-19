@@ -9,11 +9,11 @@
 #                              tap-qualified formulae are compared by their last path element)
 #     description: <text>     why the package is installed
 #     os: [macos, ubuntu]     only on the listed OSes (default: every OS)
-#     personal: true          only in personal mode (-p)
-#     ci: false               skip in CI because the installation takes long
+#     addons: [personal]      only when every listed addon is enabled (personal: personal mode, -p)
 #     module: <path>          module path for `go install` (required for go)
-#     exclude:                skip on the matching environments (os / arch default to any)
+#     exclude:                skip on the environments matching any item (unset keys match any)
 #       - {os: ubuntu, arch: aarch64}
+#       - {ci: true}          e.g. skip in CI because the installation takes long
 #
 # `command` entries are installed by OS specific functions in os-*/setup.sh,
 # so they are only checked for their presence.
@@ -48,10 +48,12 @@ brew:
   - tree
   - starship
   - name: openssl@3
-    ci: false
+    exclude:
+      - {ci: true}
   - name: watch
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: xclip
     os: [ubuntu]
   - name: keychain
@@ -75,15 +77,18 @@ brew:
   # cloud tools
   - name: opentofu
     description: terraform alternative (command tofu)
-    ci: false
+    exclude:
+      - {ci: true}
 
   # personal machine tools
   - name: hugo
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
   - name: sass/sass/sass
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
 
 cask:
   - claude-code
@@ -91,43 +96,54 @@ cask:
     os: [macos]
   - name: appcleaner
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: alacritty
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: google-chrome
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: licecap
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: raycast
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: visual-studio-code
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
   - name: wireshark-app
     os: [macos]
-    ci: false
+    exclude:
+      - {ci: true}
 
   # personal machine tools
   - name: slack
     os: [macos]
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
   - name: zoom
     os: [macos]
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
   - name: tailscale-app
     os: [macos]
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
   - name: gcloud-cli
     os: [macos]
-    personal: true
-    ci: false
+    addons: [personal]
+    exclude:
+      - {ci: true}
 
 go:
   - name: gotests
@@ -160,8 +176,8 @@ command:
   - name: tailscale
     description: installed by os-linux/setup.sh
     os: [ubuntu]
-    personal: true
+    addons: [personal]
   - name: gcloud
     description: installed with snap by os-linux/setup.sh
     os: [ubuntu]
-    personal: true
+    addons: [personal]
