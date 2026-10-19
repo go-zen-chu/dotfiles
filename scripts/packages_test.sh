@@ -91,7 +91,7 @@ expect_invalid_manifest() {
 
 expect_invalid_manifest "If an unknown manager given, it should fail" $'apt:\n  - git'
 expect_invalid_manifest "If a manager value is not a list, it should fail" $'brew: git'
-expect_invalid_manifest "If an entry is neither a name nor a map, it should fail" $'brew:\n  - 123'
+expect_invalid_manifest "If an entry is neither a name nor a map, it should fail" $'brew:\n  - [git]'
 expect_invalid_manifest "If an entry without name given, it should fail" $'brew:\n  - os: [macos]'
 expect_invalid_manifest "If an unknown key given, it should fail" $'brew:\n  - name: git\n    oss: [macos]'
 expect_invalid_manifest "If os is not a list, it should fail" $'brew:\n  - name: git\n    os: macos'
