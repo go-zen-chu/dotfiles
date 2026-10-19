@@ -130,6 +130,22 @@ assert_equal "If a tap-qualified package given, it should compare it by its last
     "" \
     "$(compare_package_sets 'microsoft/apm/apm' 'apm' 'apm')"
 
+assert_equal "If a different version of an expected package is installed, it should not print drift" \
+    "" \
+    "$(compare_package_sets $'git\nnode@24' $'git\nnode@22' $'git\nnode@22')"
+
+assert_equal "If an unversioned package is installed for a versioned expected one, it should not print drift" \
+    "" \
+    "$(compare_package_sets 'openssl@3' 'openssl' 'openssl')"
+
+assert_equal "If an unexpected versioned package given, it should print it as extra without the version" \
+    $'extra\tpython' \
+    "$(compare_package_sets 'git' $'git\npython@3.11' $'git\npython@3.11')"
+
+assert_equal "If an npm scoped package given, it should keep its leading @" \
+    $'extra\t@scope/tool' \
+    "$(compare_package_sets 'pnpm' $'pnpm\n@scope/tool' $'pnpm\n@scope/tool')"
+
 assert_equal "If nothing is installed, it should print every expected package as missing" \
     $'missing\tgit\nmissing\tjq' \
     "$(compare_package_sets $'jq\ngit' '' '')"

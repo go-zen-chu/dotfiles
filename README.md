@@ -46,6 +46,7 @@ Tools added by hand or left over from old setups drift the environment from it, 
 
 - Packages: `missing` (in packages.yaml but not installed) and `extra` (installed on request but not in packages.yaml)
   for Homebrew formulae / casks, `go install`, `npm -g` and krew plugins.
+  Versions are ignored: names are compared without the version suffix (`node@24` is satisfied by `node@22`).
 - Config: `~/dotfiles` is on an up-to-date master without local changes, `~/.zshrc`, the login shell and the global git config point to the repository.
 - The exit status is a bitmask: `1` missing packages, `2` extra packages, `4` config drift.
 - packages.yaml is read with [yq](https://github.com/mikefarah/yq), which `install.sh` installs with Homebrew first.

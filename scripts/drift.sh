@@ -12,16 +12,24 @@ to_name_set() {
     printf '%s\n' "$1" | sed '/^$/d' | LC_ALL=C sort -u
 }
 
+# to_unversioned_name_set prints the given names as a set without their version suffix
+# (node@24 -> node), so that version level differences are not reported as drift.
+# A leading @ of npm scoped packages (@scope/name) is kept.
+to_unversioned_name_set() {
+    to_name_set "$(printf '%s\n' "$1" | sed 's/\(.\)@.*/\1/')"
+}
+
 # compare_package_sets prints "missing<TAB>name" for each expected package that is not installed
 # and "extra<TAB>name" for each package installed on request that is not expected.
 # Packages installed as dependencies are never reported as extra.
+# Names are compared without their versions (node@24 is satisfied by node@22 or node).
 # usage: compare_package_sets <expected names> <all installed names> <names installed on request>
 compare_package_sets() {
     local expected installed requested
     # tap-qualified formulae (e.g. sass/sass/sass) are listed by their last path element
-    expected=$(to_name_set "$(printf '%s\n' "$1" | sed 's#.*/##')")
-    installed=$(to_name_set "$2")
-    requested=$(to_name_set "$3")
+    expected=$(to_unversioned_name_set "$(printf '%s\n' "$1" | sed 's#.*/##')")
+    installed=$(to_unversioned_name_set "$2")
+    requested=$(to_unversioned_name_set "$3")
 
     LC_ALL=C comm -23 <(printf '%s\n' "${expected}") <(printf '%s\n' "${installed}") |
         awk 'NF { print "missing\t" $0 }'
