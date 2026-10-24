@@ -45,7 +45,7 @@ cp -r ~/dotfiles/devcontainer-template/.devcontainer path/to/repo/
 ```
 
 - `postCreateCommand` only does per-user setup (`.devcontainer/post-create.sh`):
-  git email from `GIT_EMAIL` on the host, and commit signing with the key from the forwarded ssh-agent.
+  git email from `GIT_EMAIL` on the host.
 - The dotfiles are at `~/dotfiles` in the image. To pick up dotfiles changes, pull the new image and rebuild the container.
 - `.devcontainer/` in this repository builds the image locally, for testing changes to `install.sh`.
 - Personal mode (`-p`) is not supported because it needs interactive login / snap.
