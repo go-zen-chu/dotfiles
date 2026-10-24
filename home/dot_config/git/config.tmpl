@@ -1,0 +1,12 @@
+# Deployed by chezmoi from home/dot_config/git/config.tmpl.
+# `git config --global` writes to ~/.gitconfig, which overrides this file.
+[include]
+	path = {{ .chezmoi.workingTree }}/terminal-tools/git/.gitconfig
+[core]
+	excludesfile = {{ .chezmoi.workingTree }}/terminal-tools/git/global-ignore
+	hooksPath = {{ .chezmoi.homeDir }}/.config/gitleaks-global-hooks
+[user]
+	name = Akira Masuda
+{{- if .email }}
+	email = {{ .email }}
+{{- end }}

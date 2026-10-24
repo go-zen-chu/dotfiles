@@ -1,0 +1,8 @@
+{{- /* install.sh answers the prompts with --promptString / --promptBool */ -}}
+{{- $email := promptString "email" -}}
+{{- $personal := promptBool "personal" -}}
+sourceDir = {{ .chezmoi.workingTree | quote }}
+
+[data]
+email = {{ $email | quote }}
+personal = {{ $personal }}
