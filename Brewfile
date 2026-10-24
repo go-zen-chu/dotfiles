@@ -43,12 +43,14 @@ else
 end
 
 # development tools
-brew "microsoft/apm/apm" # agent package manager for claude code
+# TIPS: Homebrew refuses formulae of third party taps unless they are trusted
+brew "microsoft/apm/apm", trusted: true # agent package manager for claude code
 cask "claude-code"
 brew "gibo"
 brew "ghq"
 brew "shellcheck"
 brew "golangci-lint"
+brew "pnpm"
 
 # kubernetes tools
 brew "kubernetes-cli"
@@ -76,7 +78,7 @@ end
 # personal machine tools
 if personal && !ci
   brew "hugo"
-  brew "sass/sass/sass"
+  brew "sass/sass/sass", trusted: true
   if OS.mac?
     cask "slack"
     cask "zoom"
@@ -89,9 +91,6 @@ end
 go "github.com/cweill/gotests/gotests" # generate test code
 go "github.com/rakyll/gotest" # colorize test output
 go "golang.org/x/tools/gopls"
-
-# npm install -g (needs node@24 above in PATH)
-npm "pnpm"
 
 # kubectl krew install
 krew "ctx"

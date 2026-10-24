@@ -31,9 +31,6 @@ install_brew_packages() {
 
     # brew drops environment variables without the HOMEBREW_ prefix (see Brewfile)
     export HOMEBREW_DOTFILES_PERSONAL="${flg_personal_mode}"
-    # npm entries need npm of the keg-only node@24, which the same brew bundle run may install
-    PATH="$(brew --prefix)/opt/node@24/bin:${PATH}"
-    export PATH
 
     if [ "${upgrade}" = "true" ]; then
         brew update

@@ -29,7 +29,7 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 
 | Path | Managed by | Content |
 | --- | --- | --- |
-| `Brewfile` | `brew bundle` | Homebrew formulae / casks, `go install`, `npm -g` and krew plugins for macOS / Ubuntu |
+| `Brewfile` | `brew bundle` | Homebrew formulae / casks, `go install` and krew plugins for macOS / Ubuntu |
 | `home/` | chezmoi | files deployed to `$HOME` (mostly symlinks to `terminal-tools/` and `os-macos/`) |
 | `home/.chezmoiscripts/` | chezmoi | run `scripts/install-packages.sh`, `scripts/setup-tools.sh` and the macOS defaults when they (or the Brewfile) change |
 | `os-termux/setup.sh` | pkg | packages for termux |

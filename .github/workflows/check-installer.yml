@@ -113,7 +113,6 @@ jobs:
           ./install.sh -p -e "actions@github.com"
       - name: Check packages and dotfiles
         run: |
-          export PATH="$(brew --prefix)/opt/node@24/bin:${PATH}"
           HOMEBREW_DOTFILES_PERSONAL=true brew bundle check --verbose --file Brewfile
           chezmoi verify --exclude scripts
 
@@ -142,7 +141,6 @@ jobs:
       - name: Check packages and dotfiles
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          export PATH="$(brew --prefix)/opt/node@24/bin:${PATH}"
           HOMEBREW_DOTFILES_PERSONAL=true brew bundle check --verbose --file Brewfile
           chezmoi verify --exclude scripts
 
