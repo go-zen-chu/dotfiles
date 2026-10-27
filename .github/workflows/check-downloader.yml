@@ -8,6 +8,9 @@ on:
     paths:
       - "downloader.sh"
 
+permissions:
+  contents: read
+
 jobs:
   run-downloader:
     runs-on: ubuntu-latest

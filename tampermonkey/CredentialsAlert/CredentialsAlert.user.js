@@ -1,15 +1,13 @@
 // ==UserScript==
 // @name         CredentialsAlert
 // @namespace    https://github.com/go-zen-chu
-// @version      0.4
+// @version      0.5
 // @description  Watch out! You might input credentials!
 // @author       go-zen-chu
 // @licence      MIT
 // @match        https://*/*
 // @icon         https://img.icons8.com/?size=64&id=82753&format=png
 // @grant        none
-// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js
-// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/CredentialsAlert/CredentialsAlert.user.js
 // ==/UserScript==
 
 (function () {

@@ -1,14 +1,12 @@
 // ==UserScript==
 // @name         HideAmazonAds
 // @namespace    https://github.com/go-zen-chu
-// @version      0.2
+// @version      0.3
 // @description  Hide sponser ads from amazon list
 // @author       go-zen-chu
 // @match        https://www.amazon.co.jp/*
 // @match        https://amazon.co.jp/*
 // @grant        none
-// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/HideAmazonAds/HideAmazonAds.user.js
-// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/HideAmazonAds/HideAmazonAds.user.js
 // ==/UserScript==
 
 (function () {

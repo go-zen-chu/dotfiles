@@ -10,6 +10,9 @@ on:
       - master
       - main
 
+permissions:
+  contents: read
+
 jobs:
   bash-syntax-check:
     runs-on: ubuntu-latest

@@ -48,33 +48,20 @@ if [[ -f "${HOME}/.zsh_history" ]]; then
 	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .zsh_history finished"
 fi
 
-if [[ -d "${HOME}/.ssh" ]]; then
-	cp -R ~/.ssh "${backup_dir_path}"
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup ssh finished"
+# Credentials (~/.ssh, ~/.gnupg, tokens under ~/.config such as gh and gcloud, the atuin key and session)
+# are not backed up: a copy in cloud storage would spread a leak from one device to every device.
+# Configs worth keeping live in this repository, and credentials are issued again on a new device.
+atuin_data_dir="${HOME}/.local/share/atuin"
+if [[ -f "${atuin_data_dir}/history.db" ]]; then
+	mkdir -p "${backup_dir_path}/atuin"
+	for db_file in history.db history.db-wal history.db-shm; do
+		if [[ -f "${atuin_data_dir}/${db_file}" ]]; then
+			cp "${atuin_data_dir}/${db_file}" "${backup_dir_path}/atuin/"
+		fi
+	done
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup atuin history finished"
 else
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .ssh folder found"
-fi
-
-if [[ -d "${HOME}/.gnupg" ]]; then
-	cp -R ~/.gnupg "${backup_dir_path}"
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup gnupg finished"
-else
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .gnupg folder found"
-fi
-
-if [[ -d "${HOME}/.config" ]]; then
-	cp -R ~/.config "${backup_dir_path}"
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup .config finished"
-else
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No .config folder found"
-fi
-
-if [[ -d "${HOME}/.local/share/atuin" ]]; then
-	mkdir -p "${backup_dir_path}/.local/share/"
-	cp -R ~/.local/share/atuin "${backup_dir_path}"
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] Backup atuin database finished"
-else
-	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No atuin database found"
+	log "$LOG_LEVEL_INFO" "[backup.sh] [✓] No atuin history found"
 fi
 
 echo_blue "[backup.sh] $(date '+%Y%m%d-%H%M%S') Finish backup"

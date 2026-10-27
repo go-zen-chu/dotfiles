@@ -1,13 +1,11 @@
 // ==UserScript==
 // @name         EmphasizeTab
 // @namespace    https://github.com/go-zen-chu
-// @version      0.5
+// @version      0.6
 // @description  Blink tab title on edit pages to avoid accidental close
 // @author       go-zen-chu
 // @match        https://*/*
 // @grant        none
-// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/EmphasizeTab/EmphasizeTab.user.js
-// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/EmphasizeTab/EmphasizeTab.user.js
 // ==/UserScript==
 
 (function () {

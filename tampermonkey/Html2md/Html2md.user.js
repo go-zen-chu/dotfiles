@@ -1,16 +1,14 @@
 // ==UserScript==
 // @name         Html2md
 // @namespace    https://github.com/go-zen-chu
-// @version      0.2
+// @version      0.3
 // @description  Convert html page to markdown and store to clipboard
 // @author       go-zen-chu
 // @match        https://*/*
-// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/Html2md/html2md.user.js
-// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/Html2md/html2md.user.js
 // @icon         https://img.icons8.com/?size=160&id=50145&format=png
 // @run-at       context-menu
 // @grant        GM_setClipboard
-// @require      https://unpkg.com/turndown/dist/turndown.js
+// @require      https://unpkg.com/turndown@7.2.4/dist/turndown.js#sha256=c97187f436d41638bf7acf346a39d9d42f2f2c02af18245a297c09e796f8e46f
 // ==/UserScript==
 
 (function () {
