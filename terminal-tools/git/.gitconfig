@@ -1,6 +1,6 @@
-; Machine/user specific settings (user.name/email, core.excludesfile)
-; are written to ~/.gitconfig by install.sh because they contain absolute
-; paths. Keep only portable settings here.
+; Included from ~/.config/git/config, which chezmoi deploys from
+; home/dot_config/git/config.tmpl with the machine/user specific settings
+; (user.name/email, core.excludesfile). Keep only portable settings here.
 [push]
     default = current
     autoSetupRemote = true
