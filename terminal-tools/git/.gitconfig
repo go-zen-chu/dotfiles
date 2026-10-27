@@ -1,12 +1,19 @@
-; Machine/user specific settings (user.name/email, core.excludesfile,
-; user.signingkey) are written to ~/.gitconfig by install.sh because they
-; contain absolute paths. Keep only portable settings here.
+; Machine/user specific settings (user.name/email, core.excludesfile)
+; are written to ~/.gitconfig by install.sh because they contain absolute
+; paths. Keep only portable settings here.
 [push]
     default = current
     autoSetupRemote = true
 [pull]
     rebase = false
-[gpg]
-    format = ssh
-[commit]
-    gpgsign = true
+; Authenticate to GitHub over HTTPS with the gh token in the OS keyring
+; instead of a private key file under ~/.ssh.
+; Helpers from system config are not reset so that the one injected by
+; VS Code Dev Containers keeps forwarding the host credential.
+[credential "https://github.com"]
+    helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+    helper = !gh auth git-credential
+[url "https://github.com/"]
+    insteadOf = git@github.com:
+    insteadOf = ssh://git@github.com/

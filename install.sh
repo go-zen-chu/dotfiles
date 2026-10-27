@@ -195,7 +195,8 @@ configure_git() {
 
     # Machine/user specific settings (absolute paths can't live in the shared file)
     git config --global core.excludesfile "${home_dir}/dotfiles/terminal-tools/git/global-ignore"
-    git config --global user.signingkey "${home_dir}/.ssh/id_ed25519.pub"
+    # Commit signing with ~/.ssh keys was dropped; clean up configs written by older installs.
+    git config --global --unset user.signingkey || true
     if [ -z "$(git config --global user.name)" ]; then
         git config --global user.name "${git_user_name}"
     fi
