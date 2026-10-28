@@ -1,0 +1,11 @@
+#!/bin/bash
+# Configures the tools after the dotfiles are applied. chezmoi runs it again when the hashes below change.
+# scripts/setup-tools.sh: {{ include "../scripts/setup-tools.sh" | sha256sum }}
+{{- range (glob (joinPath .chezmoi.workingTree "apm" "**" "*")) }}
+{{-   if not (stat .).isDir }}
+# {{ . | trimPrefix $.chezmoi.workingTree }}: {{ include . | sha256sum }}
+{{-   end }}
+{{- end }}
+set -eu
+cd {{ .chezmoi.workingTree | quote }}
+./scripts/setup-tools.sh{{ if .personal }} -p{{ end }}

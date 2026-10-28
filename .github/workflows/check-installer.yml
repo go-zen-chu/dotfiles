@@ -7,6 +7,9 @@ on:
       - main
     paths:
       - "install.sh"
+      - "Brewfile"
+      - ".chezmoiroot"
+      - "home/**"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -22,6 +25,9 @@ on:
       - master
     paths:
       - "install.sh"
+      - "Brewfile"
+      - ".chezmoiroot"
+      - "home/**"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -66,6 +72,9 @@ jobs:
           filters: |
             common: &common
               - "install.sh"
+              - "Brewfile"
+              - ".chezmoiroot"
+              - "home/**"
               - "scripts/**"
               - "terminal-tools/**"
               - "apm/**"
@@ -76,7 +85,7 @@ jobs:
             ubuntu:
               - *common
               - "os-linux/**"
-              # install.sh sources os-termux/setup.sh on every OS
+              # scripts/install-packages.sh sources os-termux/setup.sh on every OS
               - "os-termux/**"
             windows:
               - "os-windows/**"
@@ -102,6 +111,10 @@ jobs:
       - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
+      - name: Check packages and dotfiles
+        run: |
+          HOMEBREW_DOTFILES_PERSONAL=true brew bundle check --verbose --file Brewfile
+          chezmoi verify --exclude scripts
 
   setup-ubuntu:
     needs: changes
@@ -125,6 +138,11 @@ jobs:
         env:
           # somehow ubuntu runner preinstalls /usr/bin/go (old) which makes go tool installation by goenv fail
           GOENV_PATH_ORDER: front
+      - name: Check packages and dotfiles
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          HOMEBREW_DOTFILES_PERSONAL=true brew bundle check --verbose --file Brewfile
+          chezmoi verify --exclude scripts
 
   setup-windows:
     needs: changes

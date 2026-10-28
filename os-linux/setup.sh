@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# shellcheck disable=SC2154 # os, is_ci and is_devcontainer are set by install.sh, which sources this file
+# shellcheck disable=SC2154 # os, is_ci and is_devcontainer are set by the script that sources this file
 set -eu
 
+# linux_setup_basic_tools installs the linux tools that are not provided by Homebrew.
 linux_setup_basic_tools() {
     echo_blue "Setup basic tools for linux..."
 
-    brew_install xclip
     linux_setup_google_chrome
 }
 
+# linux_setup_personal_machine_tools installs the personal machine tools that are not provided by Homebrew.
 linux_setup_personal_machine_tools() {
     echo_blue "Setup personal machine tools for linux..."
 
@@ -41,6 +42,7 @@ linux_setup_personal_machine_tools() {
     fi
 }
 
+# linux_setup_google_chrome installs google chrome from the .deb package on ubuntu desktops.
 linux_setup_google_chrome() {
     if hash google-chrome 2>/dev/null; then
         log "$LOG_LEVEL_INFO" "[✓] google-chrome is already installed"
@@ -85,6 +87,7 @@ linux_setup_google_chrome() {
 
 linux_package_list_updated="false"
 
+# linux_package_install installs the package with the package manager of the distribution.
 linux_package_install() {
     local package_name
     package_name=$1
