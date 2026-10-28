@@ -22,13 +22,19 @@ python_version="3.13"
 # The settings are deployed to ~/.config/git/config by chezmoi now.
 setup_git() {
     echo_blue "Setup git..."
+    # TIPS: `git config --global` writes to ~/.config/git/config (deployed by chezmoi) when ~/.gitconfig
+    # does not exist, so edit ~/.gitconfig explicitly
+    local legacy_config="${home_dir}/.gitconfig"
+    if [ ! -f "${legacy_config}" ]; then
+        return
+    fi
     # commit signing with ~/.ssh keys was dropped
-    git config --global --unset user.signingkey || true
+    git config --file "${legacy_config}" --unset user.signingkey || true
     # TIPS: ~/.gitconfig is read after ~/.config/git/config, so stale values there would override chezmoi's.
     # Only the values pointing at this repository or the gitleaks hooks are removed (exit code 5 = no match).
-    git config --global --unset-all include.path '/dotfiles/(terminal-tools/)?git/\.gitconfig$' || true
-    git config --global --unset-all core.excludesfile '/dotfiles/(terminal-tools/)?git/global-ignore$' || true
-    git config --global --unset-all core.hooksPath '/gitleaks-global-hooks$' || true
+    git config --file "${legacy_config}" --unset-all include.path '/dotfiles/(terminal-tools/)?git/\.gitconfig$' || true
+    git config --file "${legacy_config}" --unset-all core.excludesfile '/dotfiles/(terminal-tools/)?git/global-ignore$' || true
+    git config --file "${legacy_config}" --unset-all core.hooksPath '/gitleaks-global-hooks$' || true
 }
 
 # setup_gh sets the editor of gh.
