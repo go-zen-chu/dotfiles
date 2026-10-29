@@ -1,7 +1,7 @@
 #!/bin/bash
 # Configures the installed tools with their own commands (the config files are deployed by chezmoi).
 # The chezmoi script home/.chezmoiscripts/run_onchange_after_20-setup-tools.sh.tmpl runs it
-# after the dotfiles are applied, and again when this script or apm/ changes.
+# after the dotfiles are applied, and again when this script changes.
 # usage: ./scripts/setup-tools.sh [-p (personal mode)] (run from the repository root)
 
 set -eu
@@ -62,15 +62,6 @@ setup_atuin() {
     # TIPS: in CI, .bash_history does not exist which causes an error
     atuin import auto
     atuin login || log "$LOG_LEVEL_WARN" "atuin login failed. run 'atuin login' later"
-}
-
-# setup_claude_code installs the claude code skills and instructions in apm/ at user scope.
-setup_claude_code() {
-    echo_blue "Setup claude code..."
-    mkdir -p "${home_dir}/.claude"
-    # apm rejects relative paths at user scope, so resolve an absolute path.
-    apm install "$(pwd)/apm" --global --target claude
-    apm compile --global
 }
 
 # setup_login_shell makes zsh the login shell.
@@ -150,7 +141,6 @@ case "${os}" in
     setup_gh
     setup_python
     setup_atuin
-    setup_claude_code
     ;;
 "termux") ;;
 *)
