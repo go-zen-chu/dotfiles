@@ -6,6 +6,8 @@
 // @author       go-zen-chu
 // @match        https://*/*
 // @grant        none
+// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/EmphasizeTab/EmphasizeTab.user.js
+// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/EmphasizeTab/EmphasizeTab.user.js
 // ==/UserScript==
 
 (function () {

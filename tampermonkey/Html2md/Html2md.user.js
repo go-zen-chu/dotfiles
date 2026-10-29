@@ -9,6 +9,8 @@
 // @run-at       context-menu
 // @grant        GM_setClipboard
 // @require      https://unpkg.com/turndown@7.2.4/dist/turndown.js#sha256=c97187f436d41638bf7acf346a39d9d42f2f2c02af18245a297c09e796f8e46f
+// @updateURL    https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/Html2md/Html2md.user.js
+// @downloadURL  https://github.com/go-zen-chu/dotfiles/raw/refs/heads/master/tampermonkey/Html2md/Html2md.user.js
 // ==/UserScript==
 
 (function () {

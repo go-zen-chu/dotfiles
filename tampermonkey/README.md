@@ -6,17 +6,17 @@ This directory contains UserScripts for Tampermonkey.
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) extension for your browser
 2. Click the "Install" link for each script below to add it to Tampermonkey
-3. Open the script in the Tampermonkey dashboard, and uncheck "Check for updates" in its Settings tab
+3. In the Tampermonkey dashboard, add sensitive sites (password managers, banks, identity providers)
+   to "User excludes" in the Settings tab of the scripts matching every site (CredentialsAlert, EmphasizeTab, Html2md)
 
-## Updating
+## Updates
 
-The scripts have no `@updateURL` / `@downloadURL` on purpose.
-Most of them run on every site (including password managers), so an automatic update from this public repository
-would let anyone who can push to `master` run arbitrary JavaScript in the browser.
-Tampermonkey still checks the URL a script was installed from unless "Check for updates" is unchecked (step 3).
+The scripts update automatically from `master` (`@updateURL` / `@downloadURL`).
+Most of them run on every site, so whatever is merged into `master` runs in the browser:
 
-To update a script, review the diff on GitHub, then reinstall it from the "Install" link
-(or paste the new version into the Tampermonkey editor).
+- `master` only changes through pull requests (no direct or force push), so review every change under `tampermonkey/`
+- "User excludes" are browser-side settings, so an update to a script cannot remove them
+- `@require` URLs are pinned to a version with a `#sha256=` hash
 
 ## Scripts
 
