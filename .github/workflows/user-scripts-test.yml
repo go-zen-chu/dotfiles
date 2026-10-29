@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x]
-        script: [CredentialsAlert, HideAmazonAds, EmphasizeTab, Html2md]
+        script: [CredentialsAlert, HideAmazonAds, EmphasizeTab]
 
     steps:
       - name: Checkout repository
