@@ -104,15 +104,16 @@ jobs:
       - name: Cache Homebrew downloads
         uses: actions/cache@v4
         with:
-          path: ~/Library/Caches/Homebrew
+          path: |
+            ~/Library/Caches/Homebrew
+            !~/Library/Caches/Homebrew/Backup
           key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
-      # TIPS: the runner image links openssl@4, and Homebrew fails to back up its links when openssl@3
-      # (a dependency of rsync) replaces them ("rsync: same file: /opt/homebrew/bin/openssl ...")
-      - name: Unlink openssl preinstalled on the runner
-        run: |
-          brew unlink openssl@4 || true
+      # TIPS: Homebrew backs up replaced links to <cache>/Backup, and a stale backup restored from the cache
+      # that points to the same file makes the install fail ("openssl@3: same file: /opt/homebrew/bin/openssl ...")
+      - name: Remove Homebrew link backups restored from the cache
+        run: rm -rf ~/Library/Caches/Homebrew/Backup
       - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
@@ -133,7 +134,9 @@ jobs:
       - name: Cache Homebrew downloads
         uses: actions/cache@v4
         with:
-          path: ~/.cache/Homebrew
+          path: |
+            ~/.cache/Homebrew
+            !~/.cache/Homebrew/Backup
           key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
