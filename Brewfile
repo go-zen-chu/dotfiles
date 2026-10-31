@@ -43,8 +43,6 @@ else
 end
 
 # development tools
-# TIPS: Homebrew refuses formulae of third party taps unless they are trusted
-brew "microsoft/apm/apm", trusted: true # agent package manager for claude code
 cask "claude-code"
 brew "gibo"
 brew "ghq"
@@ -78,6 +76,7 @@ end
 # personal machine tools
 if personal && !ci
   brew "hugo"
+  # TIPS: Homebrew refuses formulae of third party taps unless they are trusted
   brew "sass/sass/sass", trusted: true
   if OS.mac?
     cask "slack"

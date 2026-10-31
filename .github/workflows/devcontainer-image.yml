@@ -14,7 +14,6 @@ on:
       - "scripts/**"
       - "os-linux/**"
       - "terminal-tools/**"
-      - "apm/**"
       - ".github/workflows/devcontainer-image.yml"
   push:
     branches:
@@ -28,7 +27,6 @@ on:
       - "scripts/**"
       - "os-linux/**"
       - "terminal-tools/**"
-      - "apm/**"
       - ".github/workflows/devcontainer-image.yml"
   # refresh tools (Homebrew installs the latest versions) weekly
   schedule:
@@ -78,7 +76,7 @@ jobs:
         run: |
           docker run --rm "${IMAGE}:latest-${{ matrix.arch }}" zsh -ic '
             set -e
-            for cmd in git gh direnv uv go node pnpm atuin gitleaks claude apm fzf jq yq bat starship \
+            for cmd in git gh direnv uv go node pnpm atuin gitleaks claude fzf jq yq bat starship \
                        kubectl kustomize tofu shellcheck golangci-lint gopls vim zsh; do
               command -v "$cmd"
             done
