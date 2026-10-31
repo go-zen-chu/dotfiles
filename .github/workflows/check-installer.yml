@@ -104,15 +104,16 @@ jobs:
       - name: Cache Homebrew downloads
         uses: actions/cache@v4
         with:
-          path: ~/Library/Caches/Homebrew
+          path: |
+            ~/Library/Caches/Homebrew
+            !~/Library/Caches/Homebrew/Backup
           key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
-      # TIPS: the runner image links openssl@4, and Homebrew fails to back up its links when openssl@3
-      # (a dependency of rsync) replaces them ("rsync: same file: /opt/homebrew/bin/openssl ...")
-      - name: Unlink openssl preinstalled on the runner
-        run: |
-          brew unlink openssl@4 || true
+      # TIPS: Homebrew backs up replaced links to <cache>/Backup, and a stale backup restored from the cache
+      # that points to the same file makes the install fail ("openssl@3: same file: /opt/homebrew/bin/openssl ...")
+      - name: Remove Homebrew link backups restored from the cache
+        run: rm -rf ~/Library/Caches/Homebrew/Backup
       - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
@@ -133,7 +134,9 @@ jobs:
       - name: Cache Homebrew downloads
         uses: actions/cache@v4
         with:
-          path: ~/.cache/Homebrew
+          path: |
+            ~/.cache/Homebrew
+            !~/.cache/Homebrew/Backup
           key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
@@ -176,12 +179,22 @@ jobs:
           foreach ($package in $packages) {
             # manifests/<first letter>/<publisher>/<name>, e.g. manifests/g/Google/Chrome
             $path = "manifests/$($package.Substring(0, 1).ToLower())/$($package.Replace('.', '/'))"
-            try {
-              Invoke-RestMethod -Headers $headers "https://api.github.com/repos/microsoft/winget-pkgs/contents/$path" | Out-Null
-              Write-Host "OK   $package"
-            } catch {
-              Write-Host "FAIL $package ($path)"
-              $missing += $package
+            # the contents API sometimes fails transiently, so only a 404 (or repeated errors) means missing
+            for ($attempt = 1; $attempt -le 3; $attempt++) {
+              try {
+                Invoke-RestMethod -Headers $headers "https://api.github.com/repos/microsoft/winget-pkgs/contents/$path" | Out-Null
+                Write-Host "OK   $package"
+                break
+              } catch {
+                $status = [int]$_.Exception.Response.StatusCode
+                if ($status -eq 404 -or $attempt -eq 3) {
+                  Write-Host "FAIL $package ($path): HTTP $status $($_.Exception.Message)"
+                  $missing += $package
+                  break
+                }
+                Write-Host "RETRY ${package}: HTTP $status"
+                Start-Sleep -Seconds (5 * $attempt)
+              }
             }
           }
           if ($missing) { exit 1 }
