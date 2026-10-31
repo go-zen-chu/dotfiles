@@ -1,0 +1,10 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Applies the macOS preferences. chezmoi runs it again when the hash below changes.
+# os-macos/setup.sh: {{ include "../os-macos/setup.sh" | sha256sum }}
+set -eu
+cd {{ .chezmoi.workingTree | quote }}
+source ./scripts/log.sh
+source ./os-macos/setup.sh
+macos_setup_defaults
+{{ end -}}

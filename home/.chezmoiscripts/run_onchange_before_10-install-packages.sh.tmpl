@@ -1,0 +1,9 @@
+#!/bin/bash
+# Installs the packages before the dotfiles are applied. chezmoi runs it again when the hashes below change.
+# Brewfile: {{ include "../Brewfile" | sha256sum }}
+# scripts/install-packages.sh: {{ include "../scripts/install-packages.sh" | sha256sum }}
+# os-linux/setup.sh: {{ include "../os-linux/setup.sh" | sha256sum }}
+# os-termux/setup.sh: {{ include "../os-termux/setup.sh" | sha256sum }}
+set -eu
+cd {{ .chezmoi.workingTree | quote }}
+./scripts/install-packages.sh{{ if .personal }} -p{{ end }}

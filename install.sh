@@ -1,4 +1,7 @@
 #!/bin/bash
+# Bootstraps the environment: installs Homebrew (pkg on termux) and chezmoi, then applies the dotfiles
+# in home/ with chezmoi. The chezmoi scripts in home/.chezmoiscripts install the packages of the Brewfile
+# and configure the tools.
 
 set -eu
 
@@ -8,41 +11,34 @@ source ./scripts/log.sh
 source ./scripts/env.sh
 # shellcheck source=os-macos/setup.sh
 source ./os-macos/setup.sh
-# shellcheck source=os-linux/setup.sh
-source ./os-linux/setup.sh
-# shellcheck source=os-termux/setup.sh
-source ./os-termux/setup.sh
 
 flg_verbose="false"
 flg_personal_mode="false"
-git_user_name="Akira Masuda"
+flg_upgrade="false"
 arg_git_email=""
 
 log_level=$LOG_LEVEL_INFO
 os=""
-home_dir="${HOME}"
-config_dir="${home_dir}/.config"
+repo_dir="$(pwd)"
 is_ci="false"
 is_devcontainer="false"
-homebrew_bin_path="/undefined"
-
-nodejs_version="24"
-python_version="3.13"
 
 ### setup methods
 
+# startup parses the options and checks the environment.
 startup() {
     log "$LOG_LEVEL_INFO" "Start dotfile install script"
     cmdname=$(basename "$0")
 
     local OPTIND
-    while getopts "vpe:" opt; do
+    while getopts "vpue:" opt; do
         case $opt in
         "e") arg_git_email="$OPTARG" ;;
         "v") flg_verbose="true" ;;
         "p") flg_personal_mode="true" ;;
+        "u") flg_upgrade="true" ;;
         *)
-            echo "Usage: $cmdname [-e (git email)] [-v (verbose)] [-p (personal mode)]" 1>&2
+            echo "Usage: $cmdname [-e (git email)] [-v (verbose)] [-p (personal mode)] [-u (upgrade every package)]" 1>&2
             exit 0
             ;;
         esac
@@ -68,6 +64,7 @@ startup() {
     fi
 }
 
+# check_env prints the environment this script runs in.
 check_env() {
     echo_blue "Checking environment..."
 
@@ -78,397 +75,83 @@ check_env() {
     echo "CPU           : $(check_cpu_arch)"
     echo "Bash Version  : ${BASH_VERSION}"
     echo "User          : $(check_current_user)"
-    echo "HOME          : ${home_dir}"
-    echo "Config Dir    : ${config_dir}"
+    echo "HOME          : ${HOME}"
+    echo "Repository    : ${repo_dir}"
     echo "Is CI         : ${is_ci}"
+    echo "Personal mode : ${flg_personal_mode}"
+    echo "Upgrade       : ${flg_upgrade}"
     echo "Devcontainer  : ${is_devcontainer}"
     echo "Log level     : $(get_log_level "$log_level")"
 }
 
-setup_package_manager() {
-    echo_blue "Setup package manager..."
+# setup_homebrew installs Homebrew and chezmoi, and adds Homebrew to PATH.
+# usage: setup_homebrew <bin directory of Homebrew>
+setup_homebrew() {
+    local homebrew_bin_path=$1
+    echo_blue "Setup Homebrew..."
 
-    if ! hash brew 2>/dev/null; then
+    if ! hash brew 2>/dev/null && [ ! -x "${homebrew_bin_path}/brew" ]; then
         log "$LOG_LEVEL_INFO" "[ ] Homebrew not installed. Installing..."
         if [ "$is_ci" = "true" ]; then
             export NONINTERACTIVE=1
         fi
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-        export PATH=$homebrew_bin_path:$PATH
-
         unset NONINTERACTIVE
-        brew update
-    else
-        log "$LOG_LEVEL_INFO" "[✓] Homebrew installed"
+    fi
+    export PATH="${homebrew_bin_path}:${PATH}"
+    log "$LOG_LEVEL_INFO" "[✓] Homebrew installed"
+
+    if ! hash chezmoi 2>/dev/null; then
+        brew install chezmoi
     fi
 }
 
-brew_install() {
-    local tool_name
-    tool_name=$1
-    if [ -f "${homebrew_bin_path}/${tool_name}" ]; then
-        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: ${homebrew_bin_path}/${tool_name})"
-        return
-    elif [ -d "$(brew --prefix "${tool_name}")" ] 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} installed (path: $(brew --prefix "${tool_name}"))"
-        return
-    fi
-    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed (homebrew). Installing..."
-    brew install "${tool_name}"
-    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
-}
-
-setup_basic_tools() {
-    echo_blue "Setup basic tools..."
-
-    setup_git
-    setup_gh
-    setup_direnv
-    setup_python
-    setup_go
-    setup_node
-    # terminal tools
-    setup_atuin
-    setup_gitleaks
-    setup_claude_code
-
-    # terminal tools
-    brew_install wget
-    brew_install rsync
-    brew_install fzf
-    brew_install jq
-    brew_install yq
-    brew_install bat   # cat, less alternatives
-    brew_install doggo # dig alternatives
-    brew_install tree
-    brew_install starship
-
-    # development tools   
-    brew_install gibo
-    brew_install ghq
-    brew_install shellcheck
-
-    # golang related tools
-    brew_install golangci-lint
-
-    # kubernetes tools
-    brew_install kubectl
-    brew_install kustomize
-    brew_install kubecolor
-    brew_install kind
-    setup_krew
-    
-    # TIPS: installing tools with Homebrew takes a long time in CI so skip for these tools
-    if [ "${is_ci}" = "false" ]; then
-        # terminal tools
-        brew_install openssl
-
-        # cloud tools
-        brew_install opentofu # terraform alternative (command: tofu)
-    fi
-
-    if [ $# -eq 1 ]; then
-        local setup_os_specific_func=$1
-        $setup_os_specific_func
+# setup_termux installs chezmoi with pkg because Homebrew does not support termux (Android).
+setup_termux() {
+    echo_blue "Setup termux..."
+    if ! hash chezmoi 2>/dev/null; then
+        pkg install -y chezmoi
     fi
 }
 
-setup_git() {
-    echo_blue "Setup git..."
-
-    brew_install git
-    configure_git
-}
-
-# shared with os-termux/setup.sh
-configure_git() {
-    # in first install global config is not created
-    touch "${home_dir}/.gitconfig"
-
-    # Include repo-managed static config so updates always take effect
-    # (the old "only when global config is empty" approach never re-applied changes).
-    local repo_gitconfig="${home_dir}/dotfiles/terminal-tools/git/.gitconfig"
-    if ! git config --global --get-all include.path 2>/dev/null | grep -qxF "${repo_gitconfig}"; then
-        git config --global --add include.path "${repo_gitconfig}"
-    fi
-
-    # Machine/user specific settings (absolute paths can't live in the shared file)
-    git config --global core.excludesfile "${home_dir}/dotfiles/terminal-tools/git/global-ignore"
-    # Commit signing with ~/.ssh keys was dropped; clean up configs written by older installs.
-    git config --global --unset user.signingkey || true
-    if [ -z "$(git config --global user.name)" ]; then
-        git config --global user.name "${git_user_name}"
-    fi
-    if [ -z "$(git config --global user.email)" ] && [ -n "${arg_git_email}" ]; then
-        git config --global user.email "${arg_git_email}"
-    fi
-}
-
-setup_gh() {
-    echo_blue "Setup gh..."
-
-    brew_install gh
-    gh config set editor vim
-}
-
-setup_direnv() {
-    echo_blue "Setup direnv..."
-
-    brew_install direnv
-
-    local direnv_config_path
-    direnv_config_path="${config_dir}/direnv"
-    mkdir -p "${direnv_config_path}"
-    if [ ! -f "${direnv_config_path}/direnv.toml" ]; then
-        cat <<EOF >"${direnv_config_path}/direnv.toml"
-[global]
-load_dotenv = true
-EOF
-    fi
-}
-
-setup_python() {
-    echo_blue "Setup python..."
-
-    # uv manages Python versions and virtualenvs (replaces pyenv/anyenv).
-    brew_install uv
-
-    # TIPS: installing a Python toolchain takes time in CI so skip there
-    if [ "${is_ci}" = "false" ]; then
-        log "$LOG_LEVEL_INFO" "install python ${python_version} via uv..."
-        uv python install "${python_version}"
-    fi
-
-    log "$LOG_LEVEL_INFO" "[✓] python setup finished"
-}
-
-setup_go() {
-    echo_blue "Setup go..."
-
-    # Install Go via Homebrew and rely on Go's built-in toolchain management
-    # (GOTOOLCHAIN=auto) so each project auto-fetches the version pinned in its
-    # go.mod. This replaces goenv/anyenv.
-    brew_install go
-    export GOTOOLCHAIN=auto
-    local gopath
-    gopath="$(go env GOPATH)"
-    export PATH="${gopath}/bin:$PATH"
-
-    setup_gotools
-}
-
-go_install() {
-    local tool_name
-    tool_name=$1
-    local tool_url
-    tool_url=$2
-
-    if hash "${tool_name}" 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] ${tool_name} is already installed"
-        return
-    fi
-    log "$LOG_LEVEL_INFO" "[ ] ${tool_name} not installed. Installing..."
-    go install "${tool_url}"
-    log "$LOG_LEVEL_INFO" "[✓] ${tool_name} install finished"
-}
-
-setup_gotools() {
-    echo_blue "Setup go tools..."
-
-    # generate test code
-    go_install "gotests" "github.com/cweill/gotests/gotests@latest"
-    # colorize test output
-    go_install "gotest" "github.com/rakyll/gotest@latest"
-
-    go_install "gopls" "golang.org/x/tools/gopls@latest"
-}
-
-setup_node() {
-    echo_blue "Setup node..."
-
-    brew_install "node@${nodejs_version}"
-    local node_path
-    node_path="$(brew --prefix node@${nodejs_version})/bin"
-    export PATH="${node_path}:$PATH"
-
-    if hash pnpm 2>/dev/null; then
-        log "$LOG_LEVEL_INFO" "[✓] pnpm already installed"
-    else
-        log "$LOG_LEVEL_INFO" "[ ] pnpm not installed. Installing..."
-        npm install -g pnpm
-        log "$LOG_LEVEL_INFO" "[✓] pnpm install finished"
-    fi
-}
-
-setup_krew() {
-    echo_blue "Setup krew..."
-
-    brew_install krew
-
-    # local krew_path
-    # krew_path="$(brew --prefix krew)/bin"
-    # export PATH="${home_dir}/.krew/bin:${krew_path}:$PATH"
-    export PATH="${home_dir}/.krew/bin:$PATH"
-    kubectl krew update
-    local plugin
-    for plugin in ctx ns access-matrix tree neat resource-capacity view-allocations iexec stern; do
-        # some plugins are not provided for every platform (e.g. access-matrix on linux/arm64)
-        if ! kubectl krew install "${plugin}"; then
-            log "$LOG_LEVEL_WARN" "failed to install krew plugin: ${plugin}"
+# backup_changed_targets moves the files that chezmoi is going to overwrite to <path>.<date>.bk,
+# so that local changes (e.g. made before this repository was managed by chezmoi) are kept.
+backup_changed_targets() {
+    local status target
+    while IFS= read -r status <&3; do
+        # chezmoi status: 1st column = since chezmoi last wrote it, 2nd column = what apply will do
+        case "${status:1:1}" in
+        "M" | "D") ;;
+        *) continue ;;
+        esac
+        target="${status:3}"
+        if [ -e "${target}" ] || [ -L "${target}" ]; then
+            log "$LOG_LEVEL_WARN" "backup ${target} to ${target}.$(date '+%Y%m%d-%H%M%S').bk"
+            mv "${target}" "${target}.$(date '+%Y%m%d-%H%M%S').bk"
         fi
-    done
+    done 3< <(chezmoi status --path-style absolute --exclude scripts)
 }
 
-setup_atuin() {
-    echo_blue "Setup atuin..."
+# apply_dotfiles generates the chezmoi config from the options and applies home/ to $HOME.
+apply_dotfiles() {
+    echo_blue "Apply dotfiles with chezmoi..."
 
-    brew_install atuin
-
-    if [ "${flg_personal_mode}" = "false" ] || [ "${is_ci}" = "true" ]; then
-        return
-    fi
-    # TIPS: in CI, .bas_history does not exists which cause an error
-    atuin import auto
-    set +e # ignore error when login failed
-    atuin login
-    set -e
+    chezmoi init --source "${repo_dir}" \
+        --promptString "email=${arg_git_email}" \
+        --promptBool "personal=${flg_personal_mode}"
+    backup_changed_targets
+    chezmoi apply --force
 }
 
-setup_gitleaks() {
-    echo_blue "Setup gitleaks..."
+# upgrade_packages upgrades every package, including the ones whose list did not change.
+upgrade_packages() {
+    echo_blue "Upgrade packages..."
 
-    brew_install gitleaks
-    configure_gitleaks_hook
-}
-
-# shared with os-termux/setup.sh
-configure_gitleaks_hook() {
-    global_hook_dir="${config_dir}/gitleaks-global-hooks"
-    mkdir -p "${global_hook_dir}"
-    cp ./terminal-tools/gitleaks/global-pre-commit.sh "${global_hook_dir}/pre-commit"
-    git config --global core.hooksPath "${global_hook_dir}"
-
-    log "$LOG_LEVEL_INFO" "[✓] gitleaks install finished"
-}
-
-setup_claude_code() {
-    echo_blue "Setup claude code..."
-
-    brew_install claude-code
-
-    if ! command -v apm >/dev/null 2>&1; then
-        brew install microsoft/apm/apm
+    local install_options=("-u")
+    if [ "${flg_personal_mode}" = "true" ]; then
+        install_options+=("-p")
     fi
-
-    mkdir -p "${home_dir}/.claude"
-
-    # apm rejects relative paths at user scope, so resolve an absolute path.
-    local apm_pkg_dir
-    apm_pkg_dir="$(pwd)/apm"
-    apm install "${apm_pkg_dir}" --global --target claude
-    apm compile --global
-
-    log "$LOG_LEVEL_INFO" "[✓] claude-code install finished"
-}
-
-setup_personal_machine_tools() {
-    if [ "$flg_personal_mode" = "false" ]; then
-        echo_blue "Skip setup personal machine tools"
-        return
-    fi
-    echo_blue "Setup personal machine tools..."
-
-    if [ "${is_ci}" = "false" ]; then
-        brew_install hugo
-        brew_install sass/sass/sass
-    fi
-
-    if [ $# -eq 1 ]; then
-        local setup_os_specific_func=$1
-        $setup_os_specific_func
-    fi
-}
-
-setup_zsh() {
-    echo_blue "Setup zsh..."
-
-    brew_install zsh
-    local zsh_path="${homebrew_bin_path}/zsh"
-
-    # change default shell
-    if [ -e "${zsh_path}" ] && ! grep "${zsh_path}" "/etc/shells"; then
-        echo "${zsh_path}" | sudo tee -a /etc/shells
-        if [ "${is_devcontainer}" = "true" ]; then
-            # no password is set for the container user, but sudo is passwordless
-            log "$LOG_LEVEL_INFO" "running chsh with sudo for devcontainer..."
-            sudo chsh -s "${zsh_path}" "$(whoami)"
-        elif [ "${is_ci}" = "false" ]; then
-            log "$LOG_LEVEL_INFO" "running chsh..."
-            chsh -s "${zsh_path}"
-        else
-            log "$LOG_LEVEL_INFO" "skip chsh for CI because it has no password given"
-        fi
-    fi
-
-    deploy_zsh_config
-}
-
-# shared with os-termux/setup.sh
-deploy_zsh_config() {
-    # make sure install zsh plugins
-    # (devcontainer image build copies the repo without .git, submodules are already checked out)
-    if git rev-parse --git-dir >/dev/null 2>&1; then
-        git submodule update --init --recursive
-    fi
-    if [ ! -f "${home_dir}/local.zsh" ]; then
-        cp ./terminal-tools/zsh/local.zsh "${home_dir}"
-    fi
-    local local_zshrc_path="${home_dir}/.zshrc"
-    if [ -f "${local_zshrc_path}" ] && ! diff "${local_zshrc_path}" ./terminal-tools/zsh/.zshrc >/dev/null 2>&1; then
-        cp "${local_zshrc_path}" "${local_zshrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./terminal-tools/zsh/.zshrc "${home_dir}"
-}
-
-setup_vim() {
-    echo_blue "Setup vim..."
-
-    brew_install vim
-    deploy_vim_config
-}
-
-# shared with os-termux/setup.sh
-deploy_vim_config() {
-    local vimrc_path="${home_dir}/.vimrc"
-
-    if [ ! -d "${home_dir}/.vim" ]; then
-        # make and copy all things inside .vim
-        cp -r ./terminal-tools/vim/.vim "${home_dir}"
-    fi
-    if [ -f "${vimrc_path}" ] && ! diff "${vimrc_path}" ./terminal-tools/vim/.vimrc >/dev/null 2>&1; then
-        cp "${vimrc_path}" "${vimrc_path}.$(date '+%Y%m%d-%H%M%S').bk"
-    fi
-    cp -f ./terminal-tools/vim/.vimrc "${home_dir}"
-
-    # TIPS: installing vim plugins takes time in CI so skip there
-    if [ "${is_ci}" = "true" ]; then
-        return
-    fi
-    # plugins.vim depends on vim-plug
-    local plug_path="${home_dir}/.vim/autoload/plug.vim"
-    if [ ! -f "${plug_path}" ]; then
-        log "$LOG_LEVEL_INFO" "[ ] vim-plug not installed. Installing..."
-        curl -fLo "${plug_path}" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    fi
-    # TIPS: vim exits non-zero in headless mode because some plugin settings may error there,
-    # so check the result by the plugin directory instead of the exit code
-    vim -es -u "${home_dir}/.vimrc" -i NONE -c 'PlugInstall --sync' -c 'qa' || true
-    if [ -d "${home_dir}/.vim/plugged" ]; then
-        log "$LOG_LEVEL_INFO" "[✓] vim plugins install finished"
-    else
-        log "$LOG_LEVEL_WARN" "failed to install vim plugins. run ':PlugInstall' in vim"
-    fi
+    ./scripts/install-packages.sh "${install_options[@]}"
 }
 
 ### install
@@ -478,27 +161,23 @@ startup "$@" # parse arguments given to this script
 case "${os}" in
 "macos")
     macos_check_developer_tool
-    macos_setup_defaults
-
-    homebrew_bin_path="/opt/homebrew/bin"
-    setup_package_manager
-    setup_basic_tools macos_setup_basic_tools
-    setup_personal_machine_tools macos_setup_personal_machine_tools
-    setup_zsh
-    setup_vim
+    setup_homebrew "/opt/homebrew/bin"
     ;;
 "ubuntu")
-    homebrew_bin_path="/home/linuxbrew/.linuxbrew/bin"
-    setup_package_manager
-    setup_basic_tools linux_setup_basic_tools
-    setup_personal_machine_tools linux_setup_personal_machine_tools
-    setup_zsh
-    setup_vim
+    setup_homebrew "/home/linuxbrew/.linuxbrew/bin"
     ;;
 "termux")
-    termux_setup
+    setup_termux
     ;;
 esac
+
+if [ "${flg_upgrade}" = "true" ] && git rev-parse --git-dir >/dev/null 2>&1; then
+    git pull --ff-only || log "$LOG_LEVEL_WARN" "failed to pull ${repo_dir}, apply the current checkout"
+fi
+apply_dotfiles
+if [ "${flg_upgrade}" = "true" ]; then
+    upgrade_packages
+fi
 
 echo_green "setup finished successfully!"
 log "$LOG_LEVEL_INFO" "done"

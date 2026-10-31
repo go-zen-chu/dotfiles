@@ -8,7 +8,7 @@ Supported OS
 
 - MacOS
 - Ubuntu
-- Termux (installs only a small set of tools with `pkg`, see [os-termux/setup.sh](./os-termux/setup.sh))
+- Termux (installs only a small set of tools with `pkg`, see [os-termux/setup.sh](./os-termux/setup.sh); dotfiles are applied with chezmoi as well)
 - Windows (see [os-windows/README.md](./os-windows/README.md))
 
 My configuration files for DRY. CI is performed on GitHub Actions.
@@ -21,8 +21,39 @@ My configuration files for DRY. CI is performed on GitHub Actions.
 # run downloader.sh for downloading latest dotfiles (using git command)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/go-zen-chu/dotfiles/refs/heads/master/downloader.sh)"
 
-# install dotfiles
+# install dotfiles (add -p for personal mode)
 ./install.sh -e "your git email here"
+```
+
+`install.sh` installs Homebrew (pkg on termux) and [chezmoi](https://www.chezmoi.io/), then applies the dotfiles with chezmoi.
+
+| Path | Managed by | Content |
+| --- | --- | --- |
+| `Brewfile` | `brew bundle` | Homebrew formulae / casks, `go install` and krew plugins for macOS / Ubuntu |
+| `home/` | chezmoi | files deployed to `$HOME` (mostly symlinks to `terminal-tools/` and `os-macos/`) |
+| `home/.chezmoiscripts/` | chezmoi | run `scripts/install-packages.sh`, `scripts/setup-tools.sh` and the macOS defaults when they (or the Brewfile) change |
+| `os-termux/setup.sh` | pkg | packages for termux |
+
+Files that chezmoi overwrites on the first run are moved to `<path>.<date>.bk`.
+
+### Update the environment
+
+```bash
+cd ~/dotfiles
+# pull the repository, apply the dotfiles and upgrade every package
+# (on a TTY, it also asks whether to uninstall the packages that are not in the Brewfile)
+./install.sh -u -e "your git email here"
+
+# only apply the dotfiles (the chezmoi scripts install packages added to the Brewfile)
+chezmoi update
+```
+
+### Check drift
+
+```bash
+chezmoi status                               # files in $HOME that differ from home/
+brew bundle check --file ~/dotfiles/Brewfile    # packages in the Brewfile that are not installed
+brew bundle cleanup --file ~/dotfiles/Brewfile  # installed packages that are not in the Brewfile
 ```
 
 ### Termux

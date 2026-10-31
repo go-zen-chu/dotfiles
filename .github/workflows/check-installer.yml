@@ -7,6 +7,9 @@ on:
       - main
     paths:
       - "install.sh"
+      - "Brewfile"
+      - ".chezmoiroot"
+      - "home/**"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -22,6 +25,9 @@ on:
       - master
     paths:
       - "install.sh"
+      - "Brewfile"
+      - ".chezmoiroot"
+      - "home/**"
       - "scripts/**"
       - "os-macos/**"
       - "os-linux/**"
@@ -47,6 +53,9 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   HOMEBREW_NO_ENV_HINTS: 1
 
+permissions:
+  contents: read
+
 jobs:
   # run only the jobs of the OS affected by the changed files
   changes:
@@ -59,13 +68,16 @@ jobs:
       ubuntu: ${{ github.event_name != 'pull_request' || steps.filter.outputs.ubuntu == 'true' }}
       windows: ${{ github.event_name != 'pull_request' || steps.filter.outputs.windows == 'true' }}
     steps:
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
         id: filter
         if: github.event_name == 'pull_request'
         with:
           filters: |
             common: &common
               - "install.sh"
+              - "Brewfile"
+              - ".chezmoiroot"
+              - "home/**"
               - "scripts/**"
               - "terminal-tools/**"
               - "apm/**"
@@ -76,7 +88,7 @@ jobs:
             ubuntu:
               - *common
               - "os-linux/**"
-              # install.sh sources os-termux/setup.sh on every OS
+              # scripts/install-packages.sh sources os-termux/setup.sh on every OS
               - "os-termux/**"
             windows:
               - "os-windows/**"
@@ -87,35 +99,47 @@ jobs:
     if: needs.changes.outputs.macos == 'true'
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Get cache week
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
       # bottles are refreshed weekly; the previous week's downloads are still restored by restore-keys
       - name: Cache Homebrew downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
-          path: ~/Library/Caches/Homebrew
+          path: |
+            ~/Library/Caches/Homebrew
+            !~/Library/Caches/Homebrew/Backup
           key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
+      # TIPS: Homebrew backs up replaced links to <cache>/Backup, and a stale backup restored from the cache
+      # that points to the same file makes the install fail ("openssl@3: same file: /opt/homebrew/bin/openssl ...")
+      - name: Remove Homebrew link backups restored from the cache
+        run: rm -rf ~/Library/Caches/Homebrew/Backup
       - name: Run MacOS personal machine setup
         run: |
           ./install.sh -p -e "actions@github.com"
+      - name: Check packages and dotfiles
+        run: |
+          HOMEBREW_DOTFILES_PERSONAL=true brew bundle check --verbose --file Brewfile
+          chezmoi verify --exclude scripts
 
   setup-ubuntu:
     needs: changes
     if: needs.changes.outputs.ubuntu == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Get cache week
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
       - name: Cache Homebrew downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
-          path: ~/.cache/Homebrew
+          path: |
+            ~/.cache/Homebrew
+            !~/.cache/Homebrew/Backup
           key: brew-${{ runner.os }}-${{ runner.arch }}-${{ steps.week.outputs.week }}
           restore-keys: |
             brew-${{ runner.os }}-${{ runner.arch }}-
@@ -125,13 +149,18 @@ jobs:
         env:
           # somehow ubuntu runner preinstalls /usr/bin/go (old) which makes go tool installation by goenv fail
           GOENV_PATH_ORDER: front
+      - name: Check packages and dotfiles
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          HOMEBREW_DOTFILES_PERSONAL=true brew bundle check --verbose --file Brewfile
+          chezmoi verify --exclude scripts
 
   setup-windows:
     needs: changes
     if: needs.changes.outputs.windows == 'true'
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Lint PowerShell scripts
         shell: pwsh
         run: |
@@ -153,12 +182,22 @@ jobs:
           foreach ($package in $packages) {
             # manifests/<first letter>/<publisher>/<name>, e.g. manifests/g/Google/Chrome
             $path = "manifests/$($package.Substring(0, 1).ToLower())/$($package.Replace('.', '/'))"
-            try {
-              Invoke-RestMethod -Headers $headers "https://api.github.com/repos/microsoft/winget-pkgs/contents/$path" | Out-Null
-              Write-Host "OK   $package"
-            } catch {
-              Write-Host "FAIL $package ($path)"
-              $missing += $package
+            # the contents API sometimes fails transiently, so only a 404 (or repeated errors) means missing
+            for ($attempt = 1; $attempt -le 3; $attempt++) {
+              try {
+                Invoke-RestMethod -Headers $headers "https://api.github.com/repos/microsoft/winget-pkgs/contents/$path" | Out-Null
+                Write-Host "OK   $package"
+                break
+              } catch {
+                $status = [int]$_.Exception.Response.StatusCode
+                if ($status -eq 404 -or $attempt -eq 3) {
+                  Write-Host "FAIL $package ($path): HTTP $status $($_.Exception.Message)"
+                  $missing += $package
+                  break
+                }
+                Write-Host "RETRY ${package}: HTTP $status"
+                Start-Sleep -Seconds (5 * $attempt)
+              }
             }
           }
           if ($missing) { exit 1 }
@@ -180,7 +219,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Report job results and durations
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const owner = context.repo.owner;
