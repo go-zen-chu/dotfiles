@@ -8,6 +8,9 @@ on:
     paths:
       - "backup.sh"
 
+permissions:
+  contents: read
+
 jobs:
   run-backup:
     runs-on: ubuntu-latest

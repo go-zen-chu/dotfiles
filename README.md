@@ -89,9 +89,12 @@ On PRs only the jobs of the OS affected by the changed files run
 winget is not available on GitHub-hosted runners, so the Windows job lints the scripts,
 checks the package IDs in `os-windows/winget-packages.txt` exist and installs the profile.
 
-### Backup config & secrets
+### Backup local settings & shell history
 
 ```bash
 cd $HOME/dotfiles
 ./backup.sh -p "path/to/cloudstorage"
 ```
+
+`backup.sh` copies `~/local.zsh`, `~/.zsh_history` and the atuin history only.
+Credentials (SSH / GPG keys, tokens under `~/.config`, the atuin key) are not backed up, so that a leak from one device does not spread to the others.

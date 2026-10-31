@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CredentialsAlert
 // @namespace    https://github.com/go-zen-chu
-// @version      0.4
+// @version      0.5
 // @description  Watch out! You might input credentials!
 // @author       go-zen-chu
 // @licence      MIT
