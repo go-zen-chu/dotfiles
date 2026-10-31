@@ -76,8 +76,7 @@ end
 # personal machine tools
 if personal && !ci
   brew "hugo"
-  # TIPS: Homebrew refuses formulae of third party taps unless they are trusted
-  brew "sass/sass/sass", trusted: true
+  brew "dart-sass" # sass/sass/sass depends on the dart-lang/dart tap, which Homebrew does not trust
   if OS.mac?
     cask "slack"
     cask "zoom"
