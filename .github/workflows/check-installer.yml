@@ -53,6 +53,9 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   HOMEBREW_NO_ENV_HINTS: 1
 
+permissions:
+  contents: read
+
 jobs:
   # run only the jobs of the OS affected by the changed files
   changes:
@@ -65,7 +68,7 @@ jobs:
       ubuntu: ${{ github.event_name != 'pull_request' || steps.filter.outputs.ubuntu == 'true' }}
       windows: ${{ github.event_name != 'pull_request' || steps.filter.outputs.windows == 'true' }}
     steps:
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
         id: filter
         if: github.event_name == 'pull_request'
         with:
@@ -96,13 +99,13 @@ jobs:
     if: needs.changes.outputs.macos == 'true'
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Get cache week
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
       # bottles are refreshed weekly; the previous week's downloads are still restored by restore-keys
       - name: Cache Homebrew downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             ~/Library/Caches/Homebrew
@@ -127,12 +130,12 @@ jobs:
     if: needs.changes.outputs.ubuntu == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Get cache week
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
       - name: Cache Homebrew downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             ~/.cache/Homebrew
@@ -157,7 +160,7 @@ jobs:
     if: needs.changes.outputs.windows == 'true'
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Lint PowerShell scripts
         shell: pwsh
         run: |
@@ -216,7 +219,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Report job results and durations
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const owner = context.repo.owner;
