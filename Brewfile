@@ -76,8 +76,6 @@ end
 # personal machine tools
 if personal && !ci
   brew "hugo"
-  # TIPS: Homebrew refuses formulae of third party taps unless they are trusted
-  brew "sass/sass/sass", trusted: true
   if OS.mac?
     cask "slack"
     cask "zoom"
